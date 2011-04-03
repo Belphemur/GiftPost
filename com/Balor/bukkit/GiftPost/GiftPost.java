@@ -4,6 +4,7 @@
  */
 package com.Balor.bukkit.GiftPost;
 
+import com.Balor.commands.*;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,14 +17,12 @@ import org.bukkit.plugin.Plugin;
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
-
 /**
  *
  * @author Antoine
  */
 public class GiftPost extends JavaPlugin
 {
-
 
     public static final Logger log = Logger.getLogger("Minecraft");
     private GiftPostWorker gpw;
@@ -54,13 +53,17 @@ public class GiftPost extends JavaPlugin
                 log.info("[" + pdfFile.getName() + "]" + " Instead of Permissions, check if the user is OP.");
             }
     }
+    void registerCommands()
+    {
+        gpw.registerCommand(Chest.class);
+    }
 
     @Override
     public void onEnable()
     {
         setupPermissions();
-        gpw=new GiftPostWorker(Permissions);
-        
+        gpw = new GiftPostWorker(Permissions);
+        registerCommands();
     }
 
     @Override
@@ -79,9 +82,22 @@ public class GiftPost extends JavaPlugin
             return true;
         } else
         {
-            Player player = (Player) sender;
+            for (GPCommand cmd : gpw.getCommands())
+            {
+                if (!cmd.validate(gpw, sender, args))
+                    continue;
 
-            String cmd = command.getName();
+                try
+                {
+                    cmd.execute(gpw, sender, args);
+                } catch (Exception e)
+                {
+                    log.info("A GiftPost command threw an exception!");
+                    e.printStackTrace();
+                }
+
+                return true;
+            }
 
 
         }

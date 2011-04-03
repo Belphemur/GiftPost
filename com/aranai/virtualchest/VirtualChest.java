@@ -7,9 +7,11 @@ package com.aranai.virtualchest;
 
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.InventoryLargeChest;
+import net.minecraft.server.ItemStack;
 
 import org.bukkit.entity.Player;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+
 
 /**
  * VirtualChest for Bukkit
@@ -25,7 +27,11 @@ public class VirtualChest
     private InventoryLargeChest lc;
     private Player owner;
 
-    public void VirtualChest(Player player)
+    /**
+     * Constructor
+     * @param player
+     */
+    public VirtualChest(Player player)
     {
         // Large chests are made up of two individual small chests
         // TileEntityVirtualChest extends the TileEntityChest class to remove some bothersome world checks
@@ -39,15 +45,25 @@ public class VirtualChest
         lc = new InventoryLargeChest(owner.getName() + "'s PostChest", chest, chest2);
 
     }
-
+    /**
+     * Check if the chest is belong to the player
+     * @param player
+     * @return
+     */
     public boolean isBelongTo(Player player)
     {
         return owner.equals(player);
     }
-
+    /**
+     * Open the chest for the owner
+     */
     public void openChest()
     {
         EntityPlayer eh = ((CraftPlayer) owner).getHandle();
         eh.a(lc);
+    }
+    public ItemStack[] getContents()
+    {
+        return lc.getContents();
     }
 }
