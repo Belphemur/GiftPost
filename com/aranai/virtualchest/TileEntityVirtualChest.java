@@ -29,6 +29,7 @@ public class TileEntityVirtualChest extends TileEntityChest
     {
         this.name = name;
     }
+
     /**
      * Return if the chest is full
      * @return
@@ -65,11 +66,14 @@ public class TileEntityVirtualChest extends TileEntityChest
     @Override
     public ItemStack a(int i, int j)
     {
-        ItemStack toReturn= super.a(i,j);
-        ItemStack afterSuper[] = this.getContents();
-        if(afterSuper[i]==null)
-             emptyCases.add(i);
-        
+        ItemStack toReturn = super.a(i, j);
+        if (toReturn != null)
+        {
+            ItemStack afterSuper[] = this.getContents();
+            if (afterSuper[i] == null)
+                emptyCases.add(i);
+        }
+
         return toReturn;
     }
 
