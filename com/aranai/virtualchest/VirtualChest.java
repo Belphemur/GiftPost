@@ -42,7 +42,7 @@ public class VirtualChest
         // Set up the global chest
         // Note: this is NOT persisted across server restarts
         owner = player;
-        lc = new InventoryLargeChest(owner.getName() + "'s PostChest", chest, chest2);
+        lc = new InventoryLargeChest(owner.getName(), chest, chest2);
 
     }
     /**

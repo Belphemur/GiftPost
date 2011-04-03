@@ -50,12 +50,28 @@ public class GiftPost extends JavaPlugin
             } else
             {
                 log.info("[" + pdfFile.getName() + "]" + " (version " + pdfFile.getVersion() + ") Enables without Permissions.");
-                log.info("[" + pdfFile.getName() + "]" + " Instead of Permissions, check if the user is OP.");
+                log.info("[" + pdfFile.getName() + "]" + " Commands are free for all");
             }
     }
+
+    private void registerCommand(Class<?> clazz)
+    {
+        try
+        {
+            GPCommand command = (GPCommand) clazz.newInstance();
+            gpw.getCommands().add(command);
+        } catch (InstantiationException e)
+        {
+            e.printStackTrace();
+        } catch (IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     void registerCommands()
     {
-        gpw.registerCommand(Chest.class);
+        registerCommand(Chest.class);
     }
 
     @Override
@@ -81,7 +97,6 @@ public class GiftPost extends JavaPlugin
             sender.sendMessage(ChatColor.RED + "You have to be a player!");
             return true;
         } else
-        {
             for (GPCommand cmd : gpw.getCommands())
             {
                 if (!cmd.validate(gpw, sender, args))
@@ -98,9 +113,6 @@ public class GiftPost extends JavaPlugin
 
                 return true;
             }
-
-
-        }
         return false;
     }
 }

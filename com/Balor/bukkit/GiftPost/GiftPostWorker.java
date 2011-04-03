@@ -65,21 +65,6 @@ public class GiftPostWorker
         return commands;
     }
 
-    public void registerCommand(Class<?> clazz)
-    {
-        try
-        {
-            GPCommand command = (GPCommand) clazz.newInstance();
-            this.getCommands().add(command);
-        } catch (InstantiationException e)
-        {
-            e.printStackTrace();
-        } catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Check the permissions
      * @param player
