@@ -6,7 +6,6 @@
 package com.aranai.virtualchest;
 
 import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.InventoryLargeChest;
 import net.minecraft.server.ItemStack;
 
 import org.bukkit.entity.Player;
@@ -21,7 +20,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 public class VirtualChest
 {
 
-    private TileEntityVirtualChest chest;
+    protected TileEntityVirtualChest chest;
     /**
      * Constructor
      * @param player
@@ -63,9 +62,21 @@ public class VirtualChest
         } else
             p.sendMessage("You can't open this chest, it's not yours.");
     }
+    /**
+     * adding a ItemStack to the chest
+     * @param is
+     * @return
+     */
     public boolean addItemStack(ItemStack is)
     {
         return chest.addItemStack(is);
+    }
+    /**
+     * Empty chest
+     */
+    public void emptyChest()
+    {
+        chest.emptyChest();
     }
 
     /**

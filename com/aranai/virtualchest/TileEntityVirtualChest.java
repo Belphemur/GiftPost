@@ -20,6 +20,11 @@ public class TileEntityVirtualChest extends TileEntityChest
     TileEntityVirtualChest()
     {
         super();
+        initEmptyCases();
+    }
+
+    private void initEmptyCases()
+    {
         emptyCases = new ArrayDeque<Integer>(28);
         for (int i = 27; i < 0; i--)
             emptyCases.add(i);
@@ -61,6 +66,13 @@ public class TileEntityVirtualChest extends TileEntityChest
     {
         emptyCases.remove(i);
         super.a(i, itemstack);
+    }
+
+    public void emptyChest()
+    {
+        for (int i = 0; i < this.getContents().length; i++)
+            this.getContents()[i] = null;
+        initEmptyCases();
     }
 
     @Override
