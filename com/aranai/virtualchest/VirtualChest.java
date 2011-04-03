@@ -24,7 +24,6 @@ public class VirtualChest
     private TileEntityVirtualChest chest;
     private TileEntityVirtualChest chest2;
     private InventoryLargeChest lc;
-    private String owner;
 
     /**
      * Constructor
@@ -40,7 +39,7 @@ public class VirtualChest
 
         // Set up the global chest
         // Note: this is NOT persisted across server restarts
-        owner = player.getName();
+        chest.setName(player.getName());
         //lc = new InventoryLargeChest(owner.getName(), chest, chest2);
 
     }
@@ -52,7 +51,7 @@ public class VirtualChest
      */
     public boolean isBelongTo(Player player)
     {
-        return owner.equals(player.getName());
+        return chest.getName().equals(player.getName());
     }
 
     /**
@@ -64,10 +63,14 @@ public class VirtualChest
         {
             EntityPlayer eh = ((CraftPlayer) p).getHandle();
             eh.a(chest);
-        }
-        p.sendMessage("You can't open this chest, it's not yours.");
+        } else
+            p.sendMessage("You can't open this chest, it's not yours.");
     }
 
+    /**
+     * get all the itemStacks that compose the chest
+     * @return
+     */
     public ItemStack[] getContents()
     {
         return chest.getContents();
