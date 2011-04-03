@@ -2,8 +2,9 @@ name: GiftPost
 main: com.Balor.bukkit.GiftPost.GiftPost
 version: 1.0
 author: Balor
+license: GPLv3
 description: >
-            This plugin allow you to send item to a friend and if LWC is installed to a chest of a friend.
+            This plugin allow you to send item to a friend using a virtual chest.
 commands:
  giftpost:
   description: master command
