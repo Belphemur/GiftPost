@@ -90,8 +90,14 @@ public class GiftPostWorker
     {
         if (Perm == null)
             return true;
+        else if (Perm.has(player, perm))
+            return true;
         else
-            return Perm.has(player, perm);
+        {
+            player.sendMessage("You don't have the perm to do that");
+            return false;
+        }
+
     }
 
     /**

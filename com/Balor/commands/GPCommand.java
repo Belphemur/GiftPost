@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package com.Balor.commands;
+
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import org.bukkit.command.CommandSender;
 
@@ -10,7 +11,7 @@ import org.bukkit.command.CommandSender;
  *
  * @author Antoine
  */
-public interface  GPCommand
+public interface GPCommand
 {
 
     /**
@@ -20,6 +21,7 @@ public interface  GPCommand
      * @param args
      */
     public void execute(GiftPostWorker gpw, CommandSender sender, String[] args);
+
     /**
      * Validate a command to check if it should be executed
      *
@@ -29,5 +31,8 @@ public interface  GPCommand
      * @return
      */
     public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args);
-
+    /**
+     * @return the name of the perm to add in the permFile.
+     */
+    public String getPermName();
 }

@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package com.Balor.commands;
+
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +23,7 @@ public class Chest implements GPCommand
      */
     public void execute(GiftPostWorker gpw, CommandSender sender, String[] args)
     {
-        gpw.getChest((Player)sender).openChest();
+        gpw.getChest((Player) sender).openChest();
     }
 
     /**
@@ -33,10 +34,16 @@ public class Chest implements GPCommand
      * @param args
      * @return
      */
-    public boolean validate(GiftPostWorker gpw,CommandSender sender, String[] args)
+    public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args)
     {
-        return (gpw.hasFlag(args, "c") || gpw.hasFlag(args, "chest")) && gpw.hasPerm((Player)sender, "giftpost.chest.open");
+        return (gpw.hasFlag(args, "c") || gpw.hasFlag(args, "chest")) && gpw.hasPerm((Player) sender, getPermName());
     }
 
-
+    /**
+     * @return the name of the perm to add in the permFile.
+     */
+    public String getPermName()
+    {
+        return "giftpost.chest.open";
+    }
 }
