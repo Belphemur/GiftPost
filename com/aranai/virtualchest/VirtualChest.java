@@ -8,20 +8,17 @@
  */
 package com.aranai.virtualchest;
 
-import java.io.File;
 import java.util.logging.Logger;
 
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.InventoryLargeChest;
 
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 /**
  * VirtualChest for Bukkit
@@ -35,12 +32,6 @@ public class VirtualChest extends JavaPlugin {
 	private TileEntityVirtualChest chest;
 	private TileEntityVirtualChest chest2;
 	private InventoryLargeChest lc;
-
-	public VirtualChest(PluginLoader pluginLoader, Server instance,
-			PluginDescriptionFile desc, File folder, File plugin,
-			ClassLoader cLoader) {
-		super(pluginLoader, instance, desc, folder, plugin, cLoader);
-	}
 
 	@Override
 	public void onDisable() {}
