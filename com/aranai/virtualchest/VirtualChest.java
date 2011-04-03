@@ -21,6 +21,7 @@ public class VirtualChest
 {
 
     protected TileEntityVirtualChest chest;
+
     /**
      * Constructor
      * @param player
@@ -62,6 +63,7 @@ public class VirtualChest
         } else
             p.sendMessage("You can't open this chest, it's not yours.");
     }
+
     /**
      * adding a ItemStack to the chest
      * @param is
@@ -71,6 +73,7 @@ public class VirtualChest
     {
         return chest.addItemStack(is);
     }
+
     /**
      * Empty chest
      */
@@ -86,5 +89,24 @@ public class VirtualChest
     public ItemStack[] getContents()
     {
         return chest.getContents();
+    }
+
+    /**
+     * Search for a given itemStack and remove it.
+     * @param is
+     */
+    public boolean removeItemStack(ItemStack is)
+    {
+        for (int i = 0; i < this.getContents().length; i++)
+            if (this.getContents()[i].equals(is))
+            {
+                chest.removeItemStack(i);
+                return true;
+            }
+        return false;
+    }
+    public void removeItemStack(int i)
+    {
+        chest.removeItemStack(i);
     }
 }
