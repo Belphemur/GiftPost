@@ -1,3 +1,5 @@
+README of VirtualChest Concept by Timberjaw
+
 VirtualChest Proof of Concept Plugin for Bukkit
 ============================
 

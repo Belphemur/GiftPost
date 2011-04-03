@@ -1,7 +1,11 @@
-name: VirtualChest
-main: com.aranai.virtualchest.VirtualChest
-version: 0.1
+name: GiftPost
+main: com.Balor.bukkit.GiftPost.GiftPost
+version: 1.0
+author: Balor
+description: >
+            This plugin allow you to send item to a friend and if LWC is installed to a chest of a friend.
 commands:
-  chest:
-    description: Shows a chest
-    usage: /<command>
+ gp_chest:
+  description: Shows a chest
+  aliases: chest
+  usage: /<command>
