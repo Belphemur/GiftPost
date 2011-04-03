@@ -5,7 +5,7 @@ author: Balor
 description: >
             This plugin allow you to send item to a friend and if LWC is installed to a chest of a friend.
 commands:
- gp_chest:
-  description: Shows playes's chest
-  aliases: chest
+ giftpost:
+  description: master command
+  aliases: gp
   usage: /<command>
