@@ -10,6 +10,7 @@ import com.nijiko.permissions.PermissionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 /**
@@ -19,25 +20,25 @@ import org.bukkit.entity.Player;
 public class GiftPostWorker
 {
 
-    private HashMap<Player, VirtualChest> chests;
+    private HashMap<String, VirtualChest> chests;
     private PermissionHandler Perm;
     private List<GPCommand> commands;
 
     public GiftPostWorker(PermissionHandler Perm)
     {
-        chests = new HashMap<Player, VirtualChest>();
+        chests = new HashMap<String, VirtualChest>();
         this.Perm = Perm;
         commands = new ArrayList<GPCommand>();
     }
 
     public VirtualChest getChest(Player p)
     {
-        if (chests.containsKey(p))
-            return chests.get(p);
+        if (chests.containsKey(p.getName()))
+            return chests.get(p.getName());
         else
         {
             VirtualChest tmp = new VirtualChest(p);
-            chests.put(p, tmp);
+            chests.put(p.getName(), tmp);
             return tmp;
         }
     }
@@ -79,7 +80,7 @@ public class GiftPostWorker
             return true;
         else
         {
-            player.sendMessage("You don't have the perm to do that");
+            player.sendMessage(ChatColor.RED+"You don't have the Permissions to do that "+ChatColor.BLUE+"("+perm+")");
             return false;
         }
 

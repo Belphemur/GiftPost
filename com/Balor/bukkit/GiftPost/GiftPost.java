@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
+import static com.Balor.utils.Display.sendHelp;
 //Permissions imports
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -97,11 +98,20 @@ public class GiftPost extends JavaPlugin
             sender.sendMessage(ChatColor.RED + "You have to be a player!");
             return true;
         } else
+        {
+            if (args.length == 0)
+            {
+                sendHelp(sender);
+                return true;
+            }
+            int i = gpw.getCommands().size();
             for (GPCommand cmd : gpw.getCommands())
             {
                 if (!cmd.validate(gpw, sender, args))
+                {
+                    i--;
                     continue;
-
+                }
                 try
                 {
                     cmd.execute(gpw, sender, args);
@@ -113,6 +123,9 @@ public class GiftPost extends JavaPlugin
 
                 return true;
             }
-        return false;
+            if(i==0)
+                sendHelp(sender);
+        }
+        return true;
     }
 }

@@ -23,7 +23,7 @@ public class Chest implements GPCommand
      */
     public void execute(GiftPostWorker gpw, CommandSender sender, String[] args)
     {
-        gpw.getChest((Player) sender).openChest();
+        gpw.getChest((Player) sender).openChest((Player)sender);
     }
 
     /**

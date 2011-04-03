@@ -8,6 +8,7 @@ package com.aranai.virtualchest;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.TileEntityChest;
 
+
 public class TileEntityVirtualChest extends TileEntityChest {
 	TileEntityVirtualChest()
 	{

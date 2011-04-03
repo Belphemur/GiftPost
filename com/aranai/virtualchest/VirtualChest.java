@@ -12,7 +12,6 @@ import net.minecraft.server.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
-
 /**
  * VirtualChest for Bukkit
  *
@@ -25,7 +24,7 @@ public class VirtualChest
     private TileEntityVirtualChest chest;
     private TileEntityVirtualChest chest2;
     private InventoryLargeChest lc;
-    private Player owner;
+    private String owner;
 
     /**
      * Constructor
@@ -37,14 +36,15 @@ public class VirtualChest
         // TileEntityVirtualChest extends the TileEntityChest class to remove some bothersome world checks
         // This would NOT work with regular TileEntityChest instances
         chest = new TileEntityVirtualChest();
-        chest2 = new TileEntityVirtualChest();
+        //chest2 = new TileEntityVirtualChest();
 
         // Set up the global chest
         // Note: this is NOT persisted across server restarts
-        owner = player;
-        lc = new InventoryLargeChest(owner.getName(), chest, chest2);
+        owner = player.getName();
+        //lc = new InventoryLargeChest(owner.getName(), chest, chest2);
 
     }
+
     /**
      * Check if the chest is belong to the player
      * @param player
@@ -52,18 +52,24 @@ public class VirtualChest
      */
     public boolean isBelongTo(Player player)
     {
-        return owner.equals(player);
+        return owner.equals(player.getName());
     }
+
     /**
      * Open the chest for the owner
      */
-    public void openChest()
+    public void openChest(Player p)
     {
-        EntityPlayer eh = ((CraftPlayer) owner).getHandle();
-        eh.a(lc);
+        if (isBelongTo(p))
+        {
+            EntityPlayer eh = ((CraftPlayer) p).getHandle();
+            eh.a(chest);
+        }
+        p.sendMessage("You can't open this chest, it's not yours.");
     }
+
     public ItemStack[] getContents()
     {
-        return lc.getContents();
+        return chest.getContents();
     }
 }
