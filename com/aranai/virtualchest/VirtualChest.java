@@ -63,6 +63,10 @@ public class VirtualChest
         } else
             p.sendMessage("You can't open this chest, it's not yours.");
     }
+    public boolean addItemStack(ItemStack is)
+    {
+        return chest.addItemStack(is);
+    }
 
     /**
      * get all the itemStacks that compose the chest

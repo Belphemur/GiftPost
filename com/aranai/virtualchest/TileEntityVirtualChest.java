@@ -5,26 +5,72 @@
  */
 package com.aranai.virtualchest;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Queue;
 import net.minecraft.server.EntityHuman;
+import net.minecraft.server.ItemStack;
 import net.minecraft.server.TileEntityChest;
 
 public class TileEntityVirtualChest extends TileEntityChest
 {
 
-    String name;
-    List usedCase;
+    String name = "Chest";
+    Queue<Integer> emptyCases;
 
     TileEntityVirtualChest()
     {
         super();
-        usedCase=new ArrayList();        
+        emptyCases = new ArrayDeque<Integer>(28);
+        for (int i = 27; i < 0; i--)
+            emptyCases.add(i);
     }
 
     public void setName(String name)
     {
         this.name = name;
+    }
+    /**
+     * Return if the chest is full
+     * @return
+     */
+    public boolean isFull()
+    {
+        return emptyCases.isEmpty();
+    }
+
+    /**
+     * Look for the first empty case in the chest to add the stack.
+     * @param itemstack
+     * @return
+     */
+    public boolean addItemStack(ItemStack itemstack)
+    {
+        Integer i = emptyCases.poll();
+        if (i == null)
+            return false;
+        else
+        {
+            super.a(i, itemstack);
+            return true;
+        }
+    }
+
+    @Override
+    public void a(int i, ItemStack itemstack)
+    {
+        emptyCases.remove(i);
+        super.a(i, itemstack);
+    }
+
+    @Override
+    public ItemStack a(int i, int j)
+    {
+        ItemStack toReturn= super.a(i,j);
+        ItemStack afterSuper[] = this.getContents();
+        if(afterSuper[i]==null)
+             emptyCases.add(i);
+        
+        return toReturn;
     }
 
     @Override
@@ -32,6 +78,7 @@ public class TileEntityVirtualChest extends TileEntityChest
     {
         return name;
     }
+
     /**
      * Alias to c()
      * @return
