@@ -22,9 +22,6 @@ public class VirtualChest
 {
 
     private TileEntityVirtualChest chest;
-    private TileEntityVirtualChest chest2;
-    private InventoryLargeChest lc;
-
     /**
      * Constructor
      * @param player
