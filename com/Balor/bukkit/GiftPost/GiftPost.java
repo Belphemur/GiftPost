@@ -4,7 +4,6 @@
  */
 package com.Balor.bukkit.GiftPost;
 
-import com.aranai.virtualchest.VirtualChest;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -16,8 +15,7 @@ import org.bukkit.plugin.Plugin;
 //Permissions imports
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import java.io.Serializable;
-import java.util.HashMap;
+
 
 /**
  *
@@ -26,8 +24,9 @@ import java.util.HashMap;
 public class GiftPost extends JavaPlugin
 {
 
-    private HashMap<Player, VirtualChest> chests;
+
     public static final Logger log = Logger.getLogger("Minecraft");
+    private GiftPostWorker gpw;
     /**
      * Permission plugin
      */
@@ -56,25 +55,12 @@ public class GiftPost extends JavaPlugin
             }
     }
 
-    /**
-     * Check the permissions
-     * @param player
-     * @param perm
-     * @return boolean
-     */
-    private boolean hasPerm(Player player, String perm)
-    {
-        if (Permissions == null)
-            return true;
-        else
-            return Permissions.has(player, perm);
-    }
-
     @Override
     public void onEnable()
     {
         setupPermissions();
-        chests = new HashMap<Player, VirtualChest>();
+        gpw=new GiftPostWorker(Permissions);
+        
     }
 
     @Override
