@@ -108,11 +108,12 @@ public class GiftPost extends JavaPlugin {
 			try {
 				BufferedWriter out = new BufferedWriter(new FileWriter(yml,
 						true));
-
+				out.write("use-max-range: 'true'");
+				out.newLine();
 				out.write("max-range: 100");
 				out.newLine();
 				out.write("allow-offline: 'true'");
-				out.newLine();
+				out.newLine();				
 
 				// Close the output stream
 				out.close();

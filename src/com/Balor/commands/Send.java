@@ -28,7 +28,7 @@ public class Send implements GPCommand {
 
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		String targetName=args[1];
+		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
 		if (gpw.getChest(player.getName()).isEmpty())
@@ -42,25 +42,35 @@ public class Send implements GPCommand {
 			sender.sendMessage(ChatColor.RED
 					+ "There isn't enough place in the " + ChatColor.BLUE
 					+ targetName + ChatColor.RED + "'s chest !");
-		else 
-		{
-			if(target !=null)
-			{
-				target.sendMessage(ChatColor.GREEN+player.getName()+ChatColor.BLUE+" send you a gift, look in your chest (using command /gp c).");
-				sender.sendMessage(ChatColor.BLUE+"Succefuly send your gift to "+ChatColor.GREEN+targetName);
-				gpw.getChest(targetName).addItemStack(gpw.getChest(player.getName()).getContents());
+		else {
+			if (target != null) {
+				target.sendMessage(ChatColor.GREEN
+						+ player.getName()
+						+ ChatColor.BLUE
+						+ " send you a gift, look in your chest (using command /gp c).");
+				sender.sendMessage(ChatColor.BLUE
+						+ "Succefuly send your gift to " + ChatColor.GREEN
+						+ targetName);
+				gpw.getChest(targetName).addItemStack(
+						gpw.getChest(player.getName()).getContents());
 				gpw.getChest(player.getName()).emptyChest();
-			}
-			else 
-				if(gpw.getConfig().getString("allow-offline","false").equals("true"))
-				{
-					sender.sendMessage(ChatColor.BLUE+"Succefuly send your gift to "+ChatColor.GREEN+targetName+ChatColor.RED+" but he's offline, he'll receve it when he'll connect.");
-					gpw.getChest(targetName).addItemStack(gpw.getChest(player.getName()).getContents());
+			} else {
+				if (gpw.getConfig().getString("allow-offline", "false")
+						.matches("true")) {
+					sender.sendMessage(ChatColor.BLUE
+							+ "Succefuly send your gift to "
+							+ ChatColor.GREEN
+							+ targetName
+							+ ChatColor.RED
+							+ " but he's offline, he'll receve it when he'll connect.");
+					gpw.getChest(targetName).addItemStack(
+							gpw.getChest(player.getName()).getContents());
 					gpw.getChest(player.getName()).emptyChest();
-				}
-				else
-					sender.sendMessage(targetName+ChatColor.RED+" is offline, you can't send him your gift.");
-			
+				} else
+					sender.sendMessage(targetName + ChatColor.RED
+							+ " is offline, you can't send him your gift.");
+			}
+
 		}
 
 	}
