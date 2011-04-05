@@ -37,16 +37,8 @@ public class VirtualChest
      */
     public VirtualChest(Player player)
     {
-        // Large chests are made up of two individual small chests
-        // TileEntityVirtualChest extends the TileEntityChest class to remove some bothersome world checks
-        // This would NOT work with regular TileEntityChest instances
         chest = new TileEntityVirtualChest();
-        //chest2 = new TileEntityVirtualChest();
-
-        // Set up the global chest
-        // Note: this is NOT persisted across server restarts
         chest.setName(player.getName());
-        //lc = new InventoryLargeChest(owner.getName(), chest, chest2);
 
     }
 
@@ -90,7 +82,14 @@ public class VirtualChest
     {
         chest.emptyChest();
     }
-
+    /**
+     * is Chest Full
+     * @return
+     */
+    public boolean isFull()
+    {
+    	return chest.isFull();
+    }
     /**
      * get all the itemStacks that compose the chest
      * @return

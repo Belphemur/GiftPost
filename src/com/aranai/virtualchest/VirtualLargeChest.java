@@ -64,7 +64,15 @@ public class VirtualLargeChest extends VirtualChest
             return subChest2.addItemStack(is);
         return true;
     }
-
+    /**
+     * is Chest Full
+     * @return
+     */
+    @Override
+    public boolean isFull()
+    {
+    	return chest.isFull() && subChest2.isFull();
+    }
     /**
      * Empty chests
      */

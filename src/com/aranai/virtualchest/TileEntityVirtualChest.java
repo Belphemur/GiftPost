@@ -53,6 +53,22 @@ public class TileEntityVirtualChest extends TileEntityChest
     {
         return emptyCases.isEmpty();
     }
+    /**
+     * return the number of emptyCases
+     * @return
+     */
+    public int emptyCasesLeft()
+    {
+    	return emptyCases.size();
+    }
+    /**
+     * Alias to q_()
+     * @return
+     */
+    public int size()
+    {
+    	return q_();
+    }
 
     /**
      * Look for the first empty case in the chest to add the stack.
