@@ -35,9 +35,9 @@ public class VirtualChest {
 	 * 
 	 * @param player
 	 */
-	public VirtualChest(Player player) {
+	public VirtualChest(String playerName) {
 		chest = new TileEntityVirtualChest();
-		chest.setName(player.getName());
+		chest.setName(playerName);
 
 	}
 
@@ -60,6 +60,15 @@ public class VirtualChest {
 			eh.a(chest);
 		} else
 			p.sendMessage("You can't open this chest, it's not yours.");
+	}
+	/**
+	 * Add some ItemStack to the chest
+	 * @param iss
+	 */
+	public void addItemStack(ItemStack[] iss)
+	{
+		for(ItemStack is : iss)
+			addItemStack(is);
 	}
 
 	/**
@@ -88,6 +97,15 @@ public class VirtualChest {
 	 */
 	public boolean isFull() {
 		return chest.isFull();
+	}
+
+	/**
+	 * is Chest Empty
+	 * 
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return chest.isEmpty();
 	}
 
 	/**

@@ -51,6 +51,15 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	}
 
 	/**
+	 * Return if the chest is empty
+	 * 
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return emptyCases.size() == q_();
+	}
+
+	/**
 	 * return the number of emptyCases
 	 * 
 	 * @return

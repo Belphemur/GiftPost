@@ -37,10 +37,13 @@ public class EmptyChest implements GPCommand {
 	 */
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if (args.length > 1) {
-			gpw.getChest(sender.getServer().getPlayer(args[1])).emptyChest();
+		if (args.length > 1 && gpw.hasPerm((Player)sender, "giftpost.admin.empty")) {
+			gpw.getChest(args[1]).emptyChest();
 		} else
-			gpw.getChest((Player) sender).emptyChest();
+		{
+			Player p = (Player) sender;
+			gpw.getChest(p.getName()).emptyChest();
+		}
 		sender.sendMessage(ChatColor.GREEN + "Chest emptied succefuly");
 
 	}

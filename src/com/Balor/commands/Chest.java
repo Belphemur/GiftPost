@@ -34,7 +34,8 @@ public class Chest implements GPCommand
     @Override
     public void execute(GiftPostWorker gpw, CommandSender sender, String[] args)
     {
-        gpw.getChest((Player) sender).openChest((Player)sender);
+    	Player p = (Player) sender;
+        gpw.getChest(p.getName()).openChest((Player)sender);
     }
 
     /**

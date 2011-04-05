@@ -39,12 +39,12 @@ public class GiftPostWorker {
 		commands = new ArrayList<GPCommand>();
 	}
 
-	public VirtualChest getChest(Player p) {
-		if (chests.containsKey(p.getName()))
-			return chests.get(p.getName());
+	public VirtualChest getChest(String name) {
+		if (chests.containsKey(name))
+			return chests.get(name);
 		else {
-			VirtualChest tmp = new VirtualChest(p);
-			chests.put(p.getName(), tmp);
+			VirtualChest tmp = new VirtualChest(name);
+			chests.put(name, tmp);
 			return tmp;
 		}
 	}

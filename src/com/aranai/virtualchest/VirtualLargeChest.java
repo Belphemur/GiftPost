@@ -29,11 +29,11 @@ public class VirtualLargeChest extends VirtualChest {
 	protected TileEntityVirtualChest subChest2;
 	protected InventoryLargeChest lc;
 
-	public VirtualLargeChest(Player p) {
-		super(p);
+	public VirtualLargeChest(String playerName) {
+		super(playerName);
 		subChest2 = new TileEntityVirtualChest();
-		subChest2.setName(p.getName());
-		lc = new InventoryLargeChest(p.getName(), chest, subChest2);
+		subChest2.setName(playerName);
+		lc = new InventoryLargeChest(playerName, chest, subChest2);
 	}
 
 	/**
@@ -70,11 +70,20 @@ public class VirtualLargeChest extends VirtualChest {
 	 */
 	@Override
 	public boolean isFull() {
-		return chest.isFull() && subChest2.isFull();
+		return super.isFull() && subChest2.isFull();
 	}
-
+	
 	/**
-	 * Nb of used Cases
+	 * is Chest Empty
+	 * 
+	 * @return
+	 */
+	@Override
+	public boolean isEmpty() {
+		return super.isEmpty() && subChest2.isEmpty();
+	}
+	/**
+	 * Number of used Cases
 	 * 
 	 * @return
 	 */
