@@ -46,14 +46,19 @@ public class Send implements GPCommand {
 			if (target != null) {
 				target.sendMessage(ChatColor.GREEN
 						+ player.getName()
-						+ ChatColor.BLUE
-						+ " send you a gift, look in your chest (using command /gp c).");
+						+ ChatColor.GRAY
+						+ " send you a gift, look in your chest (using command "
+						+ ChatColor.GOLD + "/gp c" + ChatColor.GRAY + ").");
 				sender.sendMessage(ChatColor.BLUE
 						+ "Succefuly send your gift to " + ChatColor.GREEN
 						+ targetName);
-				gpw.getChest(targetName).addItemStack(
-						gpw.getChest(player.getName()).getContents());
-				gpw.getChest(player.getName()).emptyChest();
+				if (checkMaxRange(gpw, player, target)) {
+					gpw.getChest(targetName).addItemStack(
+							gpw.getChest(player.getName()).getContents());
+					gpw.getChest(player.getName()).emptyChest();
+				}
+				else
+					sender.sendMessage(ChatColor.GRAY+targetName+ChatColor.RED+" is to far away from you to send him your gift !");
 			} else {
 				if (gpw.getConfig().getString("allow-offline", "false")
 						.matches("true")) {
@@ -73,6 +78,34 @@ public class Send implements GPCommand {
 
 		}
 
+	}
+	/**
+	 * Function to check if the player don't exceed the max-range
+	 * @param gpw
+	 * @param player
+	 * @param target
+	 * @return
+	 */
+	private boolean checkMaxRange(GiftPostWorker gpw, Player player,
+			Player target) {
+		if (gpw.getConfig().getString("use-max-range", "false ")
+				.matches("true")) {
+			int maxRadius = gpw.getConfig().getInt("max-range", 100);
+			int totaldistance = 0;
+
+			int x1 = player.getLocation().getBlockX();
+			int y1 = player.getLocation().getBlockY();
+			int z1 = player.getLocation().getBlockZ();
+			int x2 = target.getLocation().getBlockX();
+			int y2 = target.getLocation().getBlockY();
+			int z2 = target.getLocation().getBlockZ();
+
+			totaldistance = ((x1 - x2) ^ 2 + (y1 - y2) ^ 2 + (z1 - z2) ^ 2);
+			if (!(totaldistance < (maxRadius ^ 2))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

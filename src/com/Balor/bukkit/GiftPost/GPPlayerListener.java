@@ -36,7 +36,7 @@ public class GPPlayerListener extends PlayerListener {
 			event.getPlayer()
 					.sendMessage(
 							ChatColor.GOLD
-									+ "Something wait you in your chest (command /gp c to see it)");
+									+ "Something wait you in your chest (command"+ChatColor.RED+" /gp c"+ChatColor.GOLD+" to see it)");
 	}
 
 }
