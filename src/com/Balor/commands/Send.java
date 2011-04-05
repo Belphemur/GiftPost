@@ -44,15 +44,22 @@ public class Send implements GPCommand {
 					+ targetName + ChatColor.RED + "'s chest !");
 		else 
 		{
-			gpw.getChest(targetName).addItemStack(gpw.getChest(player.getName()).getContents());
-			gpw.getChest(player.getName()).emptyChest();
 			if(target !=null)
 			{
 				target.sendMessage(ChatColor.GREEN+player.getName()+ChatColor.BLUE+" send you a gift, look in your chest (using command /gp c).");
 				sender.sendMessage(ChatColor.BLUE+"Succefuly send your gift to "+ChatColor.GREEN+targetName);
+				gpw.getChest(targetName).addItemStack(gpw.getChest(player.getName()).getContents());
+				gpw.getChest(player.getName()).emptyChest();
 			}
-			else
-				sender.sendMessage(ChatColor.BLUE+"Succefuly send your gift to "+ChatColor.GREEN+targetName+ChatColor.RED+" but he's offline, he'll receve it when he'll connect.");
+			else 
+				if(gpw.getConfig().getString("allow-offline","false").equals("true"))
+				{
+					sender.sendMessage(ChatColor.BLUE+"Succefuly send your gift to "+ChatColor.GREEN+targetName+ChatColor.RED+" but he's offline, he'll receve it when he'll connect.");
+					gpw.getChest(targetName).addItemStack(gpw.getChest(player.getName()).getContents());
+					gpw.getChest(player.getName()).emptyChest();
+				}
+				else
+					sender.sendMessage(targetName+ChatColor.RED+" is offline, you can't send him your gift.");
 			
 		}
 

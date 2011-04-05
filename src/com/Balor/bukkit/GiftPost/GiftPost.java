@@ -15,6 +15,11 @@
 package com.Balor.bukkit.GiftPost;
 
 import com.Balor.commands.*;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -32,119 +37,140 @@ import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 /**
- *
+ * 
  * @author Balor
  */
-public class GiftPost extends JavaPlugin
-{
+public class GiftPost extends JavaPlugin {
 
-    public static final Logger log = Logger.getLogger("Minecraft");
-    private GiftPostWorker gpw;
-    private GPPlayerListener pListener;
-    /**
-     * Permission plugin
-     */
-    private static PermissionHandler Permissions = null;
+	public static final Logger log = Logger.getLogger("Minecraft");
+	private GiftPostWorker gpw;
+	private GPPlayerListener pListener;
+	/**
+	 * Permission plugin
+	 */
+	private static PermissionHandler Permissions = null;
 
-    /**
-     * Checks that Permissions is installed.
-     */
-    private void setupPermissions()
-    {
+	/**
+	 * Checks that Permissions is installed.
+	 */
+	private void setupPermissions() {
 
-        Plugin perm_plugin = this.getServer().getPluginManager().getPlugin("Permissions");
-        PluginDescriptionFile pdfFile = this.getDescription();
+		Plugin perm_plugin = this.getServer().getPluginManager()
+				.getPlugin("Permissions");
+		PluginDescriptionFile pdfFile = this.getDescription();
 
-        if (Permissions == null)
-            if (perm_plugin != null)
-            {
-                //Permissions found, enable it now
-                this.getServer().getPluginManager().enablePlugin(perm_plugin);
-                Permissions = ((Permissions) perm_plugin).getHandler();
-                log.info("[" + pdfFile.getName() + "]" + " (version " + pdfFile.getVersion() + ") Enabled with Permissions.");
-            } else
-            {
-                log.info("[" + pdfFile.getName() + "]" + " (version " + pdfFile.getVersion() + ") Enables without Permissions.");
-                log.info("[" + pdfFile.getName() + "]" + " Commands are free for all");
-            }
-    }
+		if (Permissions == null)
+			if (perm_plugin != null) {
+				// Permissions found, enable it now
+				this.getServer().getPluginManager().enablePlugin(perm_plugin);
+				Permissions = ((Permissions) perm_plugin).getHandler();
+				log.info("[" + pdfFile.getName() + "]" + " (version "
+						+ pdfFile.getVersion() + ") Enabled with Permissions.");
+			} else {
+				log.info("[" + pdfFile.getName() + "]" + " (version "
+						+ pdfFile.getVersion()
+						+ ") Enables without Permissions.");
+				log.info("[" + pdfFile.getName() + "]"
+						+ " Commands are free for all");
+			}
+	}
 
-    private void registerCommand(Class<?> clazz)
-    {
-        try
-        {
-            GPCommand command = (GPCommand) clazz.newInstance();
-            gpw.getCommands().add(command);
-        } catch (InstantiationException e)
-        {
-            e.printStackTrace();
-        } catch (IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-    }
+	private void registerCommand(Class<?> clazz) {
+		try {
+			GPCommand command = (GPCommand) clazz.newInstance();
+			gpw.getCommands().add(command);
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+	}
 
-    void registerCommands()
-    {
-        registerCommand(Chest.class);
-        registerCommand(Send.class);
-        registerCommand(EmptyChest.class);
-    }
+	private void registerCommands() {
+		registerCommand(Chest.class);
+		registerCommand(Send.class);
+		registerCommand(EmptyChest.class);
+	}
 
-    @Override
-    public void onEnable()
-    {
-        setupPermissions();
-        gpw = new GiftPostWorker(Permissions);
-        pListener=new GPPlayerListener(gpw);
-        registerCommands();
-		PluginManager pm = getServer().getPluginManager();        
-        pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
-    }
+	private void setupConfigFiles() {
+		if (!new File(getDataFolder().toString()).exists()) {
+			new File(getDataFolder().toString()).mkdir();
+		}
+		File yml = new File(getDataFolder() + "/config.yml");
+		if (!yml.exists()) {
+			new File(getDataFolder().toString()).mkdir();
+			try {
+				yml.createNewFile();
+			} catch (IOException ex) {
+				System.out.println("cannot create file " + yml.getPath());
+			}
 
-    @Override
-    public void onDisable()
-    {
-        PluginDescriptionFile pdfFile = this.getDescription();
-        log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version" + pdfFile.getVersion() + ")");
-    }
+			try {
+				BufferedWriter out = new BufferedWriter(new FileWriter(yml,
+						true));
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args)
-    {
-        if (!(sender instanceof Player))
-        {
-            sender.sendMessage(ChatColor.RED + "You have to be a player!");
-            return true;
-        } else
-        {
-            if (args.length == 0)
-            {
-                sendHelp(sender);
-                return true;
-            }
-            int i = gpw.getCommands().size();
-            for (GPCommand cmd : gpw.getCommands())
-            {
-                if (!cmd.validate(gpw, sender, args))
-                {
-                    i--;
-                    continue;
-                }
-                try
-                {
-                    cmd.execute(gpw, sender, args);
-                } catch (Exception e)
-                {
-                    log.info("A GiftPost command threw an exception!");
-                    e.printStackTrace();
-                }
+				out.write("max-range: 100");
+				out.newLine();
+				out.write("allow-offline: 'true'");
+				out.newLine();
 
-                return true;
-            }
-            if(i==0)
-                sendHelp(sender);
-        }
-        return true;
-    }
+				// Close the output stream
+				out.close();
+			} catch (Exception e) {
+				System.out.println("cannot write config file: " + e);
+			}
+		}
+
+	}
+
+	@Override
+	public void onEnable() {
+		setupPermissions();
+		setupConfigFiles();
+		gpw = new GiftPostWorker(Permissions,getConfiguration());
+		pListener = new GPPlayerListener(gpw);
+		registerCommands();
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal,
+				this);
+	}
+
+	@Override
+	public void onDisable() {
+		PluginDescriptionFile pdfFile = this.getDescription();
+		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version"
+				+ pdfFile.getVersion() + ")");
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command,
+			String commandLabel, String[] args) {
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(ChatColor.RED + "You have to be a player!");
+			return true;
+		} else {
+			if (args.length == 0) {
+				sendHelp(sender);
+				return true;
+			}
+			int i = gpw.getCommands().size();
+			for (GPCommand cmd : gpw.getCommands()) {
+				if (!cmd.validate(gpw, sender, args)) {
+					i--;
+					continue;
+				}
+				try {
+					cmd.execute(gpw, sender, args);
+				} catch (Exception e) {
+					log.info("A GiftPost command threw an exception!");
+					e.printStackTrace();
+				}
+
+				return true;
+			}
+			if (i == 0)
+				sendHelp(sender);
+		}
+		return true;
+	}
 }

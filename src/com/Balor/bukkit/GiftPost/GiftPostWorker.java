@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.util.config.Configuration;
 
 /**
  * 
@@ -32,11 +33,17 @@ public class GiftPostWorker {
 	private HashMap<String, VirtualChest> chests;
 	private PermissionHandler Perm;
 	private List<GPCommand> commands;
+	private Configuration config;
 
-	public GiftPostWorker(PermissionHandler Perm) {
+	public GiftPostWorker(PermissionHandler Perm, Configuration config) {
 		chests = new HashMap<String, VirtualChest>();
 		this.Perm = Perm;
 		commands = new ArrayList<GPCommand>();
+		this.config = config;
+	}
+
+	public Configuration getConfig() {
+		return config;
 	}
 
 	public VirtualChest getChest(String name) {
