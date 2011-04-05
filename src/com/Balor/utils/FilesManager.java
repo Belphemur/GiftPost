@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 import net.minecraft.server.ItemStack;
@@ -74,10 +75,11 @@ public class FilesManager {
 	 * @param items
 	 * @param from
 	 */
-	public void createPlayer(String to, ItemStack[] items, String from) {
-		Configuration conf = this.getFile("Players",to + ".yml");
+	public void createPlayerFile(String to, ItemStack[] items, String from) {
+		Configuration conf = this.getFile("Players", to + ".yml");
 		List<String> itemsNames = new ArrayList<String>();
 		List<Integer> itemsAmount = new ArrayList<Integer>();
+		List<String> playerNames = new ArrayList<String>();
 		for (ItemStack is : items)
 			if (is != null) {
 				itemsNames.add(Material.getMaterial(is.id).toString()
@@ -86,6 +88,13 @@ public class FilesManager {
 			}
 
 		if (conf.getProperty("From." + from) == null) {
+			playerNames.add(from);
+			if (conf.getProperty("Players") == null)
+				conf.setProperty("Players", playerNames);
+			else {
+				playerNames.addAll(conf.getStringList("Players", null));
+				conf.setProperty("Players", playerNames);
+			}
 			conf.setProperty("From." + from, from);
 			conf.setProperty("From." + from + ".Items", itemsNames);
 			conf.setProperty("From." + from + ".Amount", itemsAmount);
@@ -93,8 +102,8 @@ public class FilesManager {
 		} else {
 			List<String> list = new ArrayList<String>();
 			List<Integer> list2 = new ArrayList<Integer>();
-			list = conf.getStringList("From." + from + ".Items", null);
-			list2 = conf.getIntList("From." + from + ".Amount", null);
+			list = conf.getStringList("From." + from + ".Items", list);
+			list2 = conf.getIntList("From." + from + ".Amount", list2);
 			itemsNames.addAll(list);
 			itemsAmount.addAll(list2);
 			conf.setProperty("From." + from + ".Items", itemsNames);
@@ -102,5 +111,9 @@ public class FilesManager {
 		}
 		conf.save();
 
+	}
+	public void openPlayerFile(Player p)
+	{
+		Configuration conf = this.getFile("Players", p.getName() + ".yml");
 	}
 }

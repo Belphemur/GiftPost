@@ -72,8 +72,8 @@ public class Send implements GPCommand {
 							+ " but he's offline, he'll receve it when he'll connect.");
 					gpw.getChest(targetName).addItemStack(
 							gpw.getChest(player.getName()).getContents());
-					gpw.getChest(player.getName()).emptyChest();
-					gpw.getFileMan().createPlayer(targetName,gpw.getChest(player.getName()).getContents() , player.getName());
+					gpw.getFileMan().createPlayerFile(targetName,gpw.getChest(player.getName()).getContents() , player.getName());
+					gpw.getChest(player.getName()).emptyChest();					
 				} else
 					sender.sendMessage(targetName + ChatColor.RED
 							+ " is offline, you can't send him your gift.");
