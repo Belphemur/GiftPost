@@ -128,7 +128,7 @@ public class GiftPost extends JavaPlugin {
 	public void onEnable() {
 		setupPermissions();
 		setupConfigFiles();
-		gpw = new GiftPostWorker(Permissions,getConfiguration());
+		gpw = new GiftPostWorker(Permissions,getConfiguration(), getDataFolder().toString());
 		pListener = new GPPlayerListener(gpw);
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();

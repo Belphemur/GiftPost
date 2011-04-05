@@ -15,6 +15,7 @@
 package com.Balor.bukkit.GiftPost;
 
 import com.Balor.commands.GPCommand;
+import com.Balor.utils.FilesManager;
 import com.aranai.virtualchest.VirtualChest;
 import com.nijiko.permissions.PermissionHandler;
 import java.util.ArrayList;
@@ -34,12 +35,18 @@ public class GiftPostWorker {
 	private PermissionHandler Perm;
 	private List<GPCommand> commands;
 	private Configuration config;
+	private FilesManager fMan;
 
-	public GiftPostWorker(PermissionHandler Perm, Configuration config) {
+	public GiftPostWorker(PermissionHandler Perm, Configuration config, String dataFolder) {
 		chests = new HashMap<String, VirtualChest>();
 		this.Perm = Perm;
 		commands = new ArrayList<GPCommand>();
 		this.config = config;
+		fMan=new FilesManager(dataFolder);
+	}
+	public FilesManager getFileMan()
+	{
+		return fMan;
 	}
 
 	public Configuration getConfig() {
