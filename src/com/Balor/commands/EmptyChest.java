@@ -21,7 +21,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
-import com.aranai.virtualchest.VirtualChest;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -39,7 +38,7 @@ public class EmptyChest implements GPCommand {
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		if (args.length > 1) {
-			gpw.getChest(sender.getServer().getPlayer(args[1])).emptyChest();		
+			gpw.getChest(sender.getServer().getPlayer(args[1])).emptyChest();
 		} else
 			gpw.getChest((Player) sender).emptyChest();
 		sender.sendMessage(ChatColor.GREEN + "Chest emptied succefuly");

@@ -21,134 +21,125 @@ import net.minecraft.server.EntityHuman;
 import net.minecraft.server.ItemStack;
 import net.minecraft.server.TileEntityChest;
 
-public class TileEntityVirtualChest extends TileEntityChest
-{
+public class TileEntityVirtualChest extends TileEntityChest {
 
-    String name = "Chest";
-    Queue<Integer> emptyCases;
+	protected String name = "Chest";
+	protected Queue<Integer> emptyCases;
 
-    TileEntityVirtualChest()
-    {
-        super();
-        initEmptyCases();
-    }
+	TileEntityVirtualChest() {
+		super();
+		initEmptyCases();
+	}
 
-    private void initEmptyCases()
-    {
-        emptyCases = new ArrayDeque<Integer>(q_());
-        for (int i = 0; i < q_(); i++)
-            emptyCases.add(i);
-    }
+	private void initEmptyCases() {
+		emptyCases = new ArrayDeque<Integer>(q_());
+		for (int i = 0; i < q_(); i++)
+			emptyCases.add(i);
+	}
 
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    /**
-     * Return if the chest is full
-     * @return
-     */
-    public boolean isFull()
-    {
-        return emptyCases.isEmpty();
-    }
-    /**
-     * return the number of emptyCases
-     * @return
-     */
-    public int emptyCasesLeft()
-    {
-    	return emptyCases.size();
-    }
-    /**
-     * Alias to q_()
-     * @return
-     */
-    public int size()
-    {
-    	return q_();
-    }
+	/**
+	 * Return if the chest is full
+	 * 
+	 * @return
+	 */
+	public boolean isFull() {
+		return emptyCases.isEmpty();
+	}
 
-    /**
-     * Look for the first empty case in the chest to add the stack.
-     * @param itemstack
-     * @return
-     */
-    public boolean addItemStack(ItemStack itemstack)
-    {
-        Integer i = emptyCases.poll();
-        if (i == null)
-            return false;
-        else
-        {
-            super.a(i, itemstack);
-            return true;
-        }
-    }
+	/**
+	 * return the number of emptyCases
+	 * 
+	 * @return
+	 */
+	public int emptyCasesLeft() {
+		return emptyCases.size();
+	}
 
-    @Override
-    public void a(int i, ItemStack itemstack)
-    {
-        emptyCases.remove(i);
-        super.a(i, itemstack);
-    }
+	/**
+	 * Alias to q_()
+	 * 
+	 * @return
+	 */
+	public int size() {
+		return q_();
+	}
 
-    public void emptyChest()
-    {
-        for (int i = 0; i < this.getContents().length; i++)
-            this.getContents()[i] = null;
-        initEmptyCases();
-    }
+	/**
+	 * Look for the first empty case in the chest to add the stack.
+	 * 
+	 * @param itemstack
+	 * @return
+	 */
+	public boolean addItemStack(ItemStack itemstack) {
+		Integer i = emptyCases.poll();
+		if (i == null)
+			return false;
+		else {
+			super.a(i, itemstack);
+			return true;
+		}
+	}
 
-    @Override
-    public ItemStack a(int i, int j)
-    {
-        ItemStack toReturn = super.a(i, j);
-        if (toReturn != null)
-        {
-            ItemStack afterSuper[] = this.getContents();
-            if (afterSuper[i] == null)
-                emptyCases.add(i);
-        }
+	@Override
+	public void a(int i, ItemStack itemstack) {
+		emptyCases.remove(i);
+		super.a(i, itemstack);
+	}
 
-        return toReturn;
-    }
+	public void emptyChest() {
+		for (int i = 0; i < this.getContents().length; i++)
+			this.getContents()[i] = null;
+		initEmptyCases();
+	}
 
-    public void removeItemStack(int i)
-    {
-        if (this.getContents()[i] != null && i >= 0 && i <= q_())
-        {
-            this.getContents()[i] = null;
-            emptyCases.add(i);
-        }
-    }
+	@Override
+	public ItemStack a(int i, int j) {
+		ItemStack toReturn = super.a(i, j);
+		if (toReturn != null) {
+			ItemStack afterSuper[] = this.getContents();
+			if (afterSuper[i] == null)
+				emptyCases.add(i);
+		}
 
-    @Override
-    public String c()
-    {
-        return name;
-    }
+		return toReturn;
+	}
 
-    /**
-     * Alias to c()
-     * @return
-     */
-    public String getName()
-    {
-        return this.c();
-    }
+	public void removeItemStack(int i) {
+		if (this.getContents()[i] != null && i >= 0 && i <= q_()) {
+			this.getContents()[i] = null;
+			emptyCases.add(i);
+		}
+	}
 
-    @Override
-    public boolean a_(EntityHuman entityhuman)
-    {
-        /*
-         * For this proof of concept, we ALWAYS validate the chest.
-         * This behavior has not been thoroughly tested, and may cause unexpected results depending on the state of the player.
-         *
-         * Depending on your purposes, you might want to change this.
-         * It would likely be preferable to enforce your business logic outside of this file instead, however.
-         */
-        return true;
-    }
+	@Override
+	public String c() {
+		return name;
+	}
+
+	/**
+	 * Alias to c()
+	 * 
+	 * @return
+	 */
+	public String getName() {
+		return this.c();
+	}
+
+	@Override
+	public boolean a_(EntityHuman entityhuman) {
+		/*
+		 * For this proof of concept, we ALWAYS validate the chest. This
+		 * behavior has not been thoroughly tested, and may cause unexpected
+		 * results depending on the state of the player.
+		 * 
+		 * Depending on your purposes, you might want to change this. It would
+		 * likely be preferable to enforce your business logic outside of this
+		 * file instead, however.
+		 */
+		return true;
+	}
 }

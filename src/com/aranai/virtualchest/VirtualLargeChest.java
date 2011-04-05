@@ -21,100 +21,114 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
- *
+ * 
  * @author Balor (aka Antoine Aflalo)
  */
-public class VirtualLargeChest extends VirtualChest
-{
+public class VirtualLargeChest extends VirtualChest {
 
-    protected TileEntityVirtualChest subChest2;
-    protected InventoryLargeChest lc;
+	protected TileEntityVirtualChest subChest2;
+	protected InventoryLargeChest lc;
 
-    public VirtualLargeChest(Player p)
-    {
-        super(p);
-        subChest2 = new TileEntityVirtualChest();
-        subChest2.setName(p.getName());
-        lc = new InventoryLargeChest(p.getName(), chest, subChest2);
-    }
+	public VirtualLargeChest(Player p) {
+		super(p);
+		subChest2 = new TileEntityVirtualChest();
+		subChest2.setName(p.getName());
+		lc = new InventoryLargeChest(p.getName(), chest, subChest2);
+	}
 
-    /**
-     * Open the chest for the owner
-     */
-    @Override
-    public void openChest(Player p)
-    {
-        if (isBelongTo(p))
-        {
-            EntityPlayer eh = ((CraftPlayer) p).getHandle();
-            eh.a(lc);
-        } else
-            p.sendMessage("You can't open this chest, it's not yours.");
-    }
+	/**
+	 * Open the chest for the owner
+	 */
+	@Override
+	public void openChest(Player p) {
+		if (isBelongTo(p)) {
+			EntityPlayer eh = ((CraftPlayer) p).getHandle();
+			eh.a(lc);
+		} else
+			p.sendMessage("You can't open this chest, it's not yours.");
+	}
 
-    /**
-     * adding a ItemStack to the chest
-     * @param is
-     * @return
-     */
-    @Override
-    public boolean addItemStack(ItemStack is)
-    {
-        if (!super.addItemStack(is))
-            return subChest2.addItemStack(is);
-        return true;
-    }
-    /**
-     * is Chest Full
-     * @return
-     */
-    @Override
-    public boolean isFull()
-    {
-    	return chest.isFull() && subChest2.isFull();
-    }
-    /**
-     * Empty chests
-     */
-    @Override
-    public void emptyChest()
-    {
-        super.emptyChest();
-        subChest2.emptyChest();
-    }
+	/**
+	 * adding a ItemStack to the chest
+	 * 
+	 * @param is
+	 * @return
+	 */
+	@Override
+	public boolean addItemStack(ItemStack is) {
+		if (isFull())
+			return false;
+		if (!super.addItemStack(is))
+			return subChest2.addItemStack(is);
+		return true;
+	}
 
-    /**
-     * get all the itemStacks that compose the chest
-     * @return
-     */
-    @Override
-    public ItemStack[] getContents()
-    {
-        return lc.getContents();
-    }
+	/**
+	 * is Chest Full
+	 * 
+	 * @return
+	 */
+	@Override
+	public boolean isFull() {
+		return chest.isFull() && subChest2.isFull();
+	}
 
-    @Override
-    public boolean removeItemStack(ItemStack is)
-    {
-        if (!super.removeItemStack(is))
-        {
-            for (int i = 0; i < subChest2.getContents().length; i++)
-                if (this.getContents()[i].equals(is))
-                {
-                    subChest2.removeItemStack(i);
-                    return true;
-                }
-            return false;
-        }
-        return true;
-    }
+	/**
+	 * Nb of used Cases
+	 * 
+	 * @return
+	 */
+	@Override
+	public int usedCases() {
+		return (chest.size() + subChest2.size()) - leftCases();
+	}
 
-    @Override
-    public void removeItemStack(int i)
-    {
-        if (i > chest.q_())
-            subChest2.removeItemStack(i - chest.q_());
-        else
-            super.removeItemStack(i);
-    }
+	/**
+	 * Empty chests
+	 */
+	@Override
+	public void emptyChest() {
+		super.emptyChest();
+		subChest2.emptyChest();
+	}
+
+	/**
+	 * Nb of empty cases left
+	 * 
+	 * @return
+	 */
+	public int leftCases() {
+		return chest.emptyCasesLeft() + subChest2.emptyCasesLeft();
+	}
+
+	/**
+	 * get all the itemStacks that compose the chest
+	 * 
+	 * @return
+	 */
+	@Override
+	public ItemStack[] getContents() {
+		return lc.getContents();
+	}
+
+	@Override
+	public boolean removeItemStack(ItemStack is) {
+		if (!super.removeItemStack(is)) {
+			for (int i = 0; i < subChest2.getContents().length; i++)
+				if (subChest2.getContents()[i].equals(is)) {
+					subChest2.removeItemStack(i);
+					return true;
+				}
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public void removeItemStack(int i) {
+		if (i > chest.q_())
+			subChest2.removeItemStack(i - chest.q_());
+		else
+			super.removeItemStack(i);
+	}
 }

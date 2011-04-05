@@ -22,99 +22,116 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 /**
  * VirtualChest for Bukkit
- *
+ * 
  * @authors Timberjaw and Balor
  * 
  */
-public class VirtualChest
-{
+public class VirtualChest {
 
-    protected TileEntityVirtualChest chest;
+	protected TileEntityVirtualChest chest;
 
-    /**
-     * Constructor
-     * @param player
-     */
-    public VirtualChest(Player player)
-    {
-        chest = new TileEntityVirtualChest();
-        chest.setName(player.getName());
+	/**
+	 * Constructor
+	 * 
+	 * @param player
+	 */
+	public VirtualChest(Player player) {
+		chest = new TileEntityVirtualChest();
+		chest.setName(player.getName());
 
-    }
+	}
 
-    /**
-     * Check if the chest is belong to the player
-     * @param player
-     * @return
-     */
-    public boolean isBelongTo(Player player)
-    {
-        return chest.getName().equals(player.getName());
-    }
+	/**
+	 * Check if the chest is belong to the player
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean isBelongTo(Player player) {
+		return chest.getName().equals(player.getName());
+	}
 
-    /**
-     * Open the chest for the owner
-     */
-    public void openChest(Player p)
-    {
-        if (isBelongTo(p))
-        {
-            EntityPlayer eh = ((CraftPlayer) p).getHandle();
-            eh.a(chest);
-        } else
-            p.sendMessage("You can't open this chest, it's not yours.");
-    }
+	/**
+	 * Open the chest for the owner
+	 */
+	public void openChest(Player p) {
+		if (isBelongTo(p)) {
+			EntityPlayer eh = ((CraftPlayer) p).getHandle();
+			eh.a(chest);
+		} else
+			p.sendMessage("You can't open this chest, it's not yours.");
+	}
 
-    /**
-     * adding a ItemStack to the chest
-     * @param is
-     * @return
-     */
-    public boolean addItemStack(ItemStack is)
-    {
-        return chest.addItemStack(is);
-    }
+	/**
+	 * adding a ItemStack to the chest
+	 * 
+	 * @param is
+	 * @return
+	 */
+	public boolean addItemStack(ItemStack is) {
+		if (isFull())
+			return false;
+		return chest.addItemStack(is);
+	}
 
-    /**
-     * Empty chest
-     */
-    public void emptyChest()
-    {
-        chest.emptyChest();
-    }
-    /**
-     * is Chest Full
-     * @return
-     */
-    public boolean isFull()
-    {
-    	return chest.isFull();
-    }
-    /**
-     * get all the itemStacks that compose the chest
-     * @return
-     */
-    public ItemStack[] getContents()
-    {
-        return chest.getContents();
-    }
+	/**
+	 * Empty chest
+	 */
+	public void emptyChest() {
+		chest.emptyChest();
+	}
 
-    /**
-     * Search for a given itemStack and remove it.
-     * @param is
-     */
-    public boolean removeItemStack(ItemStack is)
-    {
-        for (int i = 0; i < this.getContents().length; i++)
-            if (this.getContents()[i].equals(is))
-            {
-                chest.removeItemStack(i);
-                return true;
-            }
-        return false;
-    }
-    public void removeItemStack(int i)
-    {
-        chest.removeItemStack(i);
-    }
+	/**
+	 * is Chest Full
+	 * 
+	 * @return
+	 */
+	public boolean isFull() {
+		return chest.isFull();
+	}
+
+	/**
+	 * Nb of empty cases left
+	 * 
+	 * @return
+	 */
+	public int leftCases() {
+		return chest.emptyCasesLeft();
+	}
+
+	/**
+	 * Nb of used Cases
+	 * 
+	 * @return
+	 */
+	public int usedCases() {
+		return chest.size() - chest.emptyCasesLeft();
+	}
+
+	/**
+	 * get all the itemStacks that compose the chest
+	 * 
+	 * @return
+	 */
+	public ItemStack[] getContents() {
+		return chest.getContents();
+	}
+
+	/**
+	 * Search for a given itemStack and remove it.
+	 * 
+	 * @param is
+	 */
+	public boolean removeItemStack(ItemStack is) {
+		for (int i = 0; i < this.getContents().length; i++)
+			if (this.getContents()[i].equals(is)) {
+				chest.removeItemStack(i);
+				return true;
+			}
+		return false;
+	}
+
+	public void removeItemStack(int i) {
+		chest.removeItemStack(i);
+	}
 }

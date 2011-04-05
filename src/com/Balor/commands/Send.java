@@ -34,7 +34,8 @@ public class Send implements GPCommand
     @Override
     public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args)
     {
-        return (gpw.hasFlag(args, "s") || gpw.hasFlag(args, "send")) && gpw.hasPerm((Player) sender, getPermName());
+		return (gpw.hasFlag(args, "s") || gpw.hasFlag(args, "send"))
+				&& gpw.hasPerm((Player) sender, getPermName());
     }
 
     @Override
