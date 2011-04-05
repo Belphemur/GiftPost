@@ -61,14 +61,16 @@ public class VirtualChest {
 		} else
 			p.sendMessage("You can't open this chest, it's not yours.");
 	}
+
 	/**
 	 * Add some ItemStack to the chest
+	 * 
 	 * @param iss
 	 */
-	public void addItemStack(ItemStack[] iss)
-	{
-		for(ItemStack is : iss)
-			addItemStack(is);
+	public void addItemStack(ItemStack[] iss) {
+		for (ItemStack is : iss)
+			if (is != null)
+				addItemStack(is);
 	}
 
 	/**

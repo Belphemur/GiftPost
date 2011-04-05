@@ -40,7 +40,7 @@ public class Send implements GPCommand {
 		else if (gpw.getChest(targetName).leftCases() < gpw.getChest(
 				player.getName()).usedCases())
 			sender.sendMessage(ChatColor.RED
-					+ "There isn't engough place in the " + ChatColor.BLUE
+					+ "There isn't enough place in the " + ChatColor.BLUE
 					+ targetName + ChatColor.RED + "'s chest !");
 		else 
 		{
