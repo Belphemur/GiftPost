@@ -14,6 +14,8 @@
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.aranai.virtualchest;
 
+import java.io.Serializable;
+
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ItemStack;
 
@@ -26,8 +28,12 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
  * @authors Timberjaw and Balor
  * 
  */
-public class VirtualChest {
+public class VirtualChest implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4864014916013468795L;
 	protected TileEntityVirtualChest chest;
 
 	/**
@@ -38,7 +44,10 @@ public class VirtualChest {
 	public VirtualChest(String playerName) {
 		chest = new TileEntityVirtualChest();
 		chest.setName(playerName);
+	}
 
+	public VirtualChest(VirtualChest v) {
+		this.chest = v.chest;
 	}
 
 	/**
@@ -153,5 +162,9 @@ public class VirtualChest {
 
 	public void removeItemStack(int i) {
 		chest.removeItemStack(i);
+	}
+
+	public String getOwnerName() {
+		return this.chest.getName();
 	}
 }

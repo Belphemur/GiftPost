@@ -15,7 +15,6 @@
 package com.aranai.virtualchest;
 
 import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.InventoryLargeChest;
 import net.minecraft.server.ItemStack;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -25,15 +24,26 @@ import org.bukkit.entity.Player;
  * @author Balor (aka Antoine Aflalo)
  */
 public class VirtualLargeChest extends VirtualChest {
-
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7168377493781850126L;
 	protected TileEntityVirtualChest subChest2;
-	protected InventoryLargeChest lc;
+	protected InventoryVirtualLargeChest lc;
 
 	public VirtualLargeChest(String playerName) {
 		super(playerName);
 		subChest2 = new TileEntityVirtualChest();
 		subChest2.setName(playerName);
-		lc = new InventoryLargeChest(playerName, chest, subChest2);
+		lc = new InventoryVirtualLargeChest(playerName, chest, subChest2);
+	}
+
+	public VirtualLargeChest(VirtualLargeChest v) {
+		super(v);
+		this.subChest2 = v.subChest2;
+		this.lc = new InventoryVirtualLargeChest(chest.getName(), chest,
+				subChest2);
 	}
 
 	/**
@@ -72,7 +82,7 @@ public class VirtualLargeChest extends VirtualChest {
 	public boolean isFull() {
 		return super.isFull() && subChest2.isFull();
 	}
-	
+
 	/**
 	 * is Chest Empty
 	 * 
@@ -82,6 +92,7 @@ public class VirtualLargeChest extends VirtualChest {
 	public boolean isEmpty() {
 		return super.isEmpty() && subChest2.isEmpty();
 	}
+
 	/**
 	 * Number of used Cases
 	 * 

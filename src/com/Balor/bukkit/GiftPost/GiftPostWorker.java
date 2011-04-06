@@ -21,6 +21,7 @@ import com.nijiko.permissions.PermissionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
@@ -37,15 +38,16 @@ public class GiftPostWorker {
 	private Configuration config;
 	private FilesManager fMan;
 
-	public GiftPostWorker(PermissionHandler Perm, Configuration config, String dataFolder) {
+	public GiftPostWorker(PermissionHandler Perm, Configuration config,
+			String dataFolder) {
 		chests = new HashMap<String, VirtualChest>();
 		this.Perm = Perm;
 		commands = new ArrayList<GPCommand>();
 		this.config = config;
-		fMan=new FilesManager(dataFolder);
+		fMan = new FilesManager(dataFolder);
 	}
-	public FilesManager getFileMan()
-	{
+
+	public FilesManager getFileMan() {
 		return fMan;
 	}
 
@@ -53,6 +55,12 @@ public class GiftPostWorker {
 		return config;
 	}
 
+	/**
+	 * Return the chest, create it if not exist
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public VirtualChest getChest(String name) {
 		if (chests.containsKey(name))
 			return chests.get(name);
@@ -82,6 +90,24 @@ public class GiftPostWorker {
 	 */
 	public List<GPCommand> getCommands() {
 		return commands;
+	}
+
+	/**
+	 * Save all the chests.
+	 */
+	public void save() {
+		this.fMan.saveChests(chests, "chest.dat");
+	}
+
+	/**
+	 * Load the chests.
+	 */
+	public void load() {
+		HashMap<String, VirtualChest> loaded = this.fMan
+				.loadChests("chest.dat");
+		if (loaded != null) {
+			chests=loaded;
+		}
 	}
 
 	/**

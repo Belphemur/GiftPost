@@ -14,32 +14,25 @@
  * You should have received a copy of the GNU General Public License
  * along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
-package com.Balor.bukkit.GiftPost;
+package com.aranai.virtualchest;
 
-import org.bukkit.ChatColor;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
+import java.io.Serializable;
+
+import net.minecraft.server.InventoryLargeChest;
 
 /**
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class GPPlayerListener extends PlayerListener {
-	private GiftPostWorker worker;
+public class InventoryVirtualLargeChest extends InventoryLargeChest implements
+		Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 218446299025155660L;
 
-	public GPPlayerListener(GiftPostWorker gpw) {
-		worker = gpw;
+	public InventoryVirtualLargeChest(String name, TileEntityVirtualChest c1,
+			TileEntityVirtualChest c2) {
+		super(name, c1, c2);
 	}
-
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (!worker.getChest(event.getPlayer().getName()).isEmpty()) {
-			worker.getFileMan().openPlayerFile(event.getPlayer());
-			event.getPlayer().sendMessage(
-					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c"
-							+ ChatColor.GOLD + " to see it)");
-		}
-		else
-			worker.getFileMan().deletePlayerFile(event.getPlayer());
-	}
-
 }

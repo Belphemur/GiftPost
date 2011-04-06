@@ -134,11 +134,15 @@ public class GiftPost extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal,
 				this);
+		gpw.load();
+		log.info("[" +  this.getDescription().getName() + "] Chests loaded !");
 	}
 
 	@Override
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
+		log.info("[" + pdfFile.getName() + "] Chests Saved !");
+		gpw.save();
 		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version"
 				+ pdfFile.getVersion() + ")");
 	}

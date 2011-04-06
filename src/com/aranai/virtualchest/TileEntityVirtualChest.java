@@ -15,14 +15,19 @@
  */
 package com.aranai.virtualchest;
 
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.Queue;
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.ItemStack;
 import net.minecraft.server.TileEntityChest;
 
-public class TileEntityVirtualChest extends TileEntityChest {
+public class TileEntityVirtualChest extends TileEntityChest implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8338831559626786200L;
 	protected String name = "Chest";
 	protected Queue<Integer> emptyCases;
 
