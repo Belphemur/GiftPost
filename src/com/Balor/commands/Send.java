@@ -31,7 +31,10 @@ public class Send implements GPCommand {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
-		if (gpw.getChest(player.getName()).isEmpty())
+		if (player.getName() == targetName)
+			sender.sendMessage(ChatColor.RED
+					+ "You can't send a gift to yourself !");
+		else if (gpw.getChest(player.getName()).isEmpty())
 			sender.sendMessage(ChatColor.DARK_GRAY
 					+ "Your chest is empty, nothing to send");
 		else if (gpw.getChest(targetName).isFull())
@@ -72,8 +75,10 @@ public class Send implements GPCommand {
 							+ " but he's offline, he'll receve it when he'll connect.");
 					gpw.getChest(targetName).addItemStack(
 							gpw.getChest(player.getName()).getContents());
-					gpw.getFileMan().createPlayerFile(targetName,gpw.getChest(player.getName()).getContents() , player.getName());
-					gpw.getChest(player.getName()).emptyChest();					
+					gpw.getFileMan().createPlayerFile(targetName,
+							gpw.getChest(player.getName()).getContents(),
+							player.getName());
+					gpw.getChest(player.getName()).emptyChest();
 				} else
 					sender.sendMessage(targetName + ChatColor.RED
 							+ " is offline, you can't send him your gift.");
