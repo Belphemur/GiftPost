@@ -32,8 +32,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
-import com.aranai.virtualchest.SerializedItemStack;
 import com.aranai.virtualchest.VirtualChest;
+import com.aranai.virtualchest.VirtualLargeChest;
 
 import net.minecraft.server.ItemStack;
 
@@ -252,6 +252,45 @@ public class FilesManager {
 						v.addItemStack(new ItemStack(sis.id, sis.count,
 								sis.damage));
 					chests.put((String)names.toArray()[i],new VirtualChest(v));
+					i++;
+				}
+
+				return chests;
+			}
+			return null;
+		} else
+			return null;
+	}
+	@SuppressWarnings("unchecked")
+	public HashMap<String, VirtualLargeChest> loadLargeChests(String fileName) {
+		String filename = this.path + File.separator + fileName;
+		HashMap<String, VirtualLargeChest> chests = new HashMap<String, VirtualLargeChest>();
+		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
+		if (new File(filename).exists()) {
+			FileInputStream fis = null;
+			ObjectInputStream in = null;
+
+			try {
+				fis = new FileInputStream(filename);
+				in = new ObjectInputStream(fis);
+				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in
+						.readObject();
+				in.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} catch (ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+			if (saved != null) {
+				Set<String> names = saved.keySet();
+				int i = 0;
+				for (ArrayList<SerializedItemStack> al : saved.values()) {
+					VirtualLargeChest v = new VirtualLargeChest(
+							(String) names.toArray()[i]);
+					for (SerializedItemStack sis : al)
+						v.addItemStack(new ItemStack(sis.id, sis.count,
+								sis.damage));
+					chests.put((String)names.toArray()[i],new VirtualLargeChest(v));
 					i++;
 				}
 

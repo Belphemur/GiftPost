@@ -14,7 +14,7 @@
 * You should have received a copy of the GNU General Public License
 * along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.
 ************************************************************************/
-package com.aranai.virtualchest;
+package com.Balor.utils;
 
 import java.io.Serializable;
 

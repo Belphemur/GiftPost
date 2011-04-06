@@ -113,7 +113,9 @@ public class GiftPost extends JavaPlugin {
 				out.write("max-range: 100");
 				out.newLine();
 				out.write("allow-offline: 'true'");
-				out.newLine();				
+				out.newLine();
+				out.write("chest-type: 'normal'");
+				out.newLine();
 
 				// Close the output stream
 				out.close();

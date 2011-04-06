@@ -36,7 +36,7 @@ public class GPPlayerListener extends PlayerListener {
 			worker.getFileMan().openPlayerFile(event.getPlayer());
 			event.getPlayer().sendMessage(
 					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c"
-							+ ChatColor.GOLD + " to see it)");
+							+ ChatColor.GOLD + " to see your chest.)");
 		}
 		else
 			worker.getFileMan().deletePlayerFile(event.getPlayer());
