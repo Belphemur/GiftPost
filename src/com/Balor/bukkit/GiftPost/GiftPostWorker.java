@@ -105,7 +105,7 @@ public class GiftPostWorker {
 	 */
 	public synchronized void save() {
 		this.fMan.saveChests(chests, "chest.dat");
-		log.info("[GiftPost] Chests Saved !");
+		log.info("[VirtualChest] Chests Saved !");
 	}
 
 	public synchronized void load()

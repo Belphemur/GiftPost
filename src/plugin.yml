@@ -1,4 +1,4 @@
-name: GiftPost
+name: VirtualChest
 main: com.Balor.bukkit.GiftPost.GiftPost
 version: 2.0
 author: Balor
