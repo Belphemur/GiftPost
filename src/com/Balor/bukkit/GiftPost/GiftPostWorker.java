@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -39,6 +40,7 @@ public class GiftPostWorker {
 	private List<GPCommand> commands;
 	private Configuration config;
 	private FilesManager fMan;
+	public static final Logger log = Logger.getLogger("Minecraft");
 
 	public GiftPostWorker(PermissionHandler Perm, Configuration config,
 			String dataFolder) {
@@ -101,11 +103,12 @@ public class GiftPostWorker {
 	/**
 	 * Save all the chests.
 	 */
-	public void save() {
+	public synchronized void save() {
 		this.fMan.saveChests(chests, "chest.dat");
+		log.info("[GiftPost] Chests Saved !");
 	}
 
-	public void load()
+	public synchronized void load()
 	{
 		if (this.config.getString("chest-type", "normal").matches("normal"))
 			loadNormal();

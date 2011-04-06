@@ -15,6 +15,7 @@
 package com.Balor.bukkit.GiftPost;
 
 import com.Balor.commands.*;
+import com.Balor.utils.AutoSaveThread;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -45,6 +46,7 @@ public class GiftPost extends JavaPlugin {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private GiftPostWorker gpw;
 	private GPPlayerListener pListener;
+	private AutoSaveThread autoSave;
 	/**
 	 * Permission plugin
 	 */
@@ -116,6 +118,8 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("chest-type: 'normal'");
 				out.newLine();
+				out.write("auto-save-time: 10");
+				out.newLine();
 
 				// Close the output stream
 				out.close();
@@ -130,21 +134,24 @@ public class GiftPost extends JavaPlugin {
 	public void onEnable() {
 		setupPermissions();
 		setupConfigFiles();
-		gpw = new GiftPostWorker(Permissions,getConfiguration(), getDataFolder().toString());
+		gpw = new GiftPostWorker(Permissions, getConfiguration(),
+				getDataFolder().toString());
 		pListener = new GPPlayerListener(gpw);
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal,
 				this);
 		gpw.load();
-		log.info("[" +  this.getDescription().getName() + "] Chests loaded !");
+		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
+		autoSave = new AutoSaveThread(gpw);
+		autoSave.start();
+
 	}
 
 	@Override
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
-		log.info("[" + pdfFile.getName() + "] Chests Saved !");
-		gpw.save();
+		autoSave.stopIt();
 		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version"
 				+ pdfFile.getVersion() + ")");
 	}
