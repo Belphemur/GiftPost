@@ -17,11 +17,15 @@
 package com.Balor.Listeners;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.Balor.commands.Chest;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -44,10 +48,19 @@ public class GPPlayerListener extends PlayerListener {
 		} else
 			worker.getFileMan().deletePlayerFile(event.getPlayer());
 	}
+
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (worker.getConfig().getString("allow-offline", "true")
 				.matches("true"))
 			worker.getFileMan().createWorldFile(event.getPlayer());
+	}
+
+	@Override
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		if(event.getPlayer().getItemInHand().getType().equals(Material.CHEST) &&( event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)))
+		{
+			new Chest().execute(worker, event.getPlayer(), null);
+		}
 	}
 }

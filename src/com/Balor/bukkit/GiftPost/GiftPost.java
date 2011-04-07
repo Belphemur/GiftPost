@@ -118,6 +118,8 @@ public class GiftPost extends JavaPlugin {
 				this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal,
 				this);
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal,
+				this);
 		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener,
 				Priority.Monitor, this);
 	}
