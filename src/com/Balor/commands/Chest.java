@@ -50,7 +50,7 @@ public class Chest implements GPCommand {
 	 * @return
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
-		if (GiftPostWorker.getiConomy() != null) {
+		if (GiftPostWorker.getiConomy() != null && gpw.getConfig().getString("iConomy", "false").matches("true")) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
 						.getConfig().getDouble("iConomy-openchest-price", 1.0)) {
