@@ -93,6 +93,10 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("world-check: 'true'");
 				out.newLine();
+				out.write("iConomy-send-price: 1.0");
+				out.newLine();
+				out.write("iConomy-openchest-price: 1.0");
+				out.newLine();
 
 				// Close the output stream
 				out.close();

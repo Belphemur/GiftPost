@@ -183,7 +183,6 @@ public class GiftPostWorker {
 	public static iConomy getiConomy() {
 		return iConomy;
 	}
-
 	/**
 	 * Set iConomy Plugin
 	 * 

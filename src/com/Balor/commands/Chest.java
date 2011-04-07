@@ -15,49 +15,92 @@
 package com.Balor.commands;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.nijiko.coelho.iConomy.iConomy;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- *
+ * 
  * @author Balor (aka Antoine Aflalo)
  */
-public class Chest implements GPCommand
-{
+public class Chest implements GPCommand {
 
-    /**
-     * Execute commands
-     * @param gp
-     * @param sender
-     * @param args
-     */
-    @Override
-    public void execute(GiftPostWorker gpw, CommandSender sender, String[] args)
-    {
-    	Player p = (Player) sender;
-        gpw.getChest(p.getName()).openChest((Player)sender);
-    }
+	/**
+	 * Execute commands
+	 * 
+	 * @param gp
+	 * @param sender
+	 * @param args
+	 */
+	@Override
+	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		Player p = (Player) sender;
+		if (iConomyCheck(gpw, p))
+			gpw.getChest(p.getName()).openChest((Player) sender);
+	}
 
-    /**
-     * Validate a command to check if it should be executed
-     *
-     * @param lwc
-     * @param command
-     * @param args
-     * @return
-     */
-    @Override
-    public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args)
-    {
-        return (gpw.hasFlag(args, "c") || gpw.hasFlag(args, "chest")) && gpw.hasPerm((Player) sender, getPermName());
-    }
+	/**
+	 * Check if the plugin iConomy is present and if the player have enough
+	 * money. After checked, substract the money.
+	 * 
+	 * @param gpw
+	 * @param player
+	 * @return
+	 */
+	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
+		if (GiftPostWorker.getiConomy() != null) {
+			if (iConomy.getBank().hasAccount(player.getName())) {
+				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
+						.getConfig().getDouble("iConomy-openchest-price", 1.0)) {
+					player.sendMessage(ChatColor.RED + "You don't have enough "
+							+ iConomy.getBank().getCurrency()
+							+ " to pay the Chests Keeper !");
+					return false;
+				} else {
+					iConomy.getBank()
+							.getAccount(player.getName())
+							.subtract(
+									gpw.getConfig().getDouble(
+											"iConomy-openchest-price", 1.0));
+					player.sendMessage(gpw.getConfig().getDouble(
+							"iConomy-openchest-price", 1.0)
+							+ " "
+							+ iConomy.getBank().getCurrency()
+							+ ChatColor.DARK_GRAY + " used to pay the Chests Keeper.");
+					return true;
+				}
 
-    /**
-     * @return the name of the perm to add in the permFile.
-     */
-    @Override
-    public String getPermName()
-    {
-        return "giftpost.chest.open";
-    }
+			} else {
+				player.sendMessage(ChatColor.RED
+						+ "You must have an account to pay the post !");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Validate a command to check if it should be executed
+	 * 
+	 * @param lwc
+	 * @param command
+	 * @param args
+	 * @return
+	 */
+	@Override
+	public boolean validate(GiftPostWorker gpw, CommandSender sender,
+			String[] args) {
+		return (gpw.hasFlag(args, "c") || gpw.hasFlag(args, "chest"))
+				&& gpw.hasPerm((Player) sender, getPermName());
+	}
+
+	/**
+	 * @return the name of the perm to add in the permFile.
+	 */
+	@Override
+	public String getPermName() {
+		return "giftpost.chest.open";
+	}
 }

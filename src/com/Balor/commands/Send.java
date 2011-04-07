@@ -15,6 +15,7 @@ along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.Balor.commands;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.nijiko.coelho.iConomy.iConomy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -31,7 +32,7 @@ public class Send implements GPCommand {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
-		if (player.getName() == targetName)
+		if (player.getName().equals(targetName))
 			sender.sendMessage(ChatColor.RED
 					+ "You can't send a gift to yourself !");
 		else if (gpw.getChest(player.getName()).isEmpty())
@@ -48,7 +49,8 @@ public class Send implements GPCommand {
 		else {
 			if (target != null) {
 				if (checkMaxRange(gpw, player, target)
-						&& inSameWorld(gpw, player, target)) {
+						&& inSameWorld(gpw, player, target)
+						&& iConomyCheck(gpw, player)) {
 					gpw.getChest(targetName).addItemStack(
 							gpw.getChest(player.getName()).getContents());
 					gpw.getChest(player.getName()).emptyChest();
@@ -60,6 +62,7 @@ public class Send implements GPCommand {
 					sender.sendMessage(ChatColor.BLUE
 							+ "Succefuly send your gift to " + ChatColor.GREEN
 							+ targetName);
+
 				} else
 					sender.sendMessage(ChatColor.GRAY
 							+ targetName
@@ -70,18 +73,22 @@ public class Send implements GPCommand {
 						.matches("true")) {
 					if (inSameWorld(gpw, player.getWorld().getName(), gpw
 							.getFileMan().openWorldFile(targetName))) {
-						sender.sendMessage(ChatColor.BLUE
-								+ "Succefuly send your gift to "
-								+ ChatColor.GREEN
-								+ targetName
-								+ ChatColor.RED
-								+ " but he's offline, he'll receve it when he'll connect.");
-						gpw.getChest(targetName).addItemStack(
-								gpw.getChest(player.getName()).getContents());
-						gpw.getFileMan().createOfflineFile(targetName,
-								gpw.getChest(player.getName()).getContents(),
-								player.getName());
-						gpw.getChest(player.getName()).emptyChest();
+						if (iConomyCheck(gpw, player)) {
+							sender.sendMessage(ChatColor.BLUE
+									+ "Succefuly send your gift to "
+									+ ChatColor.GREEN
+									+ targetName
+									+ ChatColor.RED
+									+ " but he's offline, he'll receve it when he'll connect.");
+							gpw.getChest(targetName).addItemStack(
+									gpw.getChest(player.getName())
+											.getContents());
+							gpw.getFileMan().createOfflineFile(
+									targetName,
+									gpw.getChest(player.getName())
+											.getContents(), player.getName());
+							gpw.getChest(player.getName()).emptyChest();
+						}
 					} else
 						sender.sendMessage(targetName
 								+ ChatColor.RED
@@ -93,6 +100,46 @@ public class Send implements GPCommand {
 
 		}
 
+	}
+
+	/**
+	 * Check if the plugin iConomy is present and if the player have enough
+	 * money. After checked, substract the money.
+	 * 
+	 * @param gpw
+	 * @param player
+	 * @return
+	 */
+	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
+		if (GiftPostWorker.getiConomy() != null) {
+			if (iConomy.getBank().hasAccount(player.getName())) {
+				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
+						.getConfig().getDouble("iConomy-send-price", 1.0)) {
+					player.sendMessage(ChatColor.RED + "You don't have enough "
+							+ iConomy.getBank().getCurrency()
+							+ " to pay the post !");
+					return false;
+				} else {
+					iConomy.getBank()
+							.getAccount(player.getName())
+							.subtract(
+									gpw.getConfig().getDouble(
+											"iConomy-send-price", 1.0));
+					player.sendMessage(gpw.getConfig().getDouble(
+							"iConomy-send-price", 1.0)
+							+ " "
+							+ iConomy.getBank().getCurrency()
+							+ ChatColor.DARK_GRAY + " used to pay the post.");
+					return true;
+				}
+
+			} else {
+				player.sendMessage(ChatColor.RED
+						+ "You must have an account to pay the post !");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
