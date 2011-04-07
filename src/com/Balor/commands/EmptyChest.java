@@ -58,7 +58,7 @@ public class EmptyChest implements GPCommand {
 	public boolean validate(GiftPostWorker gpw, CommandSender sender,
 			String[] args) {
 		return (gpw.hasFlag(args, "e") || gpw.hasFlag(args, "empty"))
-				&& gpw.hasPerm((Player) sender, getPermName());
+				&& (gpw.hasPerm((Player) sender, getPermName()) || gpw.hasPerm((Player) sender, "giftpost.admin.empty"));
 	}
 
 	/*

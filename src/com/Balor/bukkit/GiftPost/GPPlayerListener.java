@@ -19,6 +19,7 @@ package com.Balor.bukkit.GiftPost;
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -31,15 +32,21 @@ public class GPPlayerListener extends PlayerListener {
 		worker = gpw;
 	}
 
+	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (!worker.getChest(event.getPlayer().getName()).isEmpty()) {
-			worker.getFileMan().openPlayerFile(event.getPlayer());
+			worker.getFileMan().openOfflineFile(event.getPlayer());
 			event.getPlayer().sendMessage(
 					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c"
 							+ ChatColor.GOLD + " to see your chest.)");
-		}
-		else
+		} else
 			worker.getFileMan().deletePlayerFile(event.getPlayer());
 	}
 
+	@Override
+	public void onPlayerQuit(PlayerQuitEvent event) {
+		if (worker.getConfig().getString("allow-offline", "true")
+				.equals("true"))
+			worker.getFileMan().createWorldFile(event.getPlayer());
+	}
 }

@@ -92,7 +92,7 @@ public class FilesManager {
 	 * @param items
 	 * @param from
 	 */
-	public void createPlayerFile(String to, ItemStack[] items, String from) {
+	public void createOfflineFile(String to, ItemStack[] items, String from) {
 		Configuration conf = this.getFile("Players", to + ".yml");
 		List<String> itemsNames = new ArrayList<String>();
 		List<Integer> itemsAmount = new ArrayList<Integer>();
@@ -155,6 +155,23 @@ public class FilesManager {
 				System.out.println("cannot delete file " + toDel.getPath());
 			}
 	}
+	/**
+	 * Save the name of the world were the player is.
+	 * @param p
+	 */
+	public void createWorldFile(Player p)
+	{
+		getFile("Players", p.getName() + ".yml").setProperty("world", p.getWorld().getName());
+	}
+	/**
+	 * The world were the player is.
+	 * @param name
+	 * @return
+	 */
+	public String openWorldFile(String name)
+	{
+		return this.getFile("Players", name + ".yml").getString("world");
+	}
 
 	/**
 	 * Open the file and say to the player what was send and delete it after
@@ -162,7 +179,7 @@ public class FilesManager {
 	 * 
 	 * @param p
 	 */
-	public void openPlayerFile(Player p) {
+	public void openOfflineFile(Player p) {
 		Configuration conf = this.getFile("Players", p.getName() + ".yml");
 		List<String> playerNames = new ArrayList<String>();
 		List<String> itemsNames = new ArrayList<String>();

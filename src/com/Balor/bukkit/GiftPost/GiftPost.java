@@ -120,6 +120,8 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("auto-save-time: 10");
 				out.newLine();
+				out.write("world-check: 'true'");
+				out.newLine();
 
 				// Close the output stream
 				out.close();

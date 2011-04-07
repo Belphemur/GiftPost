@@ -47,7 +47,8 @@ public class Send implements GPCommand {
 					+ targetName + ChatColor.RED + "'s chest !");
 		else {
 			if (target != null) {
-				if (checkMaxRange(gpw, player, target)) {
+				if (checkMaxRange(gpw, player, target)
+						&& inSameWorld(gpw, player, target)) {
 					gpw.getChest(targetName).addItemStack(
 							gpw.getChest(player.getName()).getContents());
 					gpw.getChest(player.getName()).emptyChest();
@@ -67,18 +68,24 @@ public class Send implements GPCommand {
 			} else {
 				if (gpw.getConfig().getString("allow-offline", "false")
 						.matches("true")) {
-					sender.sendMessage(ChatColor.BLUE
-							+ "Succefuly send your gift to "
-							+ ChatColor.GREEN
-							+ targetName
-							+ ChatColor.RED
-							+ " but he's offline, he'll receve it when he'll connect.");
-					gpw.getChest(targetName).addItemStack(
-							gpw.getChest(player.getName()).getContents());
-					gpw.getFileMan().createPlayerFile(targetName,
-							gpw.getChest(player.getName()).getContents(),
-							player.getName());
-					gpw.getChest(player.getName()).emptyChest();
+					if (inSameWorld(gpw, player.getWorld().getName(), gpw
+							.getFileMan().openWorldFile(targetName))) {
+						sender.sendMessage(ChatColor.BLUE
+								+ "Succefuly send your gift to "
+								+ ChatColor.GREEN
+								+ targetName
+								+ ChatColor.RED
+								+ " but he's offline, he'll receve it when he'll connect.");
+						gpw.getChest(targetName).addItemStack(
+								gpw.getChest(player.getName()).getContents());
+						gpw.getFileMan().createOfflineFile(targetName,
+								gpw.getChest(player.getName()).getContents(),
+								player.getName());
+						gpw.getChest(player.getName()).emptyChest();
+					} else
+						sender.sendMessage(targetName
+								+ ChatColor.RED
+								+ " is offline, and he was in an another world when he quit.");
 				} else
 					sender.sendMessage(targetName + ChatColor.RED
 							+ " is offline, you can't send him your gift.");
@@ -86,6 +93,30 @@ public class Send implements GPCommand {
 
 		}
 
+	}
+
+	/**
+	 * Check if the player are in the same world.
+	 * 
+	 * @param gpw
+	 * @param player
+	 * @param target
+	 * @return
+	 */
+	private boolean inSameWorld(GiftPostWorker gpw, Player player, Player target) {
+		if (gpw.getConfig().getString("world-check", "false ").matches("true")) {
+			return player.getWorld().getName()
+					.equals(target.getWorld().getName());
+		}
+		return true;
+	}
+
+	private boolean inSameWorld(GiftPostWorker gpw, String worldFrom,
+			String worldTo) {
+		if (gpw.getConfig().getString("world-check", "false ").matches("true")) {
+			return worldFrom.equals(worldTo);
+		}
+		return true;
 	}
 
 	/**
