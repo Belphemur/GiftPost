@@ -42,11 +42,10 @@ public class GPPlayerListener extends PlayerListener {
 		} else
 			worker.getFileMan().deletePlayerFile(event.getPlayer());
 	}
-
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (worker.getConfig().getString("allow-offline", "true")
-				.equals("true"))
+				.matches("true"))
 			worker.getFileMan().createWorldFile(event.getPlayer());
 	}
 }

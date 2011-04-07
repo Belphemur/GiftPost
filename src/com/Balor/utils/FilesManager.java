@@ -161,7 +161,9 @@ public class FilesManager {
 	 */
 	public void createWorldFile(Player p)
 	{
-		getFile("Players", p.getName() + ".yml").setProperty("world", p.getWorld().getName());
+		Configuration conf = getFile("Players", p.getName() + ".yml");
+		conf.setProperty("World", p.getWorld().getName());
+		conf.save();
 	}
 	/**
 	 * The world were the player is.
@@ -170,7 +172,7 @@ public class FilesManager {
 	 */
 	public String openWorldFile(String name)
 	{
-		return this.getFile("Players", name + ".yml").getString("world");
+		return this.getFile("Players", name + ".yml").getString("World","world");
 	}
 
 	/**

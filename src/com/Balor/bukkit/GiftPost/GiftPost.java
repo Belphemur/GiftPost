@@ -132,17 +132,23 @@ public class GiftPost extends JavaPlugin {
 
 	}
 
+	private void setupListener()
+	{
+		pListener = new GPPlayerListener(gpw);
+		registerCommands();
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal,
+				this);
+		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal,
+				this);
+	}
 	@Override
 	public void onEnable() {
 		setupPermissions();
 		setupConfigFiles();
 		gpw = new GiftPostWorker(Permissions, getConfiguration(),
 				getDataFolder().toString());
-		pListener = new GPPlayerListener(gpw);
-		registerCommands();
-		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal,
-				this);
+		setupListener();
 		gpw.load();
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
 		autoSave = new AutoSaveThread(gpw);
