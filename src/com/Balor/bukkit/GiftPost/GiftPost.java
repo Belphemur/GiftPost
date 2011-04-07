@@ -14,6 +14,8 @@
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.Balor.bukkit.GiftPost;
 
+import com.Balor.Listeners.GPPlayerListener;
+import com.Balor.Listeners.PluginListener;
 import com.Balor.commands.*;
 import com.Balor.utils.AutoSaveThread;
 
@@ -23,20 +25,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import static com.Balor.utils.Display.sendHelp;
-//Permissions imports
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
-
 /**
  * 
  * @author Balor
@@ -47,35 +45,8 @@ public class GiftPost extends JavaPlugin {
 	private GiftPostWorker gpw;
 	private GPPlayerListener pListener;
 	private AutoSaveThread autoSave;
-	/**
-	 * Permission plugin
-	 */
-	private static PermissionHandler Permissions = null;
-
-	/**
-	 * Checks that Permissions is installed.
-	 */
-	private void setupPermissions() {
-
-		Plugin perm_plugin = this.getServer().getPluginManager()
-				.getPlugin("Permissions");
-		PluginDescriptionFile pdfFile = this.getDescription();
-
-		if (Permissions == null)
-			if (perm_plugin != null) {
-				// Permissions found, enable it now
-				this.getServer().getPluginManager().enablePlugin(perm_plugin);
-				Permissions = ((Permissions) perm_plugin).getHandler();
-				log.info("[" + pdfFile.getName() + "]" + " (version "
-						+ pdfFile.getVersion() + ") Enabled with Permissions.");
-			} else {
-				log.info("[" + pdfFile.getName() + "]" + " (version "
-						+ pdfFile.getVersion()
-						+ ") Enables without Permissions.");
-				log.info("[" + pdfFile.getName() + "]"
-						+ " Commands are free for all");
-			}
-	}
+	private static Server server = null;
+	private static PluginListener pluginListener = null;
 
 	private void registerCommand(Class<?> clazz) {
 		try {
@@ -132,22 +103,30 @@ public class GiftPost extends JavaPlugin {
 
 	}
 
-	private void setupListener()
-	{
+	private void setupListener() {
 		pListener = new GPPlayerListener(gpw);
+		pluginListener = new PluginListener();
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal,
 				this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal,
 				this);
+		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener,
+				Priority.Monitor, this);
 	}
+
+	public static Server getBukkitServer() {
+		return server;
+	}
+
 	@Override
 	public void onEnable() {
-		setupPermissions();
+		server = getServer();
 		setupConfigFiles();
-		gpw = new GiftPostWorker(Permissions, getConfiguration(),
-				getDataFolder().toString());
+		log.info("[" + this.getDescription().getName() + "]" + " (version "
+				+ this.getDescription().getVersion() + ")");
+		gpw = new GiftPostWorker(getConfiguration(), getDataFolder().toString());
 		setupListener();
 		gpw.load();
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");

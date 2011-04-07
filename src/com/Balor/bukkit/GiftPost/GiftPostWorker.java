@@ -18,6 +18,7 @@ import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
+import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.permissions.PermissionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,16 +37,15 @@ import org.bukkit.util.config.Configuration;
 public class GiftPostWorker {
 
 	private HashMap<String, VirtualChest> chests;
-	private PermissionHandler Perm;
+	private static PermissionHandler permission= null;
 	private List<GPCommand> commands;
 	private Configuration config;
 	private FilesManager fMan;
 	public static final Logger log = Logger.getLogger("Minecraft");
+	private static iConomy iConomy = null;
 
-	public GiftPostWorker(PermissionHandler Perm, Configuration config,
-			String dataFolder) {
+	public GiftPostWorker(Configuration config, String dataFolder) {
 		chests = new HashMap<String, VirtualChest>();
-		this.Perm = Perm;
 		commands = new ArrayList<GPCommand>();
 		this.config = config;
 		fMan = new FilesManager(dataFolder);
@@ -108,13 +108,13 @@ public class GiftPostWorker {
 		log.info("[VirtualChest] Chests Saved !");
 	}
 
-	public synchronized void load()
-	{
+	public synchronized void load() {
 		if (this.config.getString("chest-type", "normal").matches("normal"))
 			loadNormal();
 		else
 			loadLarge();
 	}
+
 	/**
 	 * Load the normal chests.
 	 */
@@ -125,6 +125,7 @@ public class GiftPostWorker {
 			chests = loaded;
 		}
 	}
+
 	/**
 	 * Load the large chest.
 	 */
@@ -149,9 +150,9 @@ public class GiftPostWorker {
 	 * @return boolean
 	 */
 	public boolean hasPerm(Player player, String perm) {
-		if (Perm == null)
+		if (permission == null)
 			return true;
-		else if (Perm.has(player, perm))
+		else if (permission.has(player, perm))
 			return true;
 		else {
 			player.sendMessage(ChatColor.RED
@@ -172,5 +173,53 @@ public class GiftPostWorker {
 	public boolean hasFlag(String[] args, String checkFlag) {
 		String flag = args[0].toLowerCase();
 		return flag.equals(checkFlag) || flag.equals("-" + checkFlag);
+	}
+
+	/**
+	 * iConomy plugin
+	 * 
+	 * @return
+	 */
+	public static iConomy getiConomy() {
+		return iConomy;
+	}
+
+	/**
+	 * Set iConomy Plugin
+	 * 
+	 * @param plugin
+	 * @return
+	 */
+	public static boolean setiConomy(iConomy plugin) {
+		if (iConomy == null) {
+			iConomy = plugin;
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Permission plugin
+	 * 
+	 * @return
+	 */
+	public static PermissionHandler getPermission() {
+		return permission;
+	}
+
+	/**
+	 * Set iConomy Plugin
+	 * 
+	 * @param plugin
+	 * @return
+	 */
+	public static boolean setPermission(PermissionHandler plugin) {
+		if (permission == null) {
+			permission = plugin;
+		} else {
+			return false;
+		}
+		return true;
 	}
 }

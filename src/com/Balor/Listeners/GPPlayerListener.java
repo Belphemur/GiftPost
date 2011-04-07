@@ -14,12 +14,14 @@
  * You should have received a copy of the GNU General Public License
  * along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
-package com.Balor.bukkit.GiftPost;
+package com.Balor.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import com.Balor.bukkit.GiftPost.GiftPostWorker;
 
 /**
  * @author Balor (aka Antoine Aflalo)
