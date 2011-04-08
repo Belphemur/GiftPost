@@ -19,18 +19,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 /**
- *
+ * 
  * @author Balor
  */
 public class Display {
-   public static void sendHelp(CommandSender sender)
-    {
-        sender.sendMessage(ChatColor.AQUA+"Gift Post \n"
-                + "-------\n"
-                +ChatColor.GOLD +"/gp chest "+
-                ChatColor.WHITE+": to open your chest\n"
-               +ChatColor.GOLD  + "/gp send player "+
-               ChatColor.WHITE+": send the content of your chest to the player's chest.");
-    }
+	public static void sendHelp(CommandSender sender) {
+		sender.sendMessage(ChatColor.AQUA + "Gift Post \n" + "-------\n"
+				+ ChatColor.GOLD + "/gp (chest OR c) " + ChatColor.WHITE
+				+ ": to open your chest\n" + ChatColor.GOLD
+				+ "/gp (buy OR b) (large OR normal) " + ChatColor.WHITE
+				+ ": to buy a large or normal chest \n" + ChatColor.GOLD
+				+ "/gp (send OR s) player " + ChatColor.WHITE
+				+ ": send the content of your chest to the player's chest.");
+	}
 
 }

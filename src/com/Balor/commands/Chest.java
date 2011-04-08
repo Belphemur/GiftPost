@@ -38,15 +38,15 @@ public class Chest implements GPCommand {
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player p = (Player) sender;
-		if (iConomyCheck(gpw, p)) {
-			VirtualChest v = gpw.getChest(p.getName());
-			if (v != null)
+		VirtualChest v = gpw.getChest(p.getName());
+		if (v != null) {
+			if (iConomyCheck(gpw, p))
 				v.openChest((Player) sender);
-			else
-				p.sendMessage(ChatColor.RED
-						+ "You don't have a chest. To buy one type "
-						+ ChatColor.GOLD + "/gp buy (large|normal)");
-		}
+		} else
+			p.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+					+ ChatColor.WHITE + "] " + ChatColor.RED
+					+ "You don't have a chest. To buy one type "
+					+ ChatColor.GOLD + "/gp buy (large|normal)");
 	}
 
 	/**
@@ -64,7 +64,9 @@ public class Chest implements GPCommand {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
 						.getConfig().getDouble("iConomy-openchest-price", 1.0)) {
-					player.sendMessage(ChatColor.RED + "You don't have enough "
+					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+							+ ChatColor.WHITE + "] " + ChatColor.RED
+							+ "You don't have enough "
 							+ iConomy.getBank().getCurrency()
 							+ " to pay the Chests Keeper !");
 					return false;
@@ -74,9 +76,13 @@ public class Chest implements GPCommand {
 							.subtract(
 									gpw.getConfig().getDouble(
 											"iConomy-openchest-price", 1.0));
-					player.sendMessage(gpw.getConfig().getDouble(
-							"iConomy-openchest-price", 1.0)
-							+ " "
+					player.sendMessage("["
+							+ ChatColor.GOLD
+							+ "Chest Keeper"
+							+ ChatColor.WHITE
+							+ "] "
+							+ gpw.getConfig().getDouble(
+									"iConomy-openchest-price", 1.0) + " "
 							+ iConomy.getBank().getCurrency()
 							+ ChatColor.DARK_GRAY
 							+ " used to pay the Chests Keeper.");
@@ -84,8 +90,9 @@ public class Chest implements GPCommand {
 				}
 
 			} else {
-				player.sendMessage(ChatColor.RED
-						+ "You must have an account to pay the post !");
+				player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+						+ ChatColor.WHITE + "] " + ChatColor.RED
+						+ "You must have an account to pay the Chests Keeper !");
 				return false;
 			}
 		}

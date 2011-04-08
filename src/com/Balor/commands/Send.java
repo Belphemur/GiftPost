@@ -32,22 +32,28 @@ public class Send implements GPCommand {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
-		if (gpw.getChest(player.getName()) != null)
-			sender.sendMessage(ChatColor.RED
+		if (gpw.getChest(player.getName()) == null)
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+					+ ChatColor.WHITE + "] " + ChatColor.RED
 					+ "You don't have a chest. To buy one type "
 					+ ChatColor.GOLD + "/gp buy (large|normal)");
 		else if (player.getName().equals(targetName))
-			sender.sendMessage(ChatColor.RED
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+					+ ChatColor.WHITE + "] " + ChatColor.RED
 					+ "You can't send a gift to yourself !");
 		else if (gpw.getChest(player.getName()).isEmpty())
-			sender.sendMessage(ChatColor.DARK_GRAY
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+					+ ChatColor.WHITE + "] " + ChatColor.DARK_GRAY
 					+ "Your chest is empty, nothing to send");
 		else if (gpw.getChest(targetName).isFull())
-			sender.sendMessage(ChatColor.RED + "The chest of " + ChatColor.BLUE
-					+ targetName + ChatColor.RED + " is full !");
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+					+ ChatColor.WHITE + "] " + ChatColor.RED + "The chest of "
+					+ ChatColor.BLUE + targetName + ChatColor.RED
+					+ " is full !");
 		else if (gpw.getChest(targetName).leftCases() < gpw.getChest(
 				player.getName()).usedCases())
-			sender.sendMessage(ChatColor.RED
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+					+ ChatColor.WHITE + "] " + ChatColor.RED
 					+ "There isn't enough place in the " + ChatColor.BLUE
 					+ targetName + ChatColor.RED + "'s chest !");
 		else {
@@ -58,19 +64,31 @@ public class Send implements GPCommand {
 						gpw.getChest(targetName).addItemStack(
 								gpw.getChest(player.getName()).getContents());
 						gpw.getChest(player.getName()).emptyChest();
-						target.sendMessage(ChatColor.GREEN
+						target.sendMessage("["
+								+ ChatColor.GOLD
+								+ "Chest Keeper"
+								+ ChatColor.WHITE
+								+ "] "
+								+ ChatColor.GREEN
 								+ player.getName()
 								+ ChatColor.GRAY
 								+ " send you a gift, look in your chest (using command "
 								+ ChatColor.GOLD + "/gp c" + ChatColor.GRAY
 								+ ").");
-						sender.sendMessage(ChatColor.BLUE
+						sender.sendMessage("[" + ChatColor.GOLD
+								+ "Chest Keeper" + ChatColor.WHITE + "] "
+								+ ChatColor.BLUE
 								+ "Succefuly send your gift to "
 								+ ChatColor.GREEN + targetName);
 					}
 
 				} else
-					sender.sendMessage(ChatColor.GRAY
+					sender.sendMessage("["
+							+ ChatColor.GOLD
+							+ "Chest Keeper"
+							+ ChatColor.WHITE
+							+ "] "
+							+ ChatColor.GRAY
 							+ targetName
 							+ ChatColor.RED
 							+ " is to far away from you to send him your gift !");
@@ -80,7 +98,12 @@ public class Send implements GPCommand {
 					if (inSameWorld(gpw, player.getWorld().getName(), gpw
 							.getFileMan().openWorldFile(targetName))) {
 						if (iConomyCheck(gpw, player)) {
-							sender.sendMessage(ChatColor.BLUE
+							sender.sendMessage("["
+									+ ChatColor.GOLD
+									+ "Chest Keeper"
+									+ ChatColor.WHITE
+									+ "] "
+									+ ChatColor.BLUE
 									+ "Succefuly send your gift to "
 									+ ChatColor.GREEN
 									+ targetName
@@ -96,7 +119,12 @@ public class Send implements GPCommand {
 							gpw.getChest(player.getName()).emptyChest();
 						}
 					} else
-						sender.sendMessage(targetName
+						sender.sendMessage("["
+								+ ChatColor.GOLD
+								+ "Chest Keeper"
+								+ ChatColor.WHITE
+								+ "] "
+								+ targetName
 								+ ChatColor.RED
 								+ " is offline, and he was in an another world when he quit.");
 				} else
@@ -123,7 +151,9 @@ public class Send implements GPCommand {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
 						.getConfig().getDouble("iConomy-send-price", 1.0)) {
-					player.sendMessage(ChatColor.RED + "You don't have enough "
+					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+							+ ChatColor.WHITE + "] " + ChatColor.RED
+							+ "You don't have enough "
 							+ iConomy.getBank().getCurrency()
 							+ " to pay the post !");
 					return false;
@@ -133,16 +163,21 @@ public class Send implements GPCommand {
 							.subtract(
 									gpw.getConfig().getDouble(
 											"iConomy-send-price", 1.0));
-					player.sendMessage(gpw.getConfig().getDouble(
-							"iConomy-send-price", 1.0)
-							+ " "
+					player.sendMessage("["
+							+ ChatColor.GOLD
+							+ "Chest Keeper"
+							+ ChatColor.WHITE
+							+ "] "
+							+ gpw.getConfig().getDouble("iConomy-send-price",
+									1.0) + " "
 							+ iConomy.getBank().getCurrency()
 							+ ChatColor.DARK_GRAY + " used to pay the post.");
 					return true;
 				}
 
 			} else {
-				player.sendMessage(ChatColor.RED
+				player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+						+ ChatColor.WHITE + "] " + ChatColor.RED
 						+ "You must have an account to pay the post !");
 				return false;
 			}

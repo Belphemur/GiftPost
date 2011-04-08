@@ -45,7 +45,11 @@ public class VirtualLargeChest extends VirtualChest {
 		this.lc = new InventoryVirtualLargeChest(chest.getName(), chest,
 				subChest2);
 	}
-
+	public VirtualLargeChest(VirtualChest v) {
+		super(v);
+		this.subChest2=new TileEntityVirtualChest();
+		lc = new InventoryVirtualLargeChest(chest.getName(), chest, subChest2);
+	}
 	/**
 	 * Open the chest for the owner
 	 */
