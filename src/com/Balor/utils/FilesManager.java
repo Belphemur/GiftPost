@@ -129,12 +129,13 @@ public class FilesManager {
 		conf.save();
 
 	}
+
 	/**
 	 * Empty offline information from the file.
+	 * 
 	 * @param player
 	 */
-	public void emptyOfflineFile(Player player)
-	{
+	public void emptyOfflineFile(Player player) {
 		Configuration conf = this.getFile("Players", player.getName() + ".yml");
 		conf.setProperty("Players", null);
 		conf.setProperty("From", null);
@@ -282,11 +283,18 @@ public class FilesManager {
 		}
 	}
 
+	/**
+	 * Get the list of all registered player who own a chest.
+	 * 
+	 * @return
+	 */
 	private HashMap<String, String> getAllPlayerChestType() {
 		HashMap<String, String> result = new HashMap<String, String>();
 		File dir = new File(this.path + File.separator + "Players");
-		for (String s : dir.list())
+		for (String s : dir.list()) {
+			s = s.subSequence(0, s.length() - 4).toString();
 			result.put(s, openChestTypeFile(s));
+		}
 		return result;
 	}
 
@@ -340,47 +348,6 @@ public class FilesManager {
 					else
 						chests.put((String) names.toArray()[i],
 								new VirtualChest(v));
-					i++;
-				}
-
-				return chests;
-			}
-			return null;
-		} else
-			return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public HashMap<String, VirtualLargeChest> loadLargeChests(String fileName) {
-		String filename = this.path + File.separator + fileName;
-		HashMap<String, VirtualLargeChest> chests = new HashMap<String, VirtualLargeChest>();
-		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
-		if (new File(filename).exists()) {
-			FileInputStream fis = null;
-			ObjectInputStream in = null;
-
-			try {
-				fis = new FileInputStream(filename);
-				in = new ObjectInputStream(fis);
-				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in
-						.readObject();
-				in.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			} catch (ClassNotFoundException ex) {
-				ex.printStackTrace();
-			}
-			if (saved != null) {
-				Set<String> names = saved.keySet();
-				int i = 0;
-				for (ArrayList<SerializedItemStack> al : saved.values()) {
-					VirtualLargeChest v = new VirtualLargeChest(
-							(String) names.toArray()[i]);
-					for (SerializedItemStack sis : al)
-						v.addItemStack(new ItemStack(sis.id, sis.count,
-								sis.damage));
-					chests.put((String) names.toArray()[i],
-							new VirtualLargeChest(v));
 					i++;
 				}
 
