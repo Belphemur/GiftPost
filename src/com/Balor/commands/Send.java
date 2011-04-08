@@ -32,7 +32,11 @@ public class Send implements GPCommand {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
-		if (player.getName().equals(targetName))
+		if (gpw.getChest(player.getName()) != null)
+			sender.sendMessage(ChatColor.RED
+					+ "You don't have a chest. To buy one type "
+					+ ChatColor.GOLD + "/gp buy (large|normal)");
+		else if (player.getName().equals(targetName))
 			sender.sendMessage(ChatColor.RED
 					+ "You can't send a gift to yourself !");
 		else if (gpw.getChest(player.getName()).isEmpty())
@@ -49,19 +53,21 @@ public class Send implements GPCommand {
 		else {
 			if (target != null) {
 				if (checkMaxRange(gpw, player, target)
-						&& inSameWorld(gpw, player, target)
-						&& iConomyCheck(gpw, player)) {
-					gpw.getChest(targetName).addItemStack(
-							gpw.getChest(player.getName()).getContents());
-					gpw.getChest(player.getName()).emptyChest();
-					target.sendMessage(ChatColor.GREEN
-							+ player.getName()
-							+ ChatColor.GRAY
-							+ " send you a gift, look in your chest (using command "
-							+ ChatColor.GOLD + "/gp c" + ChatColor.GRAY + ").");
-					sender.sendMessage(ChatColor.BLUE
-							+ "Succefuly send your gift to " + ChatColor.GREEN
-							+ targetName);
+						&& inSameWorld(gpw, player, target)) {
+					if (iConomyCheck(gpw, player)) {
+						gpw.getChest(targetName).addItemStack(
+								gpw.getChest(player.getName()).getContents());
+						gpw.getChest(player.getName()).emptyChest();
+						target.sendMessage(ChatColor.GREEN
+								+ player.getName()
+								+ ChatColor.GRAY
+								+ " send you a gift, look in your chest (using command "
+								+ ChatColor.GOLD + "/gp c" + ChatColor.GRAY
+								+ ").");
+						sender.sendMessage(ChatColor.BLUE
+								+ "Succefuly send your gift to "
+								+ ChatColor.GREEN + targetName);
+					}
 
 				} else
 					sender.sendMessage(ChatColor.GRAY
@@ -111,7 +117,9 @@ public class Send implements GPCommand {
 	 * @return
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
-		if (GiftPostWorker.getiConomy() != null && gpw.getConfig().getString("iConomy", "false").matches("true")) {
+		if (GiftPostWorker.getiConomy() != null
+				&& gpw.getConfig().getString("iConomy", "false")
+						.matches("true")) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
 						.getConfig().getDouble("iConomy-send-price", 1.0)) {

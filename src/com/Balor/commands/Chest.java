@@ -15,6 +15,7 @@
 package com.Balor.commands;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.aranai.virtualchest.VirtualChest;
 import com.nijiko.coelho.iConomy.iConomy;
 
 import org.bukkit.ChatColor;
@@ -37,8 +38,15 @@ public class Chest implements GPCommand {
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player p = (Player) sender;
-		if (iConomyCheck(gpw, p))
-			gpw.getChest(p.getName()).openChest((Player) sender);
+		if (iConomyCheck(gpw, p)) {
+			VirtualChest v = gpw.getChest(p.getName());
+			if (v != null)
+				v.openChest((Player) sender);
+			else
+				p.sendMessage(ChatColor.RED
+						+ "You don't have a chest. To buy one type "
+						+ ChatColor.GOLD + "/gp buy (large|normal)");
+		}
 	}
 
 	/**
@@ -50,7 +58,9 @@ public class Chest implements GPCommand {
 	 * @return
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
-		if (GiftPostWorker.getiConomy() != null && gpw.getConfig().getString("iConomy", "false").matches("true")) {
+		if (GiftPostWorker.getiConomy() != null
+				&& gpw.getConfig().getString("iConomy", "false")
+						.matches("true")) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
 						.getConfig().getDouble("iConomy-openchest-price", 1.0)) {
@@ -68,7 +78,8 @@ public class Chest implements GPCommand {
 							"iConomy-openchest-price", 1.0)
 							+ " "
 							+ iConomy.getBank().getCurrency()
-							+ ChatColor.DARK_GRAY + " used to pay the Chests Keeper.");
+							+ ChatColor.DARK_GRAY
+							+ " used to pay the Chests Keeper.");
 					return true;
 				}
 

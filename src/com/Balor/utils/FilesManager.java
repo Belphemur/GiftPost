@@ -155,24 +155,50 @@ public class FilesManager {
 				System.out.println("cannot delete file " + toDel.getPath());
 			}
 	}
+
 	/**
 	 * Save the name of the world were the player is.
+	 * 
 	 * @param p
 	 */
-	public void createWorldFile(Player p)
-	{
+	public void createWorldFile(Player p) {
 		Configuration conf = getFile("Players", p.getName() + ".yml");
 		conf.setProperty("World", p.getWorld().getName());
 		conf.save();
 	}
+
 	/**
 	 * The world were the player is.
+	 * 
 	 * @param name
 	 * @return
 	 */
-	public String openWorldFile(String name)
-	{
-		return this.getFile("Players", name + ".yml").getString("World","world");
+	public String openWorldFile(String name) {
+		return this.getFile("Players", name + ".yml").getString("World",
+				"world");
+	}
+
+	/**
+	 * Add the type of the chest for the player
+	 * 
+	 * @param p
+	 * @param type
+	 */
+	public void createChestTypeFile(Player p, String type) {
+		Configuration conf = this.getFile("Players", p.getName() + ".yml");
+		conf.setProperty("Chest", type);
+		conf.save();
+	}
+
+	/**
+	 * Get the ChestType for the given player
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public String openChestTypeFile(String name) {
+		return this.getFile("Players", name + ".yml").getString("Chest",
+				"normal");
 	}
 
 	/**
@@ -201,7 +227,6 @@ public class FilesManager {
 				p.sendMessage(msg.subSequence(0, msg.length() - 2).toString());
 			}
 		}
-		deleteFile("Players", p.getName() + ".yml");
 	}
 
 	/**
@@ -270,7 +295,7 @@ public class FilesManager {
 					for (SerializedItemStack sis : al)
 						v.addItemStack(new ItemStack(sis.id, sis.count,
 								sis.damage));
-					chests.put((String)names.toArray()[i],new VirtualChest(v));
+					chests.put((String) names.toArray()[i], new VirtualChest(v));
 					i++;
 				}
 
@@ -280,6 +305,7 @@ public class FilesManager {
 		} else
 			return null;
 	}
+
 	@SuppressWarnings("unchecked")
 	public HashMap<String, VirtualLargeChest> loadLargeChests(String fileName) {
 		String filename = this.path + File.separator + fileName;
@@ -309,7 +335,8 @@ public class FilesManager {
 					for (SerializedItemStack sis : al)
 						v.addItemStack(new ItemStack(sis.id, sis.count,
 								sis.damage));
-					chests.put((String)names.toArray()[i],new VirtualLargeChest(v));
+					chests.put((String) names.toArray()[i],
+							new VirtualLargeChest(v));
 					i++;
 				}
 

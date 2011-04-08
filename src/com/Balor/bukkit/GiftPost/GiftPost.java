@@ -87,8 +87,6 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("allow-offline: 'true'");
 				out.newLine();
-				out.write("chest-type: 'normal'");
-				out.newLine();
 				out.write("auto-save-time: 10");
 				out.newLine();
 				out.write("world-check: 'true'");
@@ -99,6 +97,11 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("iConomy-openchest-price: 1.0");
 				out.newLine();
+				out.write("iConomy-normalChest-price: 10.0");
+				out.newLine();
+				out.write("iConomy-largeChest-price: 20.0");
+				out.newLine();
+				
 
 				// Close the output stream
 				out.close();

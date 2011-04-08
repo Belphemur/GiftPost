@@ -17,13 +17,11 @@ package com.Balor.bukkit.GiftPost;
 import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
 import com.aranai.virtualchest.VirtualChest;
-import com.aranai.virtualchest.VirtualLargeChest;
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.permissions.PermissionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -37,7 +35,7 @@ import org.bukkit.util.config.Configuration;
 public class GiftPostWorker {
 
 	private HashMap<String, VirtualChest> chests;
-	private static PermissionHandler permission= null;
+	private static PermissionHandler permission = null;
 	private List<GPCommand> commands;
 	private Configuration config;
 	private FilesManager fMan;
@@ -68,15 +66,17 @@ public class GiftPostWorker {
 	public VirtualChest getChest(String name) {
 		if (chests.containsKey(name))
 			return chests.get(name);
-		else {
-			VirtualChest tmp = null;
-			if (this.config.getString("chest-type", "normal").matches("normal"))
-				tmp = new VirtualChest(name);
-			else
-				tmp = new VirtualLargeChest(name);
-			chests.put(name, tmp);
-			return tmp;
-		}
+		else
+			return null;
+	}
+	/**
+	 * Add a new chest 
+	 * @param name
+	 * @param c
+	 */
+	public void addChest(String name, VirtualChest c)
+	{
+		chests.put(name,c);
 	}
 
 	/**
@@ -109,36 +109,10 @@ public class GiftPostWorker {
 	}
 
 	public synchronized void load() {
-		if (this.config.getString("chest-type", "normal").matches("normal"))
-			loadNormal();
-		else
-			loadLarge();
-	}
-
-	/**
-	 * Load the normal chests.
-	 */
-	private void loadNormal() {
 		HashMap<String, VirtualChest> loaded = this.fMan
 				.loadChests("chest.dat");
 		if (loaded != null) {
 			chests = loaded;
-		}
-	}
-
-	/**
-	 * Load the large chest.
-	 */
-	private void loadLarge() {
-		HashMap<String, VirtualLargeChest> loaded = this.fMan
-				.loadLargeChests("chest.dat");
-		if (loaded != null) {
-			Set<String> names = loaded.keySet();
-			int i = 0;
-			for (VirtualLargeChest v : loaded.values()) {
-				chests.put((String) names.toArray()[i], v);
-				i++;
-			}
 		}
 	}
 
@@ -183,6 +157,7 @@ public class GiftPostWorker {
 	public static iConomy getiConomy() {
 		return iConomy;
 	}
+
 	/**
 	 * Set iConomy Plugin
 	 * 
