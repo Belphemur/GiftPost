@@ -41,19 +41,19 @@ public class Upgrade implements GPCommand {
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
-		VirtualChest v = gpw.getChest(player.getName());
-		if (v != null)
-		{
+		VirtualChest v;
+		if (args.length == 2)
+			v = gpw.getChest(player.getName(), args[1].toLowerCase());
+		else
+			v= gpw.getDefaultChest(player.getName());
+		if (v != null) {
 			if (iConomyCheck(gpw, (Player) sender, "large")) {
-				gpw.addChest(player.getName(), new VirtualLargeChest(v));
-				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
-						+ ChatColor.WHITE + "] "
+				gpw.addChest(player,new VirtualLargeChest(v));
+				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
 						+ "You have now a Large Chest.");
 			}
-		}
-		else
-			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
-					+ ChatColor.WHITE + "] " + ChatColor.RED
+		} else
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.RED
 					+ "You don't have a chest to upgrade.");
 
 	}
@@ -68,42 +68,27 @@ public class Upgrade implements GPCommand {
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player, String type) {
 		if (GiftPostWorker.getiConomy() != null
-				&& gpw.getConfig().getString("iConomy", "false")
-						.matches("true")) {
+				&& gpw.getConfig().getString("iConomy", "false").matches("true")) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
-				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
-						.getConfig().getDouble(
-								"iConomy-" + type + "Chest-price", 10.0)) {
-					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
-							+ ChatColor.WHITE + "] " + ChatColor.RED
-							+ "You don't have enough "
-							+ iConomy.getBank().getCurrency()
+				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
+						"iConomy-" + type + "Chest-price", 10.0)) {
+					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+							+ ChatColor.RED + "You don't have enough " + iConomy.getBank().getCurrency()
 							+ " to pay the Chests Keeper !");
 					return false;
 				} else {
-					iConomy.getBank()
-							.getAccount(player.getName())
-							.subtract(
-									gpw.getConfig().getDouble(
-											"iConomy-" + type + "Chest-price",
-											10.0));
-					player.sendMessage("["
-							+ ChatColor.GOLD
-							+ "Chest Keeper"
-							+ ChatColor.WHITE
-							+ "] "
-							+ gpw.getConfig().getDouble(
-									"iConomy-" + type + "Chest-price", 10.0)
-							+ " " + iConomy.getBank().getCurrency()
-							+ ChatColor.DARK_GRAY
+					iConomy.getBank().getAccount(player.getName())
+							.subtract(gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0));
+					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+							+ gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
+							+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
 							+ " used to pay the Chests Keeper.");
 					return true;
 				}
 
 			} else {
-				player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
-						+ ChatColor.WHITE + "] " + ChatColor.RED
-						+ "You must have an account to pay the Chests Keeper !");
+				player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+						+ ChatColor.RED + "You must have an account to pay the Chests Keeper !");
 				return false;
 			}
 		}
@@ -117,9 +102,8 @@ public class Upgrade implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	@Override
-	public boolean validate(GiftPostWorker gpw, CommandSender sender,
-			String[] args) {
-		return (gpw.hasFlag(args, "u") || gpw.hasFlag(args, "upgrade"))
+	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		return (args.length >= 1 && (gpw.hasFlag(args, "u") || gpw.hasFlag(args, "upgrade")))
 				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 

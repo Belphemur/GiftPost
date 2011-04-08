@@ -17,11 +17,13 @@ package com.Balor.bukkit.GiftPost;
 import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
 import com.aranai.virtualchest.VirtualChest;
+import com.aranai.virtualchest.VirtualLargeChest;
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.permissions.PermissionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -34,7 +36,8 @@ import org.bukkit.util.config.Configuration;
  */
 public class GiftPostWorker {
 
-	private HashMap<String, VirtualChest> chests;
+	private HashMap<String, HashMap<String, VirtualChest>> chests;
+	private HashMap<String, VirtualChest> defaultChests;
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands;
 	private Configuration config;
@@ -43,7 +46,8 @@ public class GiftPostWorker {
 	private static iConomy iConomy = null;
 
 	public GiftPostWorker(Configuration config, String dataFolder) {
-		chests = new HashMap<String, VirtualChest>();
+		chests = new HashMap<String, HashMap<String, VirtualChest>>();
+		defaultChests = new HashMap<String, VirtualChest>();
 		commands = new ArrayList<GPCommand>();
 		this.config = config;
 		fMan = new FilesManager(dataFolder);
@@ -60,23 +64,59 @@ public class GiftPostWorker {
 	/**
 	 * Return the chest, create it if not exist
 	 * 
-	 * @param name
+	 * @param playerName
 	 * @return
 	 */
-	public VirtualChest getChest(String name) {
-		if (chests.containsKey(name))
-			return chests.get(name);
+	public VirtualChest getChest(String playerName, String chestName) {
+		if (chests.containsKey(playerName) && chests.get(playerName).containsKey(chestName))
+			return chests.get(playerName).get(chestName);
 		else
 			return null;
 	}
+
 	/**
-	 * Add a new chest 
-	 * @param name
-	 * @param c
+	 * Return the number of owned chest
+	 * 
+	 * @param p
+	 * @return
 	 */
-	public void addChest(String name, VirtualChest c)
-	{
-		chests.put(name,c);
+	public int numberOfChest(Player p) {
+		if (chests.containsKey(p.getName()))
+			return chests.get(p.getName()).size();
+		else
+			return 0;
+	}
+
+	/**
+	 * Return the default chest.
+	 * 
+	 * @param playerName
+	 * @return
+	 */
+	public VirtualChest getDefaultChest(String playerName) {
+		return defaultChests.get(playerName);
+	}
+
+	/**
+	 * Add a new chest
+	 * 
+	 * @param player
+	 * @param c
+	 *            VirtualChest to add
+	 * 
+	 */
+	public void addChest(Player player, VirtualChest c) {
+		if (chests.containsKey(player.getName()))
+			chests.get(player.getName()).put(c.getName(), c);
+		else {
+			HashMap<String, VirtualChest> tmp = new HashMap<String, VirtualChest>();
+			tmp.put(c.getName(), c);
+			chests.put(player.getName(), tmp);
+		}
+		if (c instanceof VirtualLargeChest)
+			fMan.createChestFile(player, c.getName(), "large");
+		else
+			fMan.createChestFile(player, c.getName(), "normal");
 	}
 
 	/**
@@ -104,15 +144,17 @@ public class GiftPostWorker {
 	 * Save all the chests.
 	 */
 	public synchronized void save() {
-		this.fMan.saveChests(chests, "chest.dat");
+		this.fMan.saveChests(chests, "chests.dat");
 		log.info("[VirtualChest] Chests Saved !");
 	}
 
 	public synchronized void load() {
-		HashMap<String, VirtualChest> loaded = this.fMan
-				.loadChests("chest.dat");
+		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan.loadChests("chests.dat");
 		if (loaded != null) {
 			chests = loaded;
+			TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
+			for (String player : tmp.keySet())
+				defaultChests.put(player, getChest(player, tmp.get(player)));
 		}
 	}
 
@@ -129,9 +171,8 @@ public class GiftPostWorker {
 		else if (permission.has(player, perm))
 			return true;
 		else {
-			player.sendMessage(ChatColor.RED
-					+ "You don't have the Permissions to do that "
-					+ ChatColor.BLUE + "(" + perm + ")");
+			player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that " + ChatColor.BLUE
+					+ "(" + perm + ")");
 			return false;
 		}
 

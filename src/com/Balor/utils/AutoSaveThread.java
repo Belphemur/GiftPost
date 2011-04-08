@@ -46,9 +46,9 @@ public class AutoSaveThread extends Thread {
 			}
 		}
 	}
-	public synchronized void stopIt()
-	{
-		this.stop=true;
+
+	public synchronized void stopIt() {
+		this.stop = true;
 		toBeSaved.save();
 	}
 

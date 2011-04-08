@@ -41,9 +41,9 @@ public class VirtualChest implements Serializable {
 	 * 
 	 * @param player
 	 */
-	public VirtualChest(String playerName) {
+	public VirtualChest(String chestName) {
 		chest = new TileEntityVirtualChest();
-		chest.setName(playerName);
+		chest.setName(chestName);
 	}
 
 	public VirtualChest(VirtualChest v) {
@@ -51,24 +51,12 @@ public class VirtualChest implements Serializable {
 	}
 
 	/**
-	 * Check if the chest is belong to the player
-	 * 
-	 * @param player
-	 * @return
-	 */
-	public boolean isBelongTo(Player player) {
-		return chest.getName().equals(player.getName());
-	}
-
-	/**
 	 * Open the chest for the owner
 	 */
 	public void openChest(Player p) {
-		if (isBelongTo(p)) {
-			EntityPlayer eh = ((CraftPlayer) p).getHandle();
-			eh.a(chest);
-		} else
-			p.sendMessage("You can't open this chest, it's not yours.");
+
+		EntityPlayer eh = ((CraftPlayer) p).getHandle();
+		eh.a(chest);
 	}
 
 	/**
@@ -164,7 +152,7 @@ public class VirtualChest implements Serializable {
 		chest.removeItemStack(i);
 	}
 
-	public String getOwnerName() {
+	public String getName() {
 		return this.chest.getName();
 	}
 }

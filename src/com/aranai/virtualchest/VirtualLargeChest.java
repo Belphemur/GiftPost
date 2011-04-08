@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
  * @author Balor (aka Antoine Aflalo)
  */
 public class VirtualLargeChest extends VirtualChest {
-	
+
 	/**
 	 * 
 	 */
@@ -32,34 +32,32 @@ public class VirtualLargeChest extends VirtualChest {
 	protected TileEntityVirtualChest subChest2;
 	protected InventoryVirtualLargeChest lc;
 
-	public VirtualLargeChest(String playerName) {
-		super(playerName);
+	public VirtualLargeChest(String chestName) {
+		super(chestName);
 		subChest2 = new TileEntityVirtualChest();
-		subChest2.setName(playerName);
-		lc = new InventoryVirtualLargeChest(playerName, chest, subChest2);
+		subChest2.setName(chestName);
+		lc = new InventoryVirtualLargeChest(chestName, chest, subChest2);
 	}
 
 	public VirtualLargeChest(VirtualLargeChest v) {
 		super(v);
 		this.subChest2 = v.subChest2;
-		this.lc = new InventoryVirtualLargeChest(chest.getName(), chest,
-				subChest2);
+		this.lc = new InventoryVirtualLargeChest(chest.getName(), chest, subChest2);
 	}
+
 	public VirtualLargeChest(VirtualChest v) {
 		super(v);
-		this.subChest2=new TileEntityVirtualChest();
+		this.subChest2 = new TileEntityVirtualChest();
 		lc = new InventoryVirtualLargeChest(chest.getName(), chest, subChest2);
 	}
+
 	/**
 	 * Open the chest for the owner
 	 */
 	@Override
 	public void openChest(Player p) {
-		if (isBelongTo(p)) {
-			EntityPlayer eh = ((CraftPlayer) p).getHandle();
-			eh.a(lc);
-		} else
-			p.sendMessage("You can't open this chest, it's not yours.");
+		EntityPlayer eh = ((CraftPlayer) p).getHandle();
+		eh.a(lc);
 	}
 
 	/**

@@ -24,15 +24,13 @@ import net.minecraft.server.InventoryLargeChest;
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class InventoryVirtualLargeChest extends InventoryLargeChest implements
-		Serializable {
+public class InventoryVirtualLargeChest extends InventoryLargeChest implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 218446299025155660L;
 
-	public InventoryVirtualLargeChest(String name, TileEntityVirtualChest c1,
-			TileEntityVirtualChest c2) {
+	public InventoryVirtualLargeChest(String name, TileEntityVirtualChest c1, TileEntityVirtualChest c2) {
 		super(name, c1, c2);
 	}
 }

@@ -35,6 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import static com.Balor.utils.Display.sendHelp;
+
 /**
  * 
  * @author Balor
@@ -64,6 +65,7 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(Send.class);
 		registerCommand(EmptyChest.class);
 		registerCommand(Buy.class);
+		registerCommand(Upgrade.class);
 	}
 
 	private void setupConfigFiles() {
@@ -80,8 +82,7 @@ public class GiftPost extends JavaPlugin {
 			}
 
 			try {
-				BufferedWriter out = new BufferedWriter(new FileWriter(yml,
-						true));
+				BufferedWriter out = new BufferedWriter(new FileWriter(yml, true));
 				out.write("use-max-range: 'true'");
 				out.newLine();
 				out.write("max-range: 100");
@@ -89,6 +90,8 @@ public class GiftPost extends JavaPlugin {
 				out.write("allow-offline: 'true'");
 				out.newLine();
 				out.write("auto-save-time: 10");
+				out.newLine();
+				out.write("max-number-chest: 10");
 				out.newLine();
 				out.write("world-check: 'true'");
 				out.newLine();
@@ -102,7 +105,6 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("iConomy-largeChest-price: 20.0");
 				out.newLine();
-				
 
 				// Close the output stream
 				out.close();
@@ -118,14 +120,10 @@ public class GiftPost extends JavaPlugin {
 		pluginListener = new PluginListener();
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal,
-				this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal,
-				this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal,
-				this);
-		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener,
-				Priority.Monitor, this);
+		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
+		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
 	}
 
 	public static Server getBukkitServer() {
@@ -151,13 +149,11 @@ public class GiftPost extends JavaPlugin {
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		autoSave.stopIt();
-		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version"
-				+ pdfFile.getVersion() + ")");
+		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version" + pdfFile.getVersion() + ")");
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command,
-			String commandLabel, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(ChatColor.RED + "You have to be a player!");
 			return true;
