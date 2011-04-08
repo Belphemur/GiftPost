@@ -129,6 +129,17 @@ public class FilesManager {
 		conf.save();
 
 	}
+	/**
+	 * Empty offline information from the file.
+	 * @param player
+	 */
+	public void emptyOfflineFile(Player player)
+	{
+		Configuration conf = this.getFile("Players", player.getName() + ".yml");
+		conf.setProperty("Players", null);
+		conf.setProperty("From", null);
+		conf.save();
+	}
 
 	/**
 	 * Accessor to deleteFile()
@@ -233,6 +244,7 @@ public class FilesManager {
 				p.sendMessage(msg.subSequence(0, msg.length() - 2).toString());
 			}
 		}
+		emptyOfflineFile(p);
 	}
 
 	/**
