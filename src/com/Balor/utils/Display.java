@@ -24,12 +24,17 @@ import org.bukkit.command.CommandSender;
  */
 public class Display {
 	public static void sendHelp(CommandSender sender) {
-		sender.sendMessage(ChatColor.AQUA + "Gift Post \n" + "-------\n"
-				+ ChatColor.GOLD + "/gp (chest OR c) " + ChatColor.WHITE
-				+ ": to open your chest\n" + ChatColor.GOLD
-				+ "/gp (buy OR b) (large OR normal) " + ChatColor.WHITE
-				+ ": to buy a large or normal chest \n" + ChatColor.GOLD
-				+ "/gp (send OR s) player " + ChatColor.WHITE
+		sender.sendMessage(ChatColor.AQUA + "Gift Post \n");
+		sender.sendMessage("-------\n");
+		sender.sendMessage(ChatColor.GOLD + "/gp (chest OR c) "
+				+ ChatColor.WHITE + ": to open your chest\n");
+		sender.sendMessage(ChatColor.GOLD + "/gp (buy OR b) (large OR normal) "
+				+ ChatColor.WHITE + ": to buy a large or normal chest \n");
+		sender.sendMessage(ChatColor.GOLD + "/gp (upgrade OR u) "
+				+ ChatColor.WHITE
+				+ ": if you have a normal chest, upgrade to a large chest.");
+		sender.sendMessage(ChatColor.GOLD + "/gp (send OR s) player "
+				+ ChatColor.WHITE
 				+ ": send the content of your chest to the player's chest.");
 	}
 

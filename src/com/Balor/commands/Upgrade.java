@@ -29,7 +29,7 @@ import com.nijiko.coelho.iConomy.iConomy;
  * @author Antoine
  * 
  */
-public class Buy implements GPCommand {
+public class Upgrade implements GPCommand {
 
 	/*
 	 * (non-Javadoc)
@@ -40,34 +40,21 @@ public class Buy implements GPCommand {
 	 */
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		String type = args[1].toLowerCase();
 		Player player = (Player) sender;
-		if (gpw.getChest(player.getName()) == null) {
-			if (type.matches("normal") || type.matches("large")) {
-				if (iConomyCheck(gpw, player, type)) {
-					gpw.getFileMan().createChestTypeFile(player, type);
-					if (type.matches("normal"))
-						gpw.addChest(player.getName(),
-								new VirtualChest(player.getName()));
-					if (type.matches("large"))
-						gpw.addChest(player.getName(), new VirtualLargeChest(
-								player.getName()));
-					player.sendMessage("["
-							+ ChatColor.GOLD
-							+ "Chest Keeper"
-							+ ChatColor.WHITE
-							+ "] Chest succefuly created. "
-							+ ChatColor.GOLD
-							+ "(command /gp c OR use a chest with left click to open it)");
-				}
-			} else
+		VirtualChest v = gpw.getChest(player.getName());
+		if (v != null)
+		{
+			if (iConomyCheck(gpw, (Player) sender, "large")) {
+				gpw.addChest(player.getName(), new VirtualLargeChest(v));
 				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
-						+ ChatColor.WHITE + "] " + ChatColor.RED
-						+ "There is only 2 type of Chests : large and normal");
-		} else
+						+ ChatColor.WHITE + "] "
+						+ "You have now a Large Chest.");
+			}
+		}
+		else
 			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
 					+ ChatColor.WHITE + "] " + ChatColor.RED
-					+ "You have already a chest.");
+					+ "You don't have a chest to upgrade.");
 
 	}
 
@@ -132,8 +119,8 @@ public class Buy implements GPCommand {
 	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender,
 			String[] args) {
-		return (args.length == 2 && (gpw.hasFlag(args, "b") || gpw.hasFlag(
-				args, "buy"))) && gpw.hasPerm((Player) sender, getPermName());
+		return (gpw.hasFlag(args, "u") || gpw.hasFlag(args, "upgrade"))
+				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*
@@ -143,7 +130,7 @@ public class Buy implements GPCommand {
 	 */
 	@Override
 	public String getPermName() {
-		return "giftpost.chest.open";
+		return "giftpost.chest.upgrade";
 	}
 
 }
