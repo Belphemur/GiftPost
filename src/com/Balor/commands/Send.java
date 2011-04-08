@@ -37,6 +37,10 @@ public class Send implements GPCommand {
 					+ ChatColor.WHITE + "] " + ChatColor.RED
 					+ "You don't have a chest. To buy one type "
 					+ ChatColor.GOLD + "/gp buy (large|normal)");
+		else if (gpw.getChest(targetName) == null)
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
+					+ ChatColor.WHITE + "] " + ChatColor.RED + targetName
+					+ " don't have a chest.");
 		else if (player.getName().equals(targetName))
 			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper"
 					+ ChatColor.WHITE + "] " + ChatColor.RED

@@ -190,6 +190,12 @@ public class FilesManager {
 		conf.save();
 	}
 
+	private void createChestTypeFile(String name, String type) {
+		Configuration conf = this.getFile("Players", name + ".yml");
+		conf.setProperty("Chest", type);
+		conf.save();
+	}
+
 	/**
 	 * Get the ChestType for the given player
 	 * 
@@ -241,6 +247,10 @@ public class FilesManager {
 		ArrayList<SerializedItemStack> itemstacks = new ArrayList<SerializedItemStack>();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = new HashMap<String, ArrayList<SerializedItemStack>>();
 		for (VirtualChest v : chest.values()) {
+			if (v instanceof VirtualLargeChest)
+				createChestTypeFile(v.getOwnerName(), "large");
+			else
+				createChestTypeFile(v.getOwnerName(), "normal");
 			for (ItemStack is : v.getContents()) {
 				if (is != null)
 					itemstacks.add(new SerializedItemStack(is.id, is.count,
@@ -260,6 +270,14 @@ public class FilesManager {
 		}
 	}
 
+	private HashMap<String, String> getAllPlayerChestType() {
+		HashMap<String, String> result = new HashMap<String, String>();
+		File dir = new File(this.path + File.separator + "Players");
+		for (String s : dir.list())
+			result.put(s, openChestTypeFile(s));
+		return result;
+	}
+
 	/**
 	 * Load the saved chest file.
 	 * 
@@ -271,6 +289,8 @@ public class FilesManager {
 		String filename = this.path + File.separator + fileName;
 		HashMap<String, VirtualChest> chests = new HashMap<String, VirtualChest>();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
+		HashMap<String, String> playerChestType = getAllPlayerChestType();
+
 		if (new File(filename).exists()) {
 			FileInputStream fis = null;
 			ObjectInputStream in = null;
@@ -290,12 +310,24 @@ public class FilesManager {
 				Set<String> names = saved.keySet();
 				int i = 0;
 				for (ArrayList<SerializedItemStack> al : saved.values()) {
-					VirtualChest v = new VirtualChest(
-							(String) names.toArray()[i]);
+
+					VirtualChest v;
+					if (playerChestType.get(names.toArray()[i]).matches(
+							"normal"))
+						v = new VirtualChest((String) names.toArray()[i]);
+					else
+						v = new VirtualLargeChest((String) names.toArray()[i]);
+
 					for (SerializedItemStack sis : al)
 						v.addItemStack(new ItemStack(sis.id, sis.count,
 								sis.damage));
-					chests.put((String) names.toArray()[i], new VirtualChest(v));
+
+					if (v instanceof VirtualLargeChest)
+						chests.put((String) names.toArray()[i],
+								new VirtualLargeChest(v));
+					else
+						chests.put((String) names.toArray()[i],
+								new VirtualChest(v));
 					i++;
 				}
 
