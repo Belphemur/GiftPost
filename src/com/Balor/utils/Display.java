@@ -34,6 +34,8 @@ public class Display {
 				+ ": if you have a normal chest, upgrade to a large chest.");
 		sender.sendMessage(ChatColor.GOLD + "/gp (send OR s) player " + ChatColor.WHITE
 				+ ": send the content of your chest to the player's chest.");
+		sender.sendMessage(ChatColor.GOLD + "/gp (set OR default) ChestName " + ChatColor.WHITE
+				+ ": set the ChestName as your default chest (open when using a chest, used for send and receve gift)");
 	}
 
 }

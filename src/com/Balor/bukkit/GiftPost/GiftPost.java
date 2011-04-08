@@ -66,6 +66,7 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(EmptyChest.class);
 		registerCommand(Buy.class);
 		registerCommand(Upgrade.class);
+		registerCommand(SetDefaultChest.class);
 	}
 
 	private void setupConfigFiles() {
@@ -138,7 +139,13 @@ public class GiftPost extends JavaPlugin {
 				+ this.getDescription().getVersion() + ")");
 		gpw = new GiftPostWorker(getConfiguration(), getDataFolder().toString());
 		setupListener();
-		gpw.load();
+		if(new File(getDataFolder()+File.separator+"chest.dat").exists())
+		{
+			gpw.transfer();
+			new File(getDataFolder()+File.separator+"chest.dat").delete();
+		}
+		else
+			gpw.load();
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
 		autoSave = new AutoSaveThread(gpw);
 		autoSave.start();

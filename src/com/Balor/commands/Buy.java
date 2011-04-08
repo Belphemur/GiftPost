@@ -43,27 +43,27 @@ public class Buy implements GPCommand {
 		String type = args[1].toLowerCase();
 		String chestName = args[2].toLowerCase();
 		Player player = (Player) sender;
-		if (gpw.getDefaultChest(player.getName()) == null) {
-			if (type.matches("normal") || type.matches("large")) {
-				if (gpw.numberOfChest(player) + 1 <= gpw.getConfig().getInt("max-number-chest", 10)) {
-					if (iConomyCheck(gpw, player, type)) {
-						if (type.matches("normal"))
-							gpw.addChest(player ,new VirtualChest(chestName));
-						if (type.matches("large"))
-							gpw.addChest(player, new VirtualLargeChest(chestName));
-						player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE
-								+ "] Chest succefuly created. " + ChatColor.GOLD
-								+ "(command /gp c OR use a chest with left click to open it)");
-					}
+		if (gpw.numberOfChest(player) > 0
+				&& gpw.getFileMan().openChestTypeFile(player.getName()).names.contains(chestName))
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.RED
+					+ "You have have already a chest named : " + ChatColor.AQUA + chestName);
+		else if (type.matches("normal") || type.matches("large")) {
+			if (gpw.numberOfChest(player) + 1 <= gpw.getConfig().getInt("max-number-chest", 10)) {
+				if (iConomyCheck(gpw, player, type)) {
+					if (type.matches("normal"))
+						gpw.addChest(player, new VirtualChest(chestName));
+					if (type.matches("large"))
+						gpw.addChest(player, new VirtualLargeChest(chestName));
+					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE
+							+ "] Chest succefuly created. " + ChatColor.GOLD
+							+ "(command /gp c "+chestName+" OR use a chest with left click to open it)");
 				}
-				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "You have reach the limit of chest.");
 			} else
 				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "There is only 2 type of Chests : large and normal");
+						+ ChatColor.RED + "You have reach the limit of chest.");
 		} else
 			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.RED
-					+ "You have already a chest.");
+					+ "There is only 2 type of Chests : large and normal");
 
 	}
 

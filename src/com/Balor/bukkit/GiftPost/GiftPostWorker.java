@@ -96,27 +96,50 @@ public class GiftPostWorker {
 	public VirtualChest getDefaultChest(String playerName) {
 		return defaultChests.get(playerName);
 	}
+	/**
+	 * Set default chest for the player.
+	 * @param playerName
+	 * @param v
+	 * @return
+	 */
+	public boolean setDefaultChest(String playerName, String vChest)
+	{
+		VirtualChest v = getChest(playerName, vChest);
+		return setDefaultChest(playerName, v);
+	}
+	public boolean setDefaultChest(String playerName, VirtualChest v) {
+		if (chests.get(playerName).containsValue(v))
+		{
+			defaultChests.put(playerName, v);
+			fMan.createDefaultChest(playerName, v.getName());
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Add a new chest
 	 * 
 	 * @param player
-	 * @param c
+	 * @param vChest
 	 *            VirtualChest to add
 	 * 
 	 */
-	public void addChest(Player player, VirtualChest c) {
+	public void addChest(Player player, VirtualChest vChest) {
 		if (chests.containsKey(player.getName()))
-			chests.get(player.getName()).put(c.getName(), c);
+			chests.get(player.getName()).put(vChest.getName(), vChest);
 		else {
 			HashMap<String, VirtualChest> tmp = new HashMap<String, VirtualChest>();
-			tmp.put(c.getName(), c);
+			tmp.put(vChest.getName(), vChest);
 			chests.put(player.getName(), tmp);
 		}
-		if (c instanceof VirtualLargeChest)
-			fMan.createChestFile(player, c.getName(), "large");
+		if (vChest instanceof VirtualLargeChest)
+			fMan.createChestFile(player, vChest.getName(), "large");
 		else
-			fMan.createChestFile(player, c.getName(), "normal");
+			fMan.createChestFile(player, vChest.getName(), "normal");
+		if(numberOfChest(player)==1)
+			setDefaultChest(player.getName(), vChest);
+			
 	}
 
 	/**
@@ -148,13 +171,33 @@ public class GiftPostWorker {
 		log.info("[VirtualChest] Chests Saved !");
 	}
 
+	/**
+	 * load all the chest
+	 */
 	public synchronized void load() {
 		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan.loadChests("chests.dat");
 		if (loaded != null) {
 			chests = loaded;
 			TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
-			for (String player : tmp.keySet())
-				defaultChests.put(player, getChest(player, tmp.get(player)));
+			if (tmp != null)
+				for (String player : tmp.keySet())
+					defaultChests.put(player, getChest(player, tmp.get(player)));
+		}
+	}
+
+	/**
+	 * Transfer from an old save
+	 * 
+	 * @deprecated
+	 */
+	public synchronized void transfer() {
+		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan.transfer("chest.dat");
+		if (loaded != null) {
+			chests = loaded;
+			TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
+			if (tmp != null)
+				for (String player : tmp.keySet())
+					defaultChests.put(player, getChest(player, tmp.get(player)));
 		}
 	}
 
