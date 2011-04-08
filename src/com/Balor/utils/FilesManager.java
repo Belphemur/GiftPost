@@ -332,7 +332,7 @@ public class FilesManager {
 				for (ArrayList<SerializedItemStack> al : saved.values()) {
 
 					VirtualChest v;
-					if (playerChestType.get(names.toArray()[i]).matches(
+					if (!playerChestType.containsKey(names.toArray()[i]) || playerChestType.get(names.toArray()[i]).matches(
 							"normal"))
 						v = new VirtualChest((String) names.toArray()[i]);
 					else

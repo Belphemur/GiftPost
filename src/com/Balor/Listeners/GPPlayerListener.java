@@ -40,7 +40,8 @@ public class GPPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		if (!worker.getChest(event.getPlayer().getName()).isEmpty()) {
+		if (worker.getChest(event.getPlayer().getName()) != null
+				&& !worker.getChest(event.getPlayer().getName()).isEmpty()) {
 			worker.getFileMan().openOfflineFile(event.getPlayer());
 			event.getPlayer().sendMessage(
 					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c"
@@ -57,8 +58,9 @@ public class GPPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		if(event.getPlayer().getItemInHand().getType().equals(Material.CHEST) &&( event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(Action.LEFT_CLICK_BLOCK)))
-		{
+		if (event.getPlayer().getItemInHand().getType().equals(Material.CHEST)
+				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event
+						.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
 			new Chest().execute(worker, event.getPlayer(), null);
 		}
 	}

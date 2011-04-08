@@ -122,8 +122,8 @@ public class Buy implements GPCommand {
 	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender,
 			String[] args) {
-		return (args.length == 2 && gpw.hasFlag(args, "b") || gpw.hasFlag(args,
-				"buy")) && gpw.hasPerm((Player) sender, getPermName());
+		return (args.length == 2 && (gpw.hasFlag(args, "b") || gpw.hasFlag(args,
+				"buy"))) && gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*
