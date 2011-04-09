@@ -24,8 +24,8 @@ import org.bukkit.command.CommandSender;
  */
 public class Display {
 	public static void sendHelp(CommandSender sender) {
-		sender.sendMessage(ChatColor.AQUA + "Gift Post \n");
-		sender.sendMessage("-------\n");
+		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
+		sender.sendMessage("--------------------\n");
 		sender.sendMessage(ChatColor.GOLD + "/gp (chest OR c) (ChestName OR nothing)" + ChatColor.WHITE
 				+ ": to open your chest if you don't set a ChestName, open your default chest.\n");
 		sender.sendMessage(ChatColor.GOLD + "/gp (buy OR b) (large OR normal) ChestName" + ChatColor.WHITE
@@ -36,6 +36,8 @@ public class Display {
 				+ ": send the content of your chest to the player's chest.");
 		sender.sendMessage(ChatColor.GOLD + "/gp (set OR default) ChestName " + ChatColor.WHITE
 				+ ": set the ChestName as your default chest (open when using a chest, used for send and receve gift)");
+		sender.sendMessage(ChatColor.GOLD + "/gp (list OR l) " + ChatColor.WHITE
+				+ ": list all your chests");
 	}
 
 }

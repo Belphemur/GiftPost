@@ -86,6 +86,15 @@ public class GiftPostWorker {
 		else
 			return 0;
 	}
+	/**
+	 * Return all the chest of the selected player
+	 * @param p
+	 * @return
+	 */
+	public HashMap<String, VirtualChest> listOfChest(Player p)
+	{
+		return chests.get(p.getName());
+	}
 
 	/**
 	 * Return the default chest.

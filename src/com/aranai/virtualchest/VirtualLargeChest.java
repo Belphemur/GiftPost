@@ -25,10 +25,6 @@ import org.bukkit.entity.Player;
  */
 public class VirtualLargeChest extends VirtualChest {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7168377493781850126L;
 	protected TileEntityVirtualChest subChest2;
 	protected InventoryVirtualLargeChest lc;
 
