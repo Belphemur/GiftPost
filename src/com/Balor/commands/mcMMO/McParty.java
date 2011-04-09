@@ -14,9 +14,13 @@
  * You should have received a copy of the GNU General Public License
  * along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
-package com.gmail.nossr50;
+package com.Balor.commands.mcMMO;
 
 import org.bukkit.entity.Player;
+
+import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.gmail.nossr50.mcMMO;
+import com.gmail.nossr50.mcParty;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -28,25 +32,24 @@ public class McParty extends mcParty {
 	 * @param instance
 	 */
 	public McParty(mcMMO instance) {
-		super(instance);
+		super(GiftPostWorker.getmcMMO());
 	}
 
-	private static volatile McParty instance;
-	private static mcMMO plugin;
+	private static volatile McParty myInstance;
 
 	public static McParty getInstance() {
-		if (instance == null) {
-			instance = new McParty(plugin);
+		if (myInstance == null) {
+			myInstance = new McParty(null);
 		}
-		return instance;
+		return myInstance;
 	}
 
 	public void sendMessage(Player player, String message) {
-		Player[] players = plugin.getServer().getOnlinePlayers();
+		Player[] players = GiftPostWorker.getmcMMO().getServer().getOnlinePlayers();
 		int x = 0;
 		for (Player p : players) {
 			if (player != null && p != null) {
-				if (inSameParty(player, p) && !p.getName().equals(player.getName())) {
+				if (inSameParty(player, p)) {
 					p.sendMessage(message);
 					x++;
 				}

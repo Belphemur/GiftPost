@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
-package com.gmail.nossr50;
+package com.Balor.commands.mcMMO;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +24,7 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.commands.GPCommand;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
+import com.gmail.nossr50.mcUsers;
 import com.nijiko.coelho.iConomy.iConomy;
 
 /**
@@ -43,34 +44,38 @@ public class BuyPartyChest implements GPCommand {
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		String type = args[1].toLowerCase();
-		if (mcUsers.getProfile(player).inParty()) {
-			if (!GiftPostWorker.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
-				if (type.matches("normal") || type.matches("large")) {
-					if (iConomyCheck(gpw, player, type)) {
-						if (type.matches("normal"))
-							GiftPostWorker.getParties().put(mcUsers.getProfile(player).getParty(),
-									new VirtualChest(mcUsers.getProfile(player).getParty()));
-						if (type.matches("large"))
-							GiftPostWorker.getParties().put(mcUsers.getProfile(player).getParty(),
-									new VirtualLargeChest(mcUsers.getProfile(player).getParty()));
-						McParty.getInstance().sendMessage(
-								player,
-								"[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-										+ player.getName() + " bought a Virtual " + type
-										+ " Chest for the party (" + ChatColor.GOLD + "command /pchest"
-										+ ChatColor.WHITE + " to open it.");
-					}
+		if (GiftPostWorker.getmcMMO() != null) {
+			if (mcUsers.getProfile(player).inParty()) {
+				if (!GiftPostWorker.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
+					if (type.matches("normal") || type.matches("large")) {
+						if (iConomyCheck(gpw, player, type)) {
+							if (type.matches("normal"))
+								GiftPostWorker.getParties().put(mcUsers.getProfile(player).getParty(),
+										new VirtualChest(mcUsers.getProfile(player).getParty()));
+							if (type.matches("large"))
+								GiftPostWorker.getParties().put(mcUsers.getProfile(player).getParty(),
+										new VirtualLargeChest(mcUsers.getProfile(player).getParty()));
+							McParty.getInstance().sendMessage(
+									player,
+									"[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+											+ player.getName() + " bought a Virtual " + type
+											+ " Chest for the party (" + ChatColor.GOLD + "command /pchest"
+											+ ChatColor.WHITE + " to open it.");
+						}
 
+					} else
+						sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+								+ ChatColor.RED + "There is only 2 type of Chests : large and normal");
 				} else
 					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ ChatColor.RED + "There is only 2 type of Chests : large and normal");
+							+ ChatColor.RED + "Your party have already a chest : " + ChatColor.GOLD
+							+ "/pchest" + ChatColor.RED + " to see it.");
 			} else
 				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "Your party have already a chest : " + ChatColor.GOLD + "/pchest"
-						+ ChatColor.RED + " to see it.");
+						+ ChatColor.DARK_RED + "You must be in a party to buy a party chest");
 		} else
 			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-					+ ChatColor.DARK_RED + "You must be in a party to buy a party chest");
+					+ ChatColor.DARK_RED + "You don't have mcMMO installed !");
 
 	}
 

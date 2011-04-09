@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
-package com.gmail.nossr50;
+package com.Balor.commands.mcMMO;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -22,6 +22,8 @@ import org.bukkit.entity.Player;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.commands.GPCommand;
+import com.gmail.nossr50.mcUsers;
+
 /**
  * @author Balor (aka Antoine Aflalo)
  * 
@@ -38,15 +40,19 @@ public class OpenPartyChest implements GPCommand {
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
-		if (mcUsers.getProfile(player).inParty()) {
-			if (GiftPostWorker.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
-				GiftPostWorker.getParties().get(mcUsers.getProfile(player).getParty()).openChest(player);
+		if (GiftPostWorker.getmcMMO() != null) {
+			if (mcUsers.getProfile(player).inParty()) {
+				if (GiftPostWorker.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
+					GiftPostWorker.getParties().get(mcUsers.getProfile(player).getParty()).openChest(player);
+				} else
+					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+							+ ChatColor.RED + "Your party don't have a chest.");
 			} else
 				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "Your party don't have a chest.");
+						+ ChatColor.DARK_RED + "You must be in a party to buy a party chest");
 		} else
 			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-					+ ChatColor.DARK_RED + "You must be in a party to buy a party chest");
+					+ ChatColor.DARK_RED + "You don't have mcMMO installed !");
 
 	}
 

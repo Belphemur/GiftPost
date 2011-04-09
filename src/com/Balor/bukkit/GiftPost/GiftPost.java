@@ -17,6 +17,8 @@ package com.Balor.bukkit.GiftPost;
 import com.Balor.Listeners.GPPlayerListener;
 import com.Balor.Listeners.PluginListener;
 import com.Balor.commands.*;
+import com.Balor.commands.mcMMO.BuyPartyChest;
+import com.Balor.commands.mcMMO.OpenPartyChest;
 import com.Balor.utils.AutoSaveThread;
 
 import java.io.BufferedWriter;
@@ -68,6 +70,8 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(Upgrade.class);
 		registerCommand(SetDefaultChest.class);
 		registerCommand(ChestList.class);
+		registerCommand(BuyPartyChest.class);
+		registerCommand(OpenPartyChest.class);
 	}
 
 	private void setupConfigFiles() {
