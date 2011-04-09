@@ -331,11 +331,14 @@ public class FilesManager {
 	private TreeMap<String, PlayerChests> getAllPlayerChestType() {
 		TreeMap<String, PlayerChests> result = new TreeMap<String, PlayerChests>();
 		File dir = new File(this.path + File.separator + "Players");
-		for (String s : dir.list()) {
-			s = s.subSequence(0, s.length() - 4).toString();
-			result.put(s, openChestTypeFile(s));
+		if (dir.exists()) {
+			for (String s : dir.list()) {
+				s = s.subSequence(0, s.length() - 4).toString();
+				result.put(s, openChestTypeFile(s));
+			}
+			return result;
 		}
-		return result;
+		return null;
 	}
 
 	public TreeMap<String, String> getAllPlayerDefaultChest() {
@@ -459,18 +462,18 @@ public class FilesManager {
 						v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
 					HashMap<String, VirtualChest> tmp = new HashMap<String, VirtualChest>();
 					tmp = new HashMap<String, VirtualChest>();
-					if (v instanceof VirtualLargeChest)
-					{
+					if (v instanceof VirtualLargeChest) {
 						tmp.put(names.toArray()[i].toString().toLowerCase(), new VirtualLargeChest(v));
-						createChestFile((String) names.toArray()[i], names.toArray()[i].toString().toLowerCase(), "large");
-					}
-					else
-					{
+						createChestFile((String) names.toArray()[i], names.toArray()[i].toString()
+								.toLowerCase(), "large");
+					} else {
 						tmp.put(names.toArray()[i].toString().toLowerCase(), new VirtualChest(v));
-						createChestFile((String) names.toArray()[i], names.toArray()[i].toString().toLowerCase(), "normal");
+						createChestFile((String) names.toArray()[i], names.toArray()[i].toString()
+								.toLowerCase(), "normal");
 					}
 					chests.put((String) names.toArray()[i], new HashMap<String, VirtualChest>(tmp));
-					createDefaultChest((String) names.toArray()[i], names.toArray()[i].toString().toLowerCase());
+					createDefaultChest((String) names.toArray()[i], names.toArray()[i].toString()
+							.toLowerCase());
 					i++;
 				}
 
