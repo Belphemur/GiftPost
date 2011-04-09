@@ -15,6 +15,7 @@
 package com.aranai.virtualchest;
 
 import net.minecraft.server.EntityPlayer;
+import net.minecraft.server.InventoryLargeChest;
 import net.minecraft.server.ItemStack;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -26,25 +27,25 @@ import org.bukkit.entity.Player;
 public class VirtualLargeChest extends VirtualChest {
 
 	protected TileEntityVirtualChest subChest2;
-	protected InventoryVirtualLargeChest lc;
+	protected InventoryLargeChest lc;
 
 	public VirtualLargeChest(String chestName) {
 		super(chestName);
 		subChest2 = new TileEntityVirtualChest();
 		subChest2.setName(chestName);
-		lc = new InventoryVirtualLargeChest(chestName, chest, subChest2);
+		lc = new InventoryLargeChest(chestName, chest, subChest2);
 	}
 
 	public VirtualLargeChest(VirtualLargeChest v) {
 		super(v);
 		this.subChest2 = v.subChest2;
-		this.lc = new InventoryVirtualLargeChest(chest.getName(), chest, subChest2);
+		this.lc = new InventoryLargeChest(chest.getName(), chest, subChest2);
 	}
 
 	public VirtualLargeChest(VirtualChest v) {
 		super(v);
 		this.subChest2 = new TileEntityVirtualChest();
-		lc = new InventoryVirtualLargeChest(chest.getName(), chest, subChest2);
+		lc = new InventoryLargeChest(chest.getName(), chest, subChest2);
 	}
 
 	/**

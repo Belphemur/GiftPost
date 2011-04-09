@@ -54,7 +54,7 @@ public class GiftPostWorker {
 		chests = new HashMap<String, HashMap<String, VirtualChest>>();
 		defaultChests = new HashMap<String, VirtualChest>();
 		commands = new ArrayList<GPCommand>();
-		this.config = config;
+		this.config = config;		
 		fMan = new FilesManager(dataFolder);
 	}
 
@@ -189,6 +189,7 @@ public class GiftPostWorker {
 	 * load all the chest
 	 */
 	public synchronized void load() {
+		this.config.load();
 		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan.loadChests("chests.dat");
 		if (loaded != null) {
 			chests = loaded;
