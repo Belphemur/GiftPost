@@ -42,8 +42,8 @@ public class OpenPartyChest implements GPCommand {
 		Player player = (Player) sender;
 		if (GiftPostWorker.getmcMMO() != null) {
 			if (mcUsers.getProfile(player).inParty()) {
-				if (GiftPostWorker.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
-					GiftPostWorker.getParties().get(mcUsers.getProfile(player).getParty()).openChest(player);
+				if (gpw.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
+					gpw.getParties().get(mcUsers.getProfile(player).getParty()).openChest(player);
 				} else
 					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
 							+ ChatColor.RED + "Your party don't have a chest.");

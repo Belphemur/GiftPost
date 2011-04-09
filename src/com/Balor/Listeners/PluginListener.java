@@ -55,7 +55,7 @@ public class PluginListener extends ServerListener {
                 }
             }
         }
-       /* if(GiftPostWorker.getmcMMO() == null) {
+        if(GiftPostWorker.getmcMMO() == null) {
             Plugin mcMMOPlugin = GiftPost.getBukkitServer().getPluginManager().getPlugin("mcMMO");
             if (mcMMOPlugin != null) {
                 if(mcMMOPlugin.isEnabled()) {
@@ -63,6 +63,6 @@ public class PluginListener extends ServerListener {
                     System.out.println("[VirtualChest] Successfully linked with mcMMO.");
                 }
             }
-        }*/
+        }
     }
 }

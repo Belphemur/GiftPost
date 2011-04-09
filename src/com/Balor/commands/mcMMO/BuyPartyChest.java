@@ -46,21 +46,21 @@ public class BuyPartyChest implements GPCommand {
 		String type = args[1].toLowerCase();
 		if (GiftPostWorker.getmcMMO() != null) {
 			if (mcUsers.getProfile(player).inParty()) {
-				if (!GiftPostWorker.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
+				if (!gpw.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
 					if (type.matches("normal") || type.matches("large")) {
 						if (iConomyCheck(gpw, player, type)) {
 							if (type.matches("normal"))
-								GiftPostWorker.getParties().put(mcUsers.getProfile(player).getParty(),
+								gpw.getParties().put(mcUsers.getProfile(player).getParty(),
 										new VirtualChest(mcUsers.getProfile(player).getParty()));
 							if (type.matches("large"))
-								GiftPostWorker.getParties().put(mcUsers.getProfile(player).getParty(),
+								gpw.getParties().put(mcUsers.getProfile(player).getParty(),
 										new VirtualLargeChest(mcUsers.getProfile(player).getParty()));
 							McParty.getInstance().sendMessage(
 									player,
 									"[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
 											+ player.getName() + " bought a Virtual " + type
 											+ " Chest for the party (" + ChatColor.GOLD + "command /pchest"
-											+ ChatColor.WHITE + " to open it.");
+											+ ChatColor.WHITE + " to open it)");
 						}
 
 					} else

@@ -155,7 +155,7 @@ public class GiftPost extends JavaPlugin {
 		autoSave = new AutoSaveThread(gpw);
 		autoSave.start();
 		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
-			partiesGC = new PartiesGarbageCollector();
+			partiesGC = new PartiesGarbageCollector(gpw);
 			partiesGC.start();
 		}
 	}

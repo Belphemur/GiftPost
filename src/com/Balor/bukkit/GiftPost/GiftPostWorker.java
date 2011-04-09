@@ -48,7 +48,7 @@ public class GiftPostWorker {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private static iConomy iConomy = null;
 	private static mcMMO mcMMO = null;
-	private static TreeMap<String, VirtualChest> parties =null;
+	private TreeMap<String, VirtualChest> parties = new TreeMap<String, VirtualChest>();
 
 	public GiftPostWorker(Configuration config, String dataFolder) {
 		chests = new HashMap<String, HashMap<String, VirtualChest>>();
@@ -313,7 +313,6 @@ public class GiftPostWorker {
 	public static boolean setmcMMO(mcMMO plugin) {
 		if (mcMMO == null) {
 			mcMMO = plugin;
-			parties=new TreeMap<String, VirtualChest>();
 		} else {
 			return false;
 		}
@@ -323,7 +322,7 @@ public class GiftPostWorker {
 	 * Return all the parties (mcMMO) that have a virtual chest.
 	 * @return
 	 */
-	public static TreeMap<String, VirtualChest> getParties()
+	public TreeMap<String, VirtualChest> getParties()
 	{
 		return parties;
 	}

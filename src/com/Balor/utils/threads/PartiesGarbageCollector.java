@@ -16,16 +16,42 @@
  ************************************************************************/
 package com.Balor.utils.threads;
 
+import java.util.TreeMap;
+
+import org.bukkit.entity.Player;
+
+import com.Balor.bukkit.GiftPost.GiftPost;
+import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.aranai.virtualchest.VirtualChest;
+import com.gmail.nossr50.mcUsers;
+
 /**
  * @author Balor (aka Antoine Aflalo)
  * 
  */
 public class PartiesGarbageCollector extends Thread {
 	private boolean stop = false;
-	private int wait =  5* 1000 * 60;
-	private void garbageCollector()
-	{
-		System.out.print("garbage launched !");
+	private int wait = 5 * 1000 * 60;
+	private GiftPostWorker gpw;
+
+	public PartiesGarbageCollector(GiftPostWorker worker) {
+		gpw = worker;
+	}
+
+	private void garbageCollector() {
+		if (!gpw.getParties().isEmpty()) {
+			TreeMap<String, VirtualChest> tmp = new TreeMap<String, VirtualChest>();
+			for (Player p : GiftPost.getBukkitServer().getOnlinePlayers()) {
+				if (mcUsers.getProfile(p).getParty()!=null && !tmp.containsKey(mcUsers.getProfile(p).getParty()))
+				{
+					tmp.put(mcUsers.getProfile(p).getParty(),
+							gpw.getParties().get(mcUsers.getProfile(p).getParty()));					
+				}
+			}
+			gpw.getParties().clear();
+			if (!tmp.isEmpty())
+				gpw.getParties().putAll(tmp);
+		}
 	}
 
 	public void run() {
