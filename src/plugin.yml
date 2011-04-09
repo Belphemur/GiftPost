@@ -10,3 +10,7 @@ commands:
   description: master command
   aliases: gp
   usage: /<command>
+ partyChest:
+  description: open the party chest (if mcMMO installed)
+  aliases: pchest
+  usage: /<command>

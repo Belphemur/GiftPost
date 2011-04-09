@@ -22,6 +22,7 @@ import org.bukkit.event.server.ServerListener;
 
 import com.Balor.bukkit.GiftPost.GiftPost;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.gmail.nossr50.mcMMO;
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
@@ -51,6 +52,15 @@ public class PluginListener extends ServerListener {
                 if(iConomy.isEnabled()) {
                 	GiftPostWorker.setiConomy((iConomy)iConomy);
                     System.out.println("[VirtualChest] Successfully linked with iConomy.");
+                }
+            }
+        }
+        if(GiftPostWorker.getmcMMO() == null) {
+            Plugin mcMMOPlugin = GiftPost.getBukkitServer().getPluginManager().getPlugin("mcMMO");
+            if (mcMMOPlugin != null) {
+                if(mcMMOPlugin.isEnabled()) {
+                	GiftPostWorker.setmcMMO((mcMMO)mcMMOPlugin);
+                    System.out.println("[VirtualChest] Successfully linked with mcMMO.");
                 }
             }
         }

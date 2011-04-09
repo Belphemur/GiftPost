@@ -13,19 +13,22 @@
     You should have received a copy of the GNU General Public License
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.Balor.bukkit.GiftPost;
-
+//GiftPost
 import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
+//Plugins
+import com.gmail.nossr50.mcMMO;
 import com.nijiko.coelho.iConomy.iConomy;
 import com.nijiko.permissions.PermissionHandler;
+//Java
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.logging.Logger;
-
+//Bukkit
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
@@ -44,6 +47,8 @@ public class GiftPostWorker {
 	private FilesManager fMan;
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private static iConomy iConomy = null;
+	private static mcMMO mcMMO = null;
+	private static TreeMap<String, VirtualChest> parties =null;
 
 	public GiftPostWorker(Configuration config, String dataFolder) {
 		chests = new HashMap<String, HashMap<String, VirtualChest>>();
@@ -288,5 +293,37 @@ public class GiftPostWorker {
 			return false;
 		}
 		return true;
+	}
+	/**
+	 * mcMMO plugin
+	 * 
+	 * @return
+	 */
+	public static mcMMO getmcMMO() {
+		return mcMMO;
+	}
+
+	/**
+	 * Set mcMMO Plugin
+	 * 
+	 * @param plugin
+	 * @return
+	 */
+	public static boolean setmcMMO(mcMMO plugin) {
+		if (mcMMO == null) {
+			mcMMO = plugin;
+			parties=new TreeMap<String, VirtualChest>();
+		} else {
+			return false;
+		}
+		return true;
+	}
+	/**
+	 * Return all the parties (mcMMO) that have a virtual chest.
+	 * @return
+	 */
+	public static TreeMap<String, VirtualChest> getParties()
+	{
+		return parties;
 	}
 }

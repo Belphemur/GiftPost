@@ -18,6 +18,8 @@ package com.Balor.utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import com.Balor.bukkit.GiftPost.GiftPostWorker;
+
 /**
  * 
  * @author Balor
@@ -38,6 +40,15 @@ public class Display {
 				+ ": set the ChestName as your default chest (open when using a chest, used for send and receve gift)");
 		sender.sendMessage(ChatColor.GOLD + "/gp (list OR l) " + ChatColor.WHITE
 				+ ": list all your chests");
+		if(GiftPostWorker.getmcMMO()!=null)
+		{
+			sender.sendMessage(ChatColor.AQUA + "mcMMO commands ! ");
+			sender.sendMessage(ChatColor.GOLD + "/pchest" + ChatColor.WHITE
+					+ ": to open your party chest if you are in a party");
+			sender.sendMessage(ChatColor.GOLD + "/gp party (large OR normal)" + ChatColor.WHITE
+					+ ": to buy a party chest for your party");
+		}
+			
 	}
 
 }
