@@ -20,6 +20,7 @@ import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
 import com.Balor.utils.AutoSaveThread;
+import com.Balor.utils.PartiesGarbageCollector;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -48,6 +49,7 @@ public class GiftPost extends JavaPlugin {
 	private GiftPostWorker gpw;
 	private GPPlayerListener pListener;
 	private AutoSaveThread autoSave;
+	private PartiesGarbageCollector partiesGC;
 	private static Server server = null;
 	private static PluginListener pluginListener = null;
 
@@ -144,17 +146,18 @@ public class GiftPost extends JavaPlugin {
 				+ this.getDescription().getVersion() + ")");
 		gpw = new GiftPostWorker(getConfiguration(), getDataFolder().toString());
 		setupListener();
-		if(new File(getDataFolder()+File.separator+"chest.dat").exists())
-		{
+		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
 			gpw.transfer();
-			new File(getDataFolder()+File.separator+"chest.dat").delete();
-		}
-		else
+			new File(getDataFolder() + File.separator + "chest.dat").delete();
+		} else
 			gpw.load();
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
 		autoSave = new AutoSaveThread(gpw);
 		autoSave.start();
-
+		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
+			partiesGC = new PartiesGarbageCollector();
+			partiesGC.start();
+		}
 	}
 
 	@Override
@@ -162,6 +165,9 @@ public class GiftPost extends JavaPlugin {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		autoSave.stopIt();
 		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version" + pdfFile.getVersion() + ")");
+		if (getServer().getPluginManager().getPlugin("mcMMO") != null)
+			partiesGC.stopIt();
+
 	}
 
 	@Override
@@ -170,10 +176,17 @@ public class GiftPost extends JavaPlugin {
 			sender.sendMessage(ChatColor.RED + "You have to be a player!");
 			return true;
 		} else {
+			String commandName = command.getName().toLowerCase();
+			if (commandName.equals("partychest")) {
+				gpw.getCommand(OpenPartyChest.class).execute(gpw, sender, null);
+				return true;
+			}
+			
 			if (args.length == 0) {
 				sendHelp(sender);
 				return true;
 			}
+
 			int i = gpw.getCommands().size();
 			for (GPCommand cmd : gpw.getCommands()) {
 				if (!cmd.validate(gpw, sender, args)) {
@@ -186,8 +199,6 @@ public class GiftPost extends JavaPlugin {
 					log.info("A GiftPost command threw an exception!");
 					e.printStackTrace();
 				}
-
-				return true;
 			}
 			if (i == 0)
 				sendHelp(sender);
