@@ -12,7 +12,7 @@
 
     You should have received a copy of the GNU General Public License
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
-package com.Balor.utils;
+package com.Balor.utils.threads;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 

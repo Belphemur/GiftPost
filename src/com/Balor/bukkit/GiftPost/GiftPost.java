@@ -19,8 +19,8 @@ import com.Balor.Listeners.PluginListener;
 import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
-import com.Balor.utils.AutoSaveThread;
-import com.Balor.utils.PartiesGarbageCollector;
+import com.Balor.utils.threads.AutoSaveThread;
+import com.Balor.utils.threads.PartiesGarbageCollector;
 
 import java.io.BufferedWriter;
 import java.io.File;
