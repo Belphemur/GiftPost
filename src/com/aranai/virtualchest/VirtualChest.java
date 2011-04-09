@@ -33,7 +33,7 @@ public class VirtualChest {
 	/**
 	 * Constructor
 	 * 
-	 * @param player
+	 * @param chestName
 	 */
 	public VirtualChest(String chestName) {
 		chest = new TileEntityVirtualChest();

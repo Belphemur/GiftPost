@@ -389,7 +389,7 @@ public class FilesManager {
 					for (String chestName : hMap.keySet()) {
 						ArrayList<SerializedItemStack> al = hMap.get(chestName);
 						VirtualChest v;
-						if (chestsTypes.get(chestName) == null
+						if (!chestsTypes.containsKey(chestName)
 								|| chestsTypes.get(chestName).matches("normal"))
 							v = new VirtualChest(chestName);
 						else
