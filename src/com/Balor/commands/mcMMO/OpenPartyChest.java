@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.commands.GPCommand;
-import com.gmail.nossr50.mcUsers;
+import com.gmail.nossr50.mcMMO;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -41,9 +41,9 @@ public class OpenPartyChest implements GPCommand {
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		if (GiftPostWorker.getmcMMO() != null) {
-			if (mcUsers.getProfile(player).inParty()) {
-				if (gpw.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
-					gpw.getParties().get(mcUsers.getProfile(player).getParty()).openChest(player);
+			if (mcMMO.inParty(player)) {
+				if (gpw.getParties().containsKey(mcMMO.getPartyName(player))) {
+					gpw.getParties().get(mcMMO.getPartyName(player)).openChest(player);
 				} else
 					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
 							+ ChatColor.RED + "Your party don't have a chest.");

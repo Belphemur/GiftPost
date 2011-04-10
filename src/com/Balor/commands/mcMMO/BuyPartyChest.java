@@ -24,7 +24,7 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.commands.GPCommand;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
-import com.gmail.nossr50.mcUsers;
+import com.gmail.nossr50.mcMMO;
 import com.nijiko.coelho.iConomy.iConomy;
 
 /**
@@ -45,16 +45,16 @@ public class BuyPartyChest implements GPCommand {
 		Player player = (Player) sender;
 		String type = args[1].toLowerCase();
 		if (GiftPostWorker.getmcMMO() != null) {
-			if (mcUsers.getProfile(player).inParty()) {
-				if (!gpw.getParties().containsKey(mcUsers.getProfile(player).getParty())) {
+			if (mcMMO.inParty(player)) {
+				if (!gpw.getParties().containsKey(mcMMO.getPartyName(player))) {
 					if (type.matches("normal") || type.matches("large")) {
 						if (iConomyCheck(gpw, player, type)) {
 							if (type.matches("normal"))
-								gpw.getParties().put(mcUsers.getProfile(player).getParty(),
-										new VirtualChest(mcUsers.getProfile(player).getParty()));
+								gpw.getParties().put(mcMMO.getPartyName(player),
+										new VirtualChest(mcMMO.getPartyName(player)));
 							if (type.matches("large"))
-								gpw.getParties().put(mcUsers.getProfile(player).getParty(),
-										new VirtualLargeChest(mcUsers.getProfile(player).getParty()));
+								gpw.getParties().put(mcMMO.getPartyName(player),
+										new VirtualLargeChest(mcMMO.getPartyName(player)));
 							McParty.getInstance().sendMessage(
 									player,
 									"[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
