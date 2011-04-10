@@ -16,10 +16,13 @@
  ************************************************************************/
 package com.Balor.utils.threads;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.aranai.virtualchest.VirtualChest;
+import com.aranai.virtualchest.VirtualLargeChest;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -27,22 +30,32 @@ import com.aranai.virtualchest.VirtualChest;
  */
 public class PartiesGarbageCollector extends Thread {
 	private boolean stop = false;
-	private int wait = 5 * 1000 * 60;
+	private int wait;
 	private GiftPostWorker gpw;
 
 	public PartiesGarbageCollector(GiftPostWorker worker) {
 		gpw = worker;
+		this.wait = gpw.getConfig().getInt("auto-save-time", 10) * 1000 * 60;
 	}
 
 	private void garbageCollector() {
 		if (!gpw.getParties().isEmpty()) {
 			TreeMap<String, VirtualChest> tmp = new TreeMap<String, VirtualChest>();
+			List<String> names = new ArrayList<String>();
+			List<String> types = new ArrayList<String>();
 			for (String party : GiftPostWorker.getmcMMO().getParties()) {
-				if (!tmp.containsKey(party)) {
-					tmp.put(party, gpw.getParties().get(party));
+				if (party != null && !tmp.containsKey(party) && gpw.getParties().containsKey(party)) {
+					VirtualChest v = gpw.getParties().get(party);
+					names.add(party);
+					tmp.put(party, v);
+					if (v instanceof VirtualLargeChest)
+						types.add("large");
+					else
+						types.add("normal");
 				}
 			}
 			gpw.getParties().clear();
+			gpw.getFileMan().createPartyFile(names, types);
 			if (!tmp.isEmpty())
 				gpw.getParties().putAll(tmp);
 		}
@@ -50,9 +63,11 @@ public class PartiesGarbageCollector extends Thread {
 
 	public void run() {
 		boolean fin = false;
+		gpw.loadParties();
 		while (!fin) {
 			try {
 				garbageCollector();
+				gpw.saveParties();
 				synchronized (this) {
 					Thread.yield();
 					fin = this.stop;
@@ -65,6 +80,8 @@ public class PartiesGarbageCollector extends Thread {
 	}
 
 	public synchronized void stopIt() {
+		garbageCollector();
+		gpw.saveParties();
 		this.stop = true;
 	}
 }

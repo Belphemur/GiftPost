@@ -324,6 +324,40 @@ public class FilesManager {
 	}
 
 	/**
+	 * Get all the type of the parties chests.
+	 * 
+	 * @return
+	 */
+	public HashMap<String, String> openAllParties() {
+		Configuration conf = getFile("Parties", "parties.yml");
+		HashMap<String, String> result = new HashMap<String, String>();
+		List<String> names = conf.getStringList("Names", null);
+		List<String> types = conf.getStringList("ChestTypes", null);
+		if (names == null || types == null)
+			return null;
+		int i = 0;
+		for (String n : names) {
+			result.put(n, types.get(i));
+			i++;
+		}
+		return result;
+
+	}
+
+	/**
+	 * Create the file containing the type of the parties chests.
+	 * 
+	 * @param names
+	 * @param types
+	 */
+	public void createPartyFile(List<String> names, List<String> types) {
+		Configuration conf = getFile("Parties", "parties.yml");
+		conf.setProperty("Names", names);
+		conf.setProperty("ChestTypes", types);
+		conf.save();
+	}
+
+	/**
 	 * Get the list of all registered player who own a chest.
 	 * 
 	 * @return
@@ -353,6 +387,90 @@ public class FilesManager {
 		}
 		return null;
 
+	}
+
+	/**
+	 * Save all parties chest
+	 * 
+	 * @param chest
+	 * @param fileName
+	 */
+	public void saveParties(HashMap<String, VirtualChest> chest, String fileName) {
+		String filename = this.path + File.separator + fileName;
+		FileOutputStream fos = null;
+		ObjectOutputStream out = null;
+		ArrayList<SerializedItemStack> itemstacks = new ArrayList<SerializedItemStack>();
+		HashMap<String, ArrayList<SerializedItemStack>> saved = new HashMap<String, ArrayList<SerializedItemStack>>();
+
+		for (String partyName : chest.keySet()) {
+			VirtualChest v = chest.get(partyName);
+			for (ItemStack is : v.getContents()) {
+				if (is != null)
+					itemstacks.add(new SerializedItemStack(is.id, is.count, is.damage));
+			}
+			saved.put(partyName, new ArrayList<SerializedItemStack>(itemstacks));
+			itemstacks = new ArrayList<SerializedItemStack>();
+		}
+		try {
+			fos = new FileOutputStream(filename);
+			out = new ObjectOutputStream(fos);
+			out.writeObject(saved);
+			out.close();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	/**
+	 * Load all parties
+	 * @param fileName
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public HashMap<String, VirtualChest> loadParties(String fileName) {
+		String filename = this.path + File.separator + fileName;
+		HashMap<String, VirtualChest> partiesAndChests = new HashMap<String, VirtualChest>();
+		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
+		HashMap<String, String> partiesChestType = openAllParties();
+
+		if (new File(filename).exists()) {
+			FileInputStream fis = null;
+			ObjectInputStream in = null;
+
+			try {
+				fis = new FileInputStream(filename);
+				in = new ObjectInputStream(fis);
+				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in.readObject();
+				in.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} catch (ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+			if (saved != null) {
+					// Chest
+					for (String partyName : saved.keySet()) {
+						ArrayList<SerializedItemStack> al = saved.get(partyName);
+						VirtualChest v;
+						if (!partiesChestType.containsKey(partyName)
+								|| partiesChestType.get(partyName).matches("normal"))
+							v = new VirtualChest(partyName);
+						else
+							v = new VirtualLargeChest(partyName);
+						// ItemStack
+						for (SerializedItemStack sis : al) {
+							v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
+						}
+						if (v instanceof VirtualLargeChest)
+							partiesAndChests.put(partyName, new VirtualLargeChest(v));
+						else
+							partiesAndChests.put(partyName, new VirtualChest(v));
+					}
+				return partiesAndChests;
+			}
+			return null;
+		} else
+			return null;
 	}
 
 	/**

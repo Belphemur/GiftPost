@@ -48,7 +48,7 @@ public class GiftPostWorker {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private static iConomy iConomy = null;
 	private static mcMMO mcMMO = null;
-	private TreeMap<String, VirtualChest> parties = new TreeMap<String, VirtualChest>();
+	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
 
 	public GiftPostWorker(Configuration config, String dataFolder) {
 		chests = new HashMap<String, HashMap<String, VirtualChest>>();
@@ -184,6 +184,13 @@ public class GiftPostWorker {
 		this.fMan.saveChests(chests, "chests.dat");
 		log.info("[VirtualChest] Chests Saved !");
 	}
+	/**
+	 * Save the parties
+	 */
+	public synchronized void saveParties() {
+		this.fMan.saveParties(parties, "parties.dat");
+		log.info("[VirtualChest] Parties Saved !");
+	}
 
 	/**
 	 * load all the chest
@@ -199,7 +206,16 @@ public class GiftPostWorker {
 					defaultChests.put(player, getChest(player, tmp.get(player)));
 		}
 	}
-
+	/**
+	 * load parties.
+	 */
+	public synchronized void loadParties() {
+		this.config.load();
+		HashMap<String, VirtualChest> loaded = this.fMan.loadParties("parties.dat");
+		if (loaded != null) {
+			parties = loaded;
+		}
+	}
 	/**
 	 * Transfer from an old save
 	 * 
@@ -322,7 +338,7 @@ public class GiftPostWorker {
 	 * Return all the parties (mcMMO) that have a virtual chest.
 	 * @return
 	 */
-	public TreeMap<String, VirtualChest> getParties()
+	public HashMap<String, VirtualChest> getParties()
 	{
 		return parties;
 	}
