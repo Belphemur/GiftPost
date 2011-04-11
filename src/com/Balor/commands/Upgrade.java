@@ -52,7 +52,7 @@ public class Upgrade implements GPCommand {
 					gpw.addChest(player, new VirtualLargeChest(v));
 					gpw.getFileMan().upgradeChest(player, v.getName());
 					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ "You have now a Large Chest.");
+							+ v.getName()+" is now a Large Chest.");
 				}
 			} else
 				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
