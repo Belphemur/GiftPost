@@ -214,6 +214,24 @@ public class FilesManager {
 		conf.setProperty("ChestsTypes", chestsTypes);
 		conf.save();
 	}
+	/**
+	 * Upgrade the selected chest.
+	 * @param p
+	 * @param chestName
+	 * @return
+	 */
+	public boolean upgradeChest(Player p, String chestName) {
+		Configuration conf = this.getFile("Players", p.getName() + ".yml");
+		List<String> chests = conf.getStringList("ChestsNames", null);
+		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
+		if (chests.contains(chestName)) {			
+			chestsTypes.set(chests.indexOf(chestName), "large");
+			conf.setProperty("ChestsTypes", chestsTypes);
+			conf.save();
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Check if the player have the chest and then set it as default.
@@ -423,6 +441,7 @@ public class FilesManager {
 
 	/**
 	 * Load all parties
+	 * 
 	 * @param fileName
 	 * @return
 	 */
@@ -448,24 +467,24 @@ public class FilesManager {
 				ex.printStackTrace();
 			}
 			if (saved != null) {
-					// Chest
-					for (String partyName : saved.keySet()) {
-						ArrayList<SerializedItemStack> al = saved.get(partyName);
-						VirtualChest v;
-						if (!partiesChestType.containsKey(partyName)
-								|| partiesChestType.get(partyName).matches("normal"))
-							v = new VirtualChest(partyName);
-						else
-							v = new VirtualLargeChest(partyName);
-						// ItemStack
-						for (SerializedItemStack sis : al) {
-							v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
-						}
-						if (v instanceof VirtualLargeChest)
-							partiesAndChests.put(partyName, new VirtualLargeChest(v));
-						else
-							partiesAndChests.put(partyName, new VirtualChest(v));
+				// Chest
+				for (String partyName : saved.keySet()) {
+					ArrayList<SerializedItemStack> al = saved.get(partyName);
+					VirtualChest v;
+					if (!partiesChestType.containsKey(partyName)
+							|| partiesChestType.get(partyName).matches("normal"))
+						v = new VirtualChest(partyName);
+					else
+						v = new VirtualLargeChest(partyName);
+					// ItemStack
+					for (SerializedItemStack sis : al) {
+						v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
 					}
+					if (v instanceof VirtualLargeChest)
+						partiesAndChests.put(partyName, new VirtualLargeChest(v));
+					else
+						partiesAndChests.put(partyName, new VirtualChest(v));
+				}
 				return partiesAndChests;
 			}
 			return null;
