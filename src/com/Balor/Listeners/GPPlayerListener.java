@@ -18,6 +18,8 @@ package com.Balor.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -40,9 +42,10 @@ public class GPPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		event.getPlayer().sendMessage("Virtual Chest is installed : /gp help to see all commands");
 		if (worker.getDefaultChest(event.getPlayer().getName()) != null
 				&& !worker.getDefaultChest(event.getPlayer().getName()).isEmpty()) {
-			worker.getFileMan().openOfflineFile(event.getPlayer());
+			worker.getFileMan().openOfflineFile(event.getPlayer());			
 			event.getPlayer().sendMessage(
 					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c" + ChatColor.GOLD
 							+ " to see your chest.)");
@@ -55,11 +58,26 @@ public class GPPlayerListener extends PlayerListener {
 			worker.getFileMan().createWorldFile(event.getPlayer());
 	}
 
+	public void onSign(PlayerInteractEvent event) {
+		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+			Block block = event.getClickedBlock();
+			if (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN_POST)) {
+				Sign sign = (Sign) block.getState();
+				if (sign.getLine(0).indexOf("[Chest Keeper]") == 0 && sign.getLine(0).indexOf("]") != -1
+						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
+					new Chest().execute(worker, event.getPlayer(), null);
+				}
+			}
+		}
+	}
+
 	@Override
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		onSign(event);
 		if (event.getPlayer().getItemInHand().getType().equals(Material.CHEST)
 				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(
-						Action.LEFT_CLICK_BLOCK))) {
+						Action.LEFT_CLICK_BLOCK))
+				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere")) {
 			new Chest().execute(worker, event.getPlayer(), null);
 		}
 	}

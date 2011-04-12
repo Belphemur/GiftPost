@@ -47,7 +47,7 @@ public class ChestList implements GPCommand {
 					+ "You don't have any chest.");
 		else {
 			String msg = "[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.GREEN
-					+ "List of all your chest : "+ChatColor.DARK_RED;
+					+ "List of all your chest ("+chestList.size()+"): "+ChatColor.DARK_RED;
 			for (String chestName : chestList.keySet())
 				msg += chestName + ", ";
 			msg = msg.substring(0, msg.length() - 2);

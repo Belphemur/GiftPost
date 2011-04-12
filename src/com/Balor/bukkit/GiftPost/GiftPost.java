@@ -16,6 +16,7 @@ package com.Balor.bukkit.GiftPost;
 
 import com.Balor.Listeners.GPPlayerListener;
 import com.Balor.Listeners.PluginListener;
+import com.Balor.Listeners.SignListener;
 import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
@@ -48,6 +49,7 @@ public class GiftPost extends JavaPlugin {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private GiftPostWorker gpw;
 	private GPPlayerListener pListener;
+	private SignListener sListener;
 	private AutoSaveThread autoSave;
 	private PartiesGarbageCollector partiesGC;
 	private static Server server = null;
@@ -74,6 +76,7 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(ChestList.class);
 		registerCommand(BuyPartyChest.class);
 		registerCommand(OpenPartyChest.class);
+		registerCommand(SetChestLimit.class);
 	}
 
 	private void setupConfigFiles() {
@@ -123,15 +126,18 @@ public class GiftPost extends JavaPlugin {
 
 	}
 
-	private void setupListener() {
+	private void setupListeners() {
 		pListener = new GPPlayerListener(gpw);
 		pluginListener = new PluginListener();
+		sListener = new SignListener(gpw);
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
+		pm.registerEvent(Event.Type.SIGN_CHANGE,sListener,Event.Priority.Highest,this);
+		pm.registerEvent(Event.Type.BLOCK_BREAK,sListener,Event.Priority.Highest,this);
 	}
 
 	public static Server getBukkitServer() {
@@ -145,7 +151,7 @@ public class GiftPost extends JavaPlugin {
 		log.info("[" + this.getDescription().getName() + "]" + " (version "
 				+ this.getDescription().getVersion() + ")");
 		gpw = new GiftPostWorker(getConfiguration(), getDataFolder().toString());
-		setupListener();
+		setupListeners();
 		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
 			gpw.transfer();
 			new File(getDataFolder() + File.separator + "chest.dat").delete();
@@ -183,7 +189,7 @@ public class GiftPost extends JavaPlugin {
 			}
 			
 			if (args.length == 0) {
-				sendHelp(sender);
+				sendHelp(gpw,sender);
 				return true;
 			}
 
@@ -201,7 +207,7 @@ public class GiftPost extends JavaPlugin {
 				}
 			}
 			if (i == 0)
-				sendHelp(sender);
+				sendHelp(gpw,sender);
 		}
 		return true;
 	}

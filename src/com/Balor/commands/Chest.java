@@ -108,6 +108,6 @@ public class Chest implements GPCommand {
 	 */
 	@Override
 	public String getPermName() {
-		return "giftpost.chest.open";
+		return "giftpost.chest.everywhere";
 	}
 }
