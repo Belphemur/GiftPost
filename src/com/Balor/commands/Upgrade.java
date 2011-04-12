@@ -49,10 +49,14 @@ public class Upgrade implements GPCommand {
 		if (v != null) {
 			if ((v instanceof VirtualChest) && !(v instanceof VirtualLargeChest)) {
 				if (iConomyCheck(gpw, player, "large")) {
-					gpw.addChest(player, new VirtualLargeChest(v));
-					gpw.getFileMan().upgradeChest(player, v.getName());
-					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ v.getName()+" is now a Large Chest.");
+					if (gpw.getFileMan().upgradeChest(player, v.getName())) {
+						gpw.addChest(player, new VirtualLargeChest(v));
+
+						sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+								+ v.getName() + " is now a Large Chest.");
+					} else
+						sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+								+ "A problem happend when you tried to upgrade your chest .");
 				}
 			} else
 				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "

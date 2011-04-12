@@ -18,6 +18,7 @@ package com.Balor.commands.mcMMO;
 
 import org.bukkit.entity.Player;
 
+import com.Balor.bukkit.GiftPost.GiftPost;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.gmail.nossr50.mcMMO;
 import com.gmail.nossr50.mcParty;
@@ -45,7 +46,7 @@ public class McParty extends mcParty {
 	}
 
 	public void sendMessage(Player player, String message) {
-		Player[] players = GiftPostWorker.getmcMMO().getServer().getOnlinePlayers();
+		Player[] players = GiftPost.getBukkitServer().getOnlinePlayers();
 		int x = 0;
 		for (Player p : players) {
 			if (player != null && p != null) {

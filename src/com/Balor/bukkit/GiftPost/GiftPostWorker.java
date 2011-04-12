@@ -78,6 +78,16 @@ public class GiftPostWorker {
 		else
 			return null;
 	}
+	/**
+	 * check if the given chest already exists.
+	 * @param playerName
+	 * @param chestName
+	 * @return
+	 */
+	public boolean chestExists(Player player, String chestName)
+	{
+		return chests.containsKey(player.getName()) && chests.get(player.getName()).containsKey(chestName);
+	}
 
 	/**
 	 * Return the number of owned chest

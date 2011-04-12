@@ -214,8 +214,10 @@ public class FilesManager {
 		conf.setProperty("ChestsTypes", chestsTypes);
 		conf.save();
 	}
+
 	/**
 	 * Upgrade the selected chest.
+	 * 
 	 * @param p
 	 * @param chestName
 	 * @return
@@ -224,13 +226,25 @@ public class FilesManager {
 		Configuration conf = this.getFile("Players", p.getName() + ".yml");
 		List<String> chests = conf.getStringList("ChestsNames", null);
 		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
-		if (chests.contains(chestName)) {			
+		if (chests.contains(chestName)) {
 			chestsTypes.set(chests.indexOf(chestName), "large");
 			conf.setProperty("ChestsTypes", chestsTypes);
 			conf.save();
 			return true;
 		}
 		return false;
+	}
+
+	public void createChestLimitFile(String player, int limit) {
+		Configuration conf = this.getFile("Players", player + ".yml");
+		conf.setProperty("ChestLimit", limit);
+		conf.save();
+	}
+
+	public int openChestLimitFile(Player p) {
+		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
+		config.load();
+		return this.getFile("Players", p.getName() + ".yml").getInt("ChestLimit",  config.getInt("max-number-chest",10));
 	}
 
 	/**
