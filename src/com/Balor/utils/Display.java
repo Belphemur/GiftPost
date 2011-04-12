@@ -30,9 +30,10 @@ public class Display {
 		Player player = (Player) sender;
 		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
 		sender.sendMessage("--------------------\n");
-		if (gpw.hasPerm(player, "giftpost.chest.open")) {
+		if (gpw.hasPerm(player, "giftpost.chest.everywhere"))
 			sender.sendMessage(ChatColor.GOLD + "/gp (chest OR c) (ChestName OR nothing)" + ChatColor.WHITE
 					+ ": to open your chest if you don't set a ChestName, open your default chest.\n");
+		if (gpw.hasPerm(player, "giftpost.chest.open")) {
 			sender.sendMessage(ChatColor.GOLD + "/gp (buy OR b) (large OR normal) ChestName"
 					+ ChatColor.WHITE + ": to buy a large or normal chest \n");
 			sender.sendMessage(ChatColor.GOLD + "/gp (upgrade OR u) (ChestName OR nothing)" + ChatColor.WHITE
