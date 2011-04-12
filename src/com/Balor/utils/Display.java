@@ -48,11 +48,11 @@ public class Display {
 		if (gpw.hasPerm(player, "giftpost.chest.send",false))
 			sender.sendMessage(ChatColor.GOLD + "/gp (send OR s) player " + ChatColor.WHITE
 					+ ": send the content of your chest to the player's chest. case sensitive)");
-		if (gpw.hasPerm(player, "giftpost.admin.limit"))
+		if (gpw.hasPerm(player, "giftpost.admin.limit",false))
 			sender.sendMessage(ChatColor.GOLD + "/gp (limit OR lim) PlayerName limit" + ChatColor.WHITE
 					+ ": set the chest's limit for the PlayerName(case sensitive)");
 
-		if (GiftPostWorker.getmcMMO() != null || gpw.hasPerm(player, "mcmmo.commands.party",false)) {
+		if (GiftPostWorker.getmcMMO() != null && gpw.hasPerm(player, "mcmmo.commands.party",false)) {
 			sender.sendMessage(ChatColor.AQUA + "mcMMO commands ! ");
 			sender.sendMessage(ChatColor.GOLD + "/pchest" + ChatColor.WHITE
 					+ ": to open your party chest if you are in a party");
