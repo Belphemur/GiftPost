@@ -30,10 +30,10 @@ public class Display {
 		Player player = (Player) sender;
 		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
 		sender.sendMessage("--------------------\n");
-		if (gpw.hasPerm(player, "giftpost.chest.everywhere"))
+		if (gpw.hasPerm(player, "giftpost.chest.everywhere",false))
 			sender.sendMessage(ChatColor.GOLD + "/gp (chest OR c) (ChestName OR nothing)" + ChatColor.WHITE
 					+ ": to open your chest if you don't set a ChestName, open your default chest.\n");
-		if (gpw.hasPerm(player, "giftpost.chest.open")) {
+		if (gpw.hasPerm(player, "giftpost.chest.open",false)) {
 			sender.sendMessage(ChatColor.GOLD + "/gp (buy OR b) (large OR normal) ChestName"
 					+ ChatColor.WHITE + ": to buy a large or normal chest \n");
 			sender.sendMessage(ChatColor.GOLD + "/gp (upgrade OR u) (ChestName OR nothing)" + ChatColor.WHITE
@@ -45,14 +45,14 @@ public class Display {
 			sender.sendMessage(ChatColor.GOLD + "/gp (list OR l) " + ChatColor.WHITE
 					+ ": list all your chests");
 		}
-		if (gpw.hasPerm(player, "giftpost.chest.send"))
+		if (gpw.hasPerm(player, "giftpost.chest.send",false))
 			sender.sendMessage(ChatColor.GOLD + "/gp (send OR s) player " + ChatColor.WHITE
 					+ ": send the content of your chest to the player's chest. case sensitive)");
 		if (gpw.hasPerm(player, "giftpost.admin.limit"))
 			sender.sendMessage(ChatColor.GOLD + "/gp (limit OR lim) PlayerName limit" + ChatColor.WHITE
 					+ ": set the chest's limit for the PlayerName(case sensitive)");
 
-		if (GiftPostWorker.getmcMMO() != null) {
+		if (GiftPostWorker.getmcMMO() != null || gpw.hasPerm(player, "mcmmo.commands.party",false)) {
 			sender.sendMessage(ChatColor.AQUA + "mcMMO commands ! ");
 			sender.sendMessage(ChatColor.GOLD + "/pchest" + ChatColor.WHITE
 					+ ": to open your party chest if you are in a party");

@@ -13,6 +13,7 @@
     You should have received a copy of the GNU General Public License
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.Balor.bukkit.GiftPost;
+
 //GiftPost
 import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
@@ -54,7 +55,7 @@ public class GiftPostWorker {
 		chests = new HashMap<String, HashMap<String, VirtualChest>>();
 		defaultChests = new HashMap<String, VirtualChest>();
 		commands = new ArrayList<GPCommand>();
-		this.config = config;		
+		this.config = config;
 		fMan = new FilesManager(dataFolder);
 	}
 
@@ -78,14 +79,15 @@ public class GiftPostWorker {
 		else
 			return null;
 	}
+
 	/**
 	 * check if the given chest already exists.
+	 * 
 	 * @param playerName
 	 * @param chestName
 	 * @return
 	 */
-	public boolean chestExists(Player player, String chestName)
-	{
+	public boolean chestExists(Player player, String chestName) {
 		return chests.containsKey(player.getName()) && chests.get(player.getName()).containsKey(chestName);
 	}
 
@@ -101,13 +103,14 @@ public class GiftPostWorker {
 		else
 			return 0;
 	}
+
 	/**
 	 * Return all the chest of the selected player
+	 * 
 	 * @param p
 	 * @return
 	 */
-	public HashMap<String, VirtualChest> listOfChest(Player p)
-	{
+	public HashMap<String, VirtualChest> listOfChest(Player p) {
 		return chests.get(p.getName());
 	}
 
@@ -120,20 +123,21 @@ public class GiftPostWorker {
 	public VirtualChest getDefaultChest(String playerName) {
 		return defaultChests.get(playerName);
 	}
+
 	/**
 	 * Set default chest for the player.
+	 * 
 	 * @param playerName
 	 * @param v
 	 * @return
 	 */
-	public boolean setDefaultChest(String playerName, String vChest)
-	{
+	public boolean setDefaultChest(String playerName, String vChest) {
 		VirtualChest v = getChest(playerName, vChest);
 		return setDefaultChest(playerName, v);
 	}
+
 	public boolean setDefaultChest(String playerName, VirtualChest v) {
-		if (chests.get(playerName).containsValue(v))
-		{
+		if (chests.get(playerName).containsValue(v)) {
 			defaultChests.put(playerName, v);
 			fMan.createDefaultChest(playerName, v.getName());
 			return true;
@@ -161,9 +165,9 @@ public class GiftPostWorker {
 			fMan.createChestFile(player, vChest.getName(), "large");
 		else
 			fMan.createChestFile(player, vChest.getName(), "normal");
-		if(numberOfChest(player)==1)
+		if (numberOfChest(player) == 1)
 			setDefaultChest(player.getName(), vChest);
-			
+
 	}
 
 	/**
@@ -194,6 +198,7 @@ public class GiftPostWorker {
 		this.fMan.saveChests(chests, "chests.dat");
 		log.info("[VirtualChest] Chests Saved !");
 	}
+
 	/**
 	 * Save the parties
 	 */
@@ -216,6 +221,7 @@ public class GiftPostWorker {
 					defaultChests.put(player, getChest(player, tmp.get(player)));
 		}
 	}
+
 	/**
 	 * load parties.
 	 */
@@ -226,6 +232,7 @@ public class GiftPostWorker {
 			parties = loaded;
 		}
 	}
+
 	/**
 	 * Transfer from an old save
 	 * 
@@ -250,15 +257,25 @@ public class GiftPostWorker {
 	 * @return boolean
 	 */
 	public boolean hasPerm(Player player, String perm) {
+		return hasPerm(player, perm, true);
+	}
+	/**
+	 * Check the permission with the possibility to disable the error msg
+	 * @param player
+	 * @param perm
+	 * @param errorMsg
+	 * @return
+	 */
+	public boolean hasPerm(Player player, String perm, boolean errorMsg) {
 		if (permission == null)
 			return true;
 		else if (permission.has(player, perm))
 			return true;
-		else {
+		else if (errorMsg) {
 			player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that " + ChatColor.BLUE
 					+ "(" + perm + ")");
-			return false;
 		}
+		return false;
 
 	}
 
@@ -321,6 +338,7 @@ public class GiftPostWorker {
 		}
 		return true;
 	}
+
 	/**
 	 * mcMMO plugin
 	 * 
@@ -344,12 +362,13 @@ public class GiftPostWorker {
 		}
 		return true;
 	}
+
 	/**
 	 * Return all the parties (mcMMO) that have a virtual chest.
+	 * 
 	 * @return
 	 */
-	public HashMap<String, VirtualChest> getParties()
-	{
+	public HashMap<String, VirtualChest> getParties() {
 		return parties;
 	}
 }
