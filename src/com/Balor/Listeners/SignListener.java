@@ -16,6 +16,7 @@
  ************************************************************************/
 package com.Balor.Listeners;
 
+import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockListener;
@@ -40,6 +41,11 @@ public class SignListener extends BlockListener {
 		if (line0.indexOf("[Chest Keeper]") == 0 && line0.indexOf("]") != -1) {
 			if (!worker.hasPerm(e.getPlayer(), "giftpost.admin.sign"))
 				e.setLine(0, "\u00A74[No Perm]");
+			else {
+				e.setLine(0, ChatColor.DARK_PURPLE + "[Chest Keeper]");
+				e.setLine(1, ChatColor.DARK_AQUA + "Click me to");
+				e.setLine(2, ChatColor.DARK_AQUA + "open your chest !");
+			}
 
 		}
 	}
@@ -48,7 +54,9 @@ public class SignListener extends BlockListener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.getBlock().getState() instanceof Sign) {
 			Sign sign = (Sign) event.getBlock().getState();
-			if (sign.getLine(0).indexOf("[Chest Keeper]") == 0 && sign.getLine(0).indexOf("]") != -1
+			if ((sign.getLine(0).indexOf("[Chest Keeper]") == 0 || sign.getLine(0).indexOf(
+					ChatColor.DARK_PURPLE + "[Chest Keeper]") == 0)
+					&& sign.getLine(0).indexOf("]") != -1
 					&& !worker.hasPerm(event.getPlayer(), "giftpost.admin.sign"))
 				event.setCancelled(true);
 

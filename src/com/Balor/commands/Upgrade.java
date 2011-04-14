@@ -16,6 +16,8 @@
  ************************************************************************/
 package com.Balor.commands;
 
+import static com.Balor.utils.Display.chestKeeper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -52,18 +54,15 @@ public class Upgrade implements GPCommand {
 					if (gpw.getFileMan().upgradeChest(player, v.getName())) {
 						gpw.addChest(player, new VirtualLargeChest(v));
 
-						sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-								+ v.getName() + " is now a Large Chest.");
+						sender.sendMessage(chestKeeper() + v.getName() + " is now a Large Chest.");
 					} else
-						sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+						sender.sendMessage(chestKeeper()
 								+ "A problem happend when you tried to upgrade your chest .");
 				}
 			} else
-				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "You can't upgrade a Large chest !");
+				sender.sendMessage(chestKeeper() + ChatColor.RED + "You can't upgrade a Large chest !");
 		} else
-			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.RED
-					+ "You don't have a chest to upgrade.");
+			sender.sendMessage(chestKeeper() + ChatColor.RED + "You don't have a chest to upgrade.");
 
 	}
 
@@ -81,23 +80,24 @@ public class Upgrade implements GPCommand {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
 						"iConomy-" + type + "Chest-price", 10.0)) {
-					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ ChatColor.RED + "You don't have enough " + iConomy.getBank().getCurrency()
-							+ " to pay the Chests Keeper !");
+					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have enough "
+							+ iConomy.getBank().getCurrency() + " to pay the Chests Keeper !");
 					return false;
 				} else {
-					iConomy.getBank().getAccount(player.getName())
-							.subtract(gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0));
-					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
-							+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
-							+ " used to pay the Chests Keeper.");
+					if (gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) != 0) {
+						iConomy.getBank().getAccount(player.getName())
+								.subtract(gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0));
+						player.sendMessage(chestKeeper()
+								+ gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
+								+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
+								+ " used to pay the Chests Keeper.");
+					}
 					return true;
 				}
 
 			} else {
-				player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "You must have an account to pay the Chests Keeper !");
+				player.sendMessage(chestKeeper() + ChatColor.RED
+						+ "You must have an account to pay the Chests Keeper !");
 				return false;
 			}
 		}

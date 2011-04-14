@@ -38,7 +38,7 @@ public class PartiesGarbageCollector extends Thread {
 		this.wait = gpw.getConfig().getInt("auto-save-time", 10) * 1000 * 60;
 	}
 
-	private void garbageCollector() {
+	private void garbageCollectorAndSave() {
 		if (!gpw.getParties().isEmpty()) {
 			TreeMap<String, VirtualChest> tmp = new TreeMap<String, VirtualChest>();
 			List<String> names = new ArrayList<String>();
@@ -58,6 +58,7 @@ public class PartiesGarbageCollector extends Thread {
 			gpw.getFileMan().createPartyFile(names, types);
 			if (!tmp.isEmpty())
 				gpw.getParties().putAll(tmp);
+			gpw.saveParties();
 		}
 	}
 
@@ -66,8 +67,7 @@ public class PartiesGarbageCollector extends Thread {
 		gpw.loadParties();
 		while (!fin) {
 			try {
-				garbageCollector();
-				gpw.saveParties();
+				garbageCollectorAndSave();
 				synchronized (this) {
 					Thread.yield();
 					fin = this.stop;
@@ -80,8 +80,7 @@ public class PartiesGarbageCollector extends Thread {
 	}
 
 	public synchronized void stopIt() {
-		garbageCollector();
-		gpw.saveParties();
+		garbageCollectorAndSave();
 		this.stop = true;
 	}
 }

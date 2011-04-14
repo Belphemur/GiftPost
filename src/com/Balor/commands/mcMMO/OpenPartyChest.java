@@ -16,6 +16,8 @@
  ************************************************************************/
 package com.Balor.commands.mcMMO;
 
+import static com.Balor.utils.Display.chestKeeper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -45,14 +47,12 @@ public class OpenPartyChest implements GPCommand {
 				if (gpw.getParties().containsKey(mcMMO.getPartyName(player))) {
 					gpw.getParties().get(mcMMO.getPartyName(player)).openChest(player);
 				} else
-					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ ChatColor.RED + "Your party don't have a chest.");
+					sender.sendMessage(chestKeeper() + ChatColor.RED + "Your party don't have a chest.");
 			} else
-				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.DARK_RED + "You must be in a party to buy a party chest");
+				sender.sendMessage(chestKeeper() + ChatColor.DARK_RED
+						+ "You must be in a party to buy a party chest");
 		} else
-			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-					+ ChatColor.DARK_RED + "You don't have mcMMO installed !");
+			sender.sendMessage(chestKeeper() + ChatColor.DARK_RED + "You don't have mcMMO installed !");
 
 	}
 

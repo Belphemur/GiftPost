@@ -16,6 +16,8 @@
  ************************************************************************/
 package com.Balor.commands;
 
+import static com.Balor.utils.Display.chestKeeper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -37,14 +39,13 @@ public class EmptyChest implements GPCommand {
 	 */
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if (args.length > 1 && gpw.hasPerm((Player)sender, "giftpost.admin.empty")) {
+		if (args.length > 1 && gpw.hasPerm((Player) sender, "giftpost.admin.empty")) {
 			gpw.getDefaultChest(args[1]).emptyChest();
-		} else
-		{
+		} else {
 			Player p = (Player) sender;
 			gpw.getDefaultChest(p.getName()).emptyChest();
 		}
-		sender.sendMessage(ChatColor.GREEN + "Chest emptied succefuly");
+		sender.sendMessage(chestKeeper() + ChatColor.GREEN + "Chest emptied succefuly");
 
 	}
 
@@ -55,10 +56,10 @@ public class EmptyChest implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	@Override
-	public boolean validate(GiftPostWorker gpw, CommandSender sender,
-			String[] args) {
+	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (gpw.hasFlag(args, "e") || gpw.hasFlag(args, "empty"))
-				&& (gpw.hasPerm((Player) sender, getPermName()) || gpw.hasPerm((Player) sender, "giftpost.admin.empty"));
+				&& (gpw.hasPerm((Player) sender, getPermName()) || gpw.hasPerm((Player) sender,
+						"giftpost.admin.empty"));
 	}
 
 	/*

@@ -16,6 +16,8 @@
  ************************************************************************/
 package com.Balor.commands.mcMMO;
 
+import static com.Balor.utils.Display.chestKeeper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -57,25 +59,22 @@ public class BuyPartyChest implements GPCommand {
 										new VirtualLargeChest(mcMMO.getPartyName(player)));
 							McParty.getInstance().sendMessage(
 									player,
-									"[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-											+ player.getName() + " bought a Virtual " + type
+									chestKeeper() + player.getName() + " bought a Virtual " + type
 											+ " Chest for the party (" + ChatColor.GOLD + "command /pchest"
 											+ ChatColor.WHITE + " to open it)");
 						}
 
 					} else
-						sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-								+ ChatColor.RED + "There is only 2 type of Chests : large and normal");
+						sender.sendMessage(chestKeeper() + ChatColor.RED
+								+ "There is only 2 type of Chests : large and normal");
 				} else
-					sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ ChatColor.RED + "Your party have already a chest : " + ChatColor.GOLD
-							+ "/pchest" + ChatColor.RED + " to see it.");
+					sender.sendMessage(chestKeeper() + ChatColor.RED + "Your party have already a chest : "
+							+ ChatColor.GOLD + "/pchest" + ChatColor.RED + " to see it.");
 			} else
-				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.DARK_RED + "You must be in a party to buy a party chest");
+				sender.sendMessage(chestKeeper() + ChatColor.DARK_RED
+						+ "You must be in a party to buy a party chest");
 		} else
-			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-					+ ChatColor.DARK_RED + "You don't have mcMMO installed !");
+			sender.sendMessage(chestKeeper() + ChatColor.DARK_RED + "You don't have mcMMO installed !");
 
 	}
 
@@ -93,23 +92,24 @@ public class BuyPartyChest implements GPCommand {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
 						"iConomy-" + type + "Chest-price", 10.0)) {
-					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ ChatColor.RED + "You don't have enough " + iConomy.getBank().getCurrency()
-							+ " to pay the Chests Keeper !");
+					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have enough "
+							+ iConomy.getBank().getCurrency() + " to pay the Chests Keeper !");
 					return false;
 				} else {
-					iConomy.getBank().getAccount(player.getName())
-							.subtract(gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0));
-					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-							+ gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
-							+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
-							+ " used to pay the Chests Keeper.");
+					if (gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) != 0) {
+						iConomy.getBank().getAccount(player.getName())
+								.subtract(gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0));
+						player.sendMessage(chestKeeper()
+								+ gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
+								+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
+								+ " used to pay the Chests Keeper.");
+					}
 					return true;
 				}
 
 			} else {
-				player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "You must have an account to pay the Chests Keeper !");
+				player.sendMessage(chestKeeper() + ChatColor.RED
+						+ "You must have an account to pay the Chests Keeper !");
 				return false;
 			}
 		}

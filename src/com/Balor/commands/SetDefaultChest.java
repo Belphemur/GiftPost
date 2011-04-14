@@ -16,6 +16,8 @@
 ************************************************************************/
 package com.Balor.commands;
 
+import static com.Balor.utils.Display.chestKeeper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,12 +35,12 @@ public class SetDefaultChest implements GPCommand {
 	 */
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		String  chestName=args[1].toLowerCase();
+		String chestName=args[1].toLowerCase();
 		if(gpw.setDefaultChest(((Player)sender).getName(), chestName))
-			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.GREEN
-					+ "New default chest set.");
+			sender.sendMessage(chestKeeper() + ChatColor.GREEN
+					+ chestName+ "is now your default chest.");
 		else
-			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.RED
+			sender.sendMessage(chestKeeper() + ChatColor.RED
 					+ "You don't have this chest.");
 		
 	}

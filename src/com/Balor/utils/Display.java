@@ -61,5 +61,9 @@ public class Display {
 		}
 
 	}
+	public static String chestKeeper()
+	{
+		return "[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] ";
+	}
 
 }

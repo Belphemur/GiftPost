@@ -16,6 +16,8 @@
  ************************************************************************/
 package com.Balor.commands;
 
+import static com.Balor.utils.Display.chestKeeper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -38,7 +40,7 @@ public class SetChestLimit implements GPCommand {
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		gpw.getFileMan().createChestLimitFile(args[1], Integer.parseInt(args[2]));
-		sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + args[1]
+		sender.sendMessage(chestKeeper() + args[1]
 				+ " chest's limit is now " + args[2]);
 
 	}
