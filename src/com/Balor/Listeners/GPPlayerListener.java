@@ -45,7 +45,7 @@ public class GPPlayerListener extends PlayerListener {
 		event.getPlayer().sendMessage("Virtual Chest is installed : /gp help to see all commands");
 		if (worker.getDefaultChest(event.getPlayer().getName()) != null
 				&& !worker.getDefaultChest(event.getPlayer().getName()).isEmpty()) {
-			worker.getFileMan().openOfflineFile(event.getPlayer());
+			worker.getFileMan().openOfflineFile(event.getPlayer());			
 			event.getPlayer().sendMessage(
 					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c" + ChatColor.GOLD
 							+ " to see your chest.)");
@@ -63,9 +63,7 @@ public class GPPlayerListener extends PlayerListener {
 			Block block = event.getClickedBlock();
 			if (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN_POST)) {
 				Sign sign = (Sign) block.getState();
-				if ((sign.getLine(0).indexOf("[Chest Keeper]") == 0 || sign.getLine(0).indexOf(
-						ChatColor.DARK_PURPLE + "[Chest Keeper]") == 0)
-						&& sign.getLine(0).indexOf("]") != -1
+				if (sign.getLine(0).indexOf("[Chest Keeper]") == 0 && sign.getLine(0).indexOf("]") != -1
 						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
 					new Chest().execute(worker, event.getPlayer(), null);
 				}
