@@ -42,7 +42,7 @@ public class SignListener extends BlockListener {
 			if (!worker.hasPerm(e.getPlayer(), "giftpost.admin.sign"))
 				e.setLine(0, "\u00A74[No Perm]");
 			else {
-				if (e.getLine(1) == null) {
+				if (e.getLine(1).isEmpty()) {
 					e.setLine(1, ChatColor.DARK_RED + "Click me to");
 					e.setLine(2, ChatColor.DARK_RED + "open your");
 					e.setLine(3, ChatColor.DARK_RED + "chest !");
