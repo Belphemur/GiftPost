@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -101,6 +102,10 @@ public class GiftPost extends JavaPlugin {
 				out.write("allow-offline: 'true'");
 				out.newLine();
 				out.write("message-of-the-day: 'true'");
+				out.newLine();
+				out.write("use-wand: 'true'");
+				out.newLine();
+				out.write("wand-item-id: "+Material.CHEST.getId());
 				out.newLine();
 				out.write("auto-save-time: 10");
 				out.newLine();
