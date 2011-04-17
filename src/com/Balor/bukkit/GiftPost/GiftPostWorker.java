@@ -51,12 +51,14 @@ public class GiftPostWorker {
 	private static iConomy iConomy = null;
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
+	private HashMap<String, HashMap<String, Boolean>> permissions;
 
 	public GiftPostWorker(Configuration config, String dataFolder) {
 		chests = new HashMap<String, HashMap<String, VirtualChest>>();
 		defaultChests = new HashMap<String, VirtualChest>();
 		sendReceiveChests = new HashMap<String, VirtualChest>();
 		commands = new ArrayList<GPCommand>();
+		permissions = new HashMap<String, HashMap<String, Boolean>>();
 		this.config = config;
 		fMan = new FilesManager(dataFolder);
 	}
@@ -257,7 +259,7 @@ public class GiftPostWorker {
 			if (tmp != null)
 				for (String player : tmp.keySet()) {
 					defaultChests.put(player, getChest(player, tmp.get(player)));
-					if ((chestName=tmp2.get(player)) == null)
+					if ((chestName = tmp2.get(player)) == null)
 						sendReceiveChests.put(player, defaultChests.get(player));
 					else
 						sendReceiveChests.put(player, getChest(player, chestName));
@@ -314,12 +316,32 @@ public class GiftPostWorker {
 	public boolean hasPerm(Player player, String perm, boolean errorMsg) {
 		if (permission == null)
 			return true;
-		else if (permission.has(player, perm))
-			return true;
-		else if (errorMsg) {
-			player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that " + ChatColor.BLUE
-					+ "(" + perm + ")");
+		String playerName = player.getName();
+		if (permissions.containsKey(playerName)) {
+			if (permissions.get(playerName).containsKey(perm))
+				permissions.get(playerName).get(perm);
+
+			if (permission.has(player, perm)) {
+				permissions.get(playerName).put(perm, true);
+				return true;
+			} else if (errorMsg) {
+				permissions.get(playerName).put(perm, false);
+				player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
+						+ ChatColor.BLUE + "(" + perm + ")");
+			}
+		} else {
+			permissions.put(playerName, new HashMap<String, Boolean>());
+			if (permission.has(player, perm)) {
+				permissions.get(playerName).put(perm, true);
+				return true;
+			} else if (errorMsg) {
+				permissions.get(playerName).put(perm, false);
+				player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
+						+ ChatColor.BLUE + "(" + perm + ")");
+			}
+
 		}
+
 		return false;
 
 	}
