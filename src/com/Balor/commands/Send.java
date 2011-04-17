@@ -58,7 +58,7 @@ public class Send implements GPCommand {
 						target.sendMessage(chestKeeper() + ChatColor.GREEN + player.getName()
 								+ ChatColor.GRAY
 								+ " send you a gift, look in your send chest (using command "
-								+ ChatColor.GOLD + "/gp c " + gpw.getSendChest(player.getName()).getName()
+								+ ChatColor.GOLD + "/gp c " + gpw.getSendChest(targetName).getName()
 								+ ChatColor.GRAY + ").");
 						sender.sendMessage(chestKeeper() + ChatColor.BLUE + "Succefuly send your gift to "
 								+ ChatColor.GREEN + targetName);
