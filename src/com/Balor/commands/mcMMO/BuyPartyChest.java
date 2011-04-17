@@ -42,7 +42,6 @@ public class BuyPartyChest implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		String type = args[1].toLowerCase();
@@ -123,7 +122,6 @@ public class BuyPartyChest implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (GiftPostWorker.getmcMMO() != null && args.length == 2 && (gpw.hasFlag(args, "party") || gpw
 				.hasFlag(args, "p"))) && gpw.hasPerm((Player) sender, getPermName());
@@ -134,7 +132,6 @@ public class BuyPartyChest implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
 		return "mcmmo.commands.party";
 	}

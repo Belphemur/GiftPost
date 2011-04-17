@@ -37,7 +37,6 @@ public class EmptyChest implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		if (args.length > 1 && gpw.hasPerm((Player) sender, "giftpost.admin.empty")) {
 			gpw.getDefaultChest(args[1]).emptyChest();
@@ -55,7 +54,6 @@ public class EmptyChest implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (gpw.hasFlag(args, "e") || gpw.hasFlag(args, "empty"))
 				&& (gpw.hasPerm((Player) sender, getPermName()) || gpw.hasPerm((Player) sender,
@@ -67,7 +65,6 @@ public class EmptyChest implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
 		return "giftpost.chest.empty";
 	}

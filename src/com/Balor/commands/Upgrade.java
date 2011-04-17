@@ -40,7 +40,6 @@ public class Upgrade implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		VirtualChest v;
@@ -111,7 +110,6 @@ public class Upgrade implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (args.length >= 1 && (gpw.hasFlag(args, "u") || gpw.hasFlag(args, "upgrade")))
 				&& gpw.hasPerm((Player) sender, getPermName());
@@ -122,7 +120,6 @@ public class Upgrade implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
 		return "giftpost.chest.upgrade";
 	}

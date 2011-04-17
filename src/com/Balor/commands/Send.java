@@ -29,7 +29,6 @@ import org.bukkit.entity.Player;
  */
 public class Send implements GPCommand {
 
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
@@ -183,13 +182,11 @@ public class Send implements GPCommand {
 		return true;
 	}
 
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return ((gpw.hasFlag(args, "s") || gpw.hasFlag(args, "send")) && args.length == 2)
 				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
-	@Override
 	public String getPermName() {
 		return "giftpost.chest.send";
 	}

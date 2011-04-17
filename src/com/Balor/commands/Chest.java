@@ -37,7 +37,6 @@ public class Chest implements GPCommand {
 	 * @param sender
 	 * @param args
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player p = (Player) sender;
 		VirtualChest v = null;
@@ -100,7 +99,6 @@ public class Chest implements GPCommand {
 	 * @param args
 	 * @return
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (args.length >= 1 && (gpw.hasFlag(args, "c") || gpw.hasFlag(args, "chest")))
 				&& gpw.hasPerm((Player) sender, getPermName());
@@ -109,7 +107,6 @@ public class Chest implements GPCommand {
 	/**
 	 * @return the name of the perm to add in the permFile.
 	 */
-	@Override
 	public String getPermName() {
 		return "giftpost.chest.everywhere";
 	}

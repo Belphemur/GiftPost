@@ -39,7 +39,6 @@ public class OpenPartyChest implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		if (GiftPostWorker.getmcMMO() != null) {
@@ -62,7 +61,6 @@ public class OpenPartyChest implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (GiftPostWorker.getmcMMO() != null && (gpw.hasFlag(args, "open") || gpw.hasFlag(args, "o")))
 				&& gpw.hasPerm((Player) sender, getPermName());
@@ -73,7 +71,6 @@ public class OpenPartyChest implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
 		return "mcmmo.commands.party";
 	}

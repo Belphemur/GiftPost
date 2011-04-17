@@ -151,7 +151,6 @@ public class GiftPost extends JavaPlugin {
 		return server;
 	}
 
-	@Override
 	public void onEnable() {
 		server = getServer();
 		setupConfigFiles();
@@ -173,7 +172,6 @@ public class GiftPost extends JavaPlugin {
 		}
 	}
 
-	@Override
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
 		autoSave.stopIt();

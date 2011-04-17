@@ -40,7 +40,6 @@ public class ChestList implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		HashMap<String, VirtualChest> chestList = gpw.listOfChest(player);
@@ -64,7 +63,6 @@ public class ChestList implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (gpw.hasFlag(args, "list") || gpw.hasFlag(args, "l"))
 				&& gpw.hasPerm((Player) sender, getPermName());
@@ -75,7 +73,6 @@ public class ChestList implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
 		return "giftpost.chest.open";
 	}

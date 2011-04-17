@@ -39,7 +39,6 @@ public class Buy implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		String type = args[1].toLowerCase();
 		String chestName = args[2].toLowerCase();
@@ -113,7 +112,6 @@ public class Buy implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (args.length == 3 && (gpw.hasFlag(args, "b") || gpw.hasFlag(args, "buy")))
 				&& gpw.hasPerm((Player) sender, getPermName());
@@ -124,7 +122,6 @@ public class Buy implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
 		return "giftpost.chest.open";
 	}

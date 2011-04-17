@@ -36,7 +36,6 @@ public class SetChestLimit implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		gpw.getFileMan().createChestLimitFile(args[1], Integer.parseInt(args[2]));
 		sender.sendMessage(chestKeeper() + args[1]
@@ -50,7 +49,6 @@ public class SetChestLimit implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return (args.length == 3 && (gpw.hasFlag(args, "lim") || gpw.hasFlag(args, "limit")))
 				&& gpw.hasPerm((Player) sender, getPermName());
@@ -61,7 +59,6 @@ public class SetChestLimit implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
 		return "giftpost.admin.limit";
 	}
