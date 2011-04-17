@@ -78,7 +78,8 @@ public class Buy implements GPCommand {
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player, String type) {
 		if (GiftPostWorker.getiConomy() != null
-				&& gpw.getConfig().getString("iConomy", "false").matches("true")) {
+				&& gpw.getConfig().getString("iConomy", "false").matches("true")
+				&& !gpw.hasPerm(player, "giftpost.admin.free")) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
 						"iConomy-" + type + "Chest-price", 10.0)) {
