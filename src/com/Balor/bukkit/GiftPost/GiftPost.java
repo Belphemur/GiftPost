@@ -100,6 +100,8 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("allow-offline: 'true'");
 				out.newLine();
+				out.write("message-of-the-day: 'true'");
+				out.newLine();
 				out.write("auto-save-time: 10");
 				out.newLine();
 				out.write("max-number-chest: 10");

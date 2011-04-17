@@ -18,7 +18,6 @@ package com.Balor.commands;
 
 import static com.Balor.utils.Display.chestKeeper;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
