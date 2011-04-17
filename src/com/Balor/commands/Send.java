@@ -46,8 +46,7 @@ public class Send implements GPCommand {
 		else if (gpw.getSendChest(targetName).isFull())
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "The chest of " + ChatColor.BLUE + targetName
 					+ ChatColor.RED + " is full !");
-		else if (gpw.getSendChest(targetName).leftCases() < gpw.getSendChest(player.getName())
-				.usedCases())
+		else if (gpw.getSendChest(targetName).leftCases() < gpw.getSendChest(player.getName()).usedCases())
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "There isn't enough place in the "
 					+ ChatColor.BLUE + targetName + ChatColor.RED + "'s chest !");
 		else {
@@ -58,8 +57,10 @@ public class Send implements GPCommand {
 								gpw.getSendChest(player.getName()).getContents());
 						gpw.getSendChest(player.getName()).emptyChest();
 						target.sendMessage(chestKeeper() + ChatColor.GREEN + player.getName()
-								+ ChatColor.GRAY + " send you a gift, look in your chest (using command "
-								+ ChatColor.GOLD + "/gp c" + ChatColor.GRAY + ").");
+								+ ChatColor.GRAY
+								+ " send you a gift, look in your send chest (using command "
+								+ ChatColor.GOLD + "/gp c " + gpw.getSendChest(player.getName()).getName()
+								+ ChatColor.GRAY + ").");
 						sender.sendMessage(chestKeeper() + ChatColor.BLUE + "Succefuly send your gift to "
 								+ ChatColor.GREEN + targetName);
 					}
