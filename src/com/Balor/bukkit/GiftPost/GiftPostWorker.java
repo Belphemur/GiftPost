@@ -55,6 +55,7 @@ public class GiftPostWorker {
 	public GiftPostWorker(Configuration config, String dataFolder) {
 		chests = new HashMap<String, HashMap<String, VirtualChest>>();
 		defaultChests = new HashMap<String, VirtualChest>();
+		sendReceiveChests = new HashMap<String, VirtualChest>();
 		commands = new ArrayList<GPCommand>();
 		this.config = config;
 		fMan = new FilesManager(dataFolder);
