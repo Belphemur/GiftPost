@@ -324,20 +324,22 @@ public class GiftPostWorker {
 			if (permission.has(player, perm)) {
 				permissions.get(playerName).put(perm, true);
 				return true;
-			} else if (errorMsg) {
+			} else {
 				permissions.get(playerName).put(perm, false);
-				player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
-						+ ChatColor.BLUE + "(" + perm + ")");
+				if (errorMsg)
+					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
+							+ ChatColor.BLUE + "(" + perm + ")");
 			}
 		} else {
 			permissions.put(playerName, new HashMap<String, Boolean>());
 			if (permission.has(player, perm)) {
 				permissions.get(playerName).put(perm, true);
 				return true;
-			} else if (errorMsg) {
+			} else {
 				permissions.get(playerName).put(perm, false);
-				player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
-						+ ChatColor.BLUE + "(" + perm + ")");
+				if (errorMsg)
+					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
+							+ ChatColor.BLUE + "(" + perm + ")");
 			}
 
 		}
