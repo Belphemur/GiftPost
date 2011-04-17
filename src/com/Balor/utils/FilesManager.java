@@ -263,6 +263,21 @@ public class FilesManager {
 		}
 		return false;
 	}
+	/**
+	 * Check if the player have the chest and then set it as send/receive.
+	 * @param player
+	 * @param chest
+	 * @return
+	 */
+	public boolean createSendReceiveChest(String player, String chest) {
+		Configuration conf = this.getFile("Players", player + ".yml");
+		if (openChestTypeFile(player).concat().containsKey(chest)) {
+			conf.setProperty("SendChest", chest);
+			conf.save();
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Return the value of DefaultChest
@@ -276,7 +291,14 @@ public class FilesManager {
 			def = openChestTypeFile(player).names.get(0);
 		return this.getFile("Players", player + ".yml").getString("DefaultChest", def);
 	}
-
+	/**
+	 * Return the value of SendChest
+	 * @param player
+	 * @return
+	 */
+	public String openSendChest(String player) {
+		return this.getFile("Players", player + ".yml").getString("SendChest", null);
+	}
 	/**
 	 * Get all the Chests with their type for the given player
 	 * 
@@ -406,7 +428,10 @@ public class FilesManager {
 		}
 		return null;
 	}
-
+	/**
+	 * open every player file to get the default chest.
+	 * @return
+	 */
 	public TreeMap<String, String> getAllPlayerDefaultChest() {
 		TreeMap<String, String> result = new TreeMap<String, String>();
 		File dir = new File(this.path + File.separator + "Players");
@@ -414,6 +439,23 @@ public class FilesManager {
 			for (String s : dir.list()) {
 				s = s.subSequence(0, s.length() - 4).toString();
 				result.put(s, openDefaultChest(s));
+			}
+			return result;
+		}
+		return null;
+
+	}
+	/**
+	 * open every player file to get the send chest.
+	 * @return
+	 */
+	public TreeMap<String, String> getAllPlayerSendChest() {
+		TreeMap<String, String> result = new TreeMap<String, String>();
+		File dir = new File(this.path + File.separator + "Players");
+		if (dir.exists()) {
+			for (String s : dir.list()) {
+				s = s.subSequence(0, s.length() - 4).toString();
+				result.put(s, openSendChest(s));
 			}
 			return result;
 		}

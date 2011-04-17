@@ -28,7 +28,7 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
  * @author Antoine
  * 
  */
-public class SetDefaultChest implements GPCommand {
+public class SetChest implements GPCommand {
 
 	/*
 	 * (non-Javadoc)
@@ -40,10 +40,24 @@ public class SetDefaultChest implements GPCommand {
 	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		String chestName = args[1].toLowerCase();
-		if (gpw.setDefaultChest(((Player) sender).getName(), chestName))
-			sender.sendMessage(chestKeeper() + chestName + ChatColor.GREEN + " is now your default chest.");
-		else
-			sender.sendMessage(chestKeeper() + ChatColor.RED + "You don't have this chest.");
+		String type = args[2].toLowerCase();
+		if (type.equals("default") || type.equals("send")) {
+			if (type.equals("default")) {
+				if (gpw.setDefaultChest(((Player) sender).getName(), chestName))
+					sender.sendMessage(chestKeeper() + chestName + ChatColor.GREEN
+							+ " is now your default chest.");
+				else
+					sender.sendMessage(chestKeeper() + ChatColor.RED + "You don't have this chest.");
+			} else {
+				assert type.equals("send");
+				if (gpw.setSendChest(((Player) sender).getName(), chestName))
+					sender.sendMessage(chestKeeper() + chestName + ChatColor.GREEN
+							+ " is now your send chest.");
+				else
+					sender.sendMessage(chestKeeper() + ChatColor.RED + "You don't have this chest.");
+			}
+		} else
+			sender.sendMessage(chestKeeper() + ChatColor.RED + " Only 2 choose possible : default and send");
 
 	}
 
@@ -55,8 +69,7 @@ public class SetDefaultChest implements GPCommand {
 	 */
 	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (args.length == 2 && (gpw.hasFlag(args, "set") || gpw.hasFlag(args, "default")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+		return (args.length == 3 && gpw.hasFlag(args, "set") && gpw.hasPerm((Player) sender, getPermName()));
 	}
 
 	/*

@@ -42,6 +42,7 @@ public class GiftPostWorker {
 
 	private HashMap<String, HashMap<String, VirtualChest>> chests;
 	private HashMap<String, VirtualChest> defaultChests;
+	private HashMap<String, VirtualChest> sendReceiveChests;
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands;
 	private Configuration config;
@@ -125,6 +126,19 @@ public class GiftPostWorker {
 	}
 
 	/**
+	 * Return the send chest.
+	 * 
+	 * @param playerName
+	 * @return
+	 */
+	public VirtualChest getSendChest(String playerName) {
+		if (sendReceiveChests.containsKey(playerName))
+			return sendReceiveChests.get(playerName);
+		else
+			return getDefaultChest(playerName);
+	}
+
+	/**
 	 * Set default chest for the player.
 	 * 
 	 * @param playerName
@@ -140,6 +154,27 @@ public class GiftPostWorker {
 		if (chests.get(playerName).containsValue(v)) {
 			defaultChests.put(playerName, v);
 			fMan.createDefaultChest(playerName, v.getName());
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Set send chest for the player.
+	 * 
+	 * @param playerName
+	 * @param v
+	 * @return
+	 */
+	public boolean setSendChest(String playerName, String vChest) {
+		VirtualChest v = getChest(playerName, vChest);
+		return setSendChest(playerName, v);
+	}
+
+	public boolean setSendChest(String playerName, VirtualChest v) {
+		if (chests.get(playerName).containsValue(v)) {
+			sendReceiveChests.put(playerName, v);
+			fMan.createSendReceiveChest(playerName, v.getName());
 			return true;
 		}
 		return false;
@@ -208,7 +243,7 @@ public class GiftPostWorker {
 	}
 
 	/**
-	 * load all the chest
+	 * load all the chests
 	 */
 	public synchronized void load() {
 		this.config.load();
@@ -216,9 +251,16 @@ public class GiftPostWorker {
 		if (loaded != null) {
 			chests = loaded;
 			TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
+			TreeMap<String, String> tmp2 = fMan.getAllPlayerSendChest();
+			String chestName;
 			if (tmp != null)
-				for (String player : tmp.keySet())
+				for (String player : tmp.keySet()) {
 					defaultChests.put(player, getChest(player, tmp.get(player)));
+					if ((chestName=tmp2.get(player)) == null)
+						sendReceiveChests.put(player, defaultChests.get(player));
+					else
+						sendReceiveChests.put(player, getChest(player, chestName));
+				}
 		}
 	}
 
@@ -259,8 +301,10 @@ public class GiftPostWorker {
 	public boolean hasPerm(Player player, String perm) {
 		return hasPerm(player, perm, true);
 	}
+
 	/**
 	 * Check the permission with the possibility to disable the error msg
+	 * 
 	 * @param player
 	 * @param perm
 	 * @param errorMsg

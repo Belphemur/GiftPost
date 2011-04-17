@@ -39,9 +39,9 @@ public class Display {
 			sender.sendMessage(ChatColor.GOLD + "/gp (upgrade OR u) (ChestName OR nothing)" + ChatColor.WHITE
 					+ ": if you have a normal chest, upgrade to a large chest.");
 			sender.sendMessage(ChatColor.GOLD
-					+ "/gp (set OR default) ChestName "
+					+ "/gp set ChestName (default|send)"
 					+ ChatColor.WHITE
-					+ ": set the ChestName as your default chest (open when using a chest, used for send and receve gift)");
+					+ ": set the ChestName as your default chest (open when using a chest) or send/receive chest (for gifts)");
 			sender.sendMessage(ChatColor.GOLD + "/gp (list OR l) " + ChatColor.WHITE
 					+ ": list all your chests");
 		}

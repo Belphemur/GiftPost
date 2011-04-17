@@ -34,19 +34,19 @@ public class Send implements GPCommand {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
-		if (gpw.getDefaultChest(player.getName()) == null)
+		if (gpw.getSendChest(player.getName()) == null)
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "You don't have a chest. To buy one type "
 					+ ChatColor.GOLD + "/gp buy (large|normal)");
-		else if (gpw.getDefaultChest(targetName) == null)
+		else if (gpw.getSendChest(targetName) == null)
 			sender.sendMessage(chestKeeper() + ChatColor.RED + targetName + " don't have a chest.");
 		else if (player.getName().equals(targetName))
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "You can't send a gift to yourself !");
-		else if (gpw.getDefaultChest(player.getName()).isEmpty())
+		else if (gpw.getSendChest(player.getName()).isEmpty())
 			sender.sendMessage(chestKeeper() + ChatColor.DARK_GRAY + "Your chest is empty, nothing to send");
-		else if (gpw.getDefaultChest(targetName).isFull())
+		else if (gpw.getSendChest(targetName).isFull())
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "The chest of " + ChatColor.BLUE + targetName
 					+ ChatColor.RED + " is full !");
-		else if (gpw.getDefaultChest(targetName).leftCases() < gpw.getDefaultChest(player.getName())
+		else if (gpw.getSendChest(targetName).leftCases() < gpw.getSendChest(player.getName())
 				.usedCases())
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "There isn't enough place in the "
 					+ ChatColor.BLUE + targetName + ChatColor.RED + "'s chest !");
@@ -54,9 +54,9 @@ public class Send implements GPCommand {
 			if (target != null) {
 				if (checkMaxRange(gpw, player, target) && inSameWorld(gpw, player, target)) {
 					if (iConomyCheck(gpw, player)) {
-						gpw.getDefaultChest(targetName).addItemStack(
-								gpw.getDefaultChest(player.getName()).getContents());
-						gpw.getDefaultChest(player.getName()).emptyChest();
+						gpw.getSendChest(targetName).addItemStack(
+								gpw.getSendChest(player.getName()).getContents());
+						gpw.getSendChest(player.getName()).emptyChest();
 						target.sendMessage(chestKeeper() + ChatColor.GREEN + player.getName()
 								+ ChatColor.GRAY + " send you a gift, look in your chest (using command "
 								+ ChatColor.GOLD + "/gp c" + ChatColor.GRAY + ").");
@@ -76,11 +76,11 @@ public class Send implements GPCommand {
 									+ "Succefuly send your gift to " + ChatColor.GREEN + targetName
 									+ ChatColor.RED
 									+ " but he's offline, he'll receve it when he'll connect.");
-							gpw.getDefaultChest(targetName).addItemStack(
-									gpw.getDefaultChest(player.getName()).getContents());
+							gpw.getSendChest(targetName).addItemStack(
+									gpw.getSendChest(player.getName()).getContents());
 							gpw.getFileMan().createOfflineFile(targetName,
-									gpw.getDefaultChest(player.getName()).getContents(), player.getName());
-							gpw.getDefaultChest(player.getName()).emptyChest();
+									gpw.getSendChest(player.getName()).getContents(), player.getName());
+							gpw.getSendChest(player.getName()).emptyChest();
 						}
 					} else
 						sender.sendMessage(chestKeeper() + targetName + ChatColor.RED
