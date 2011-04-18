@@ -26,7 +26,7 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
  * @authors Timberjaw and Balor
  * 
  */
-public class VirtualChest {
+public class VirtualChest implements Cloneable {
 
 	protected TileEntityVirtualChest chest;
 
@@ -148,5 +148,15 @@ public class VirtualChest {
 
 	public String getName() {
 		return this.chest.getName();
+	}
+
+	public VirtualChest clone() {
+		try {
+			VirtualChest result = (VirtualChest) super.clone();
+			result.addItemStack(chest.getContents().clone());
+			return result;
+		} catch (CloneNotSupportedException e) {
+			throw new AssertionError();
+		}
 	}
 }

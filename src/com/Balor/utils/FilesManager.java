@@ -512,9 +512,9 @@ public class FilesManager {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadParties(String fileName,HashMap<String, VirtualChest> partiesAndChests) {
-		partiesAndChests = new HashMap<String, VirtualChest>();
+	public HashMap<String, VirtualChest> loadParties(String fileName) {
 		String filename = this.path + File.separator + fileName;
+		HashMap<String, VirtualChest> partiesAndChests = new HashMap<String, VirtualChest>();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
 		HashMap<String, String> partiesChestType = openAllParties();
 
@@ -546,10 +546,13 @@ public class FilesManager {
 					for (SerializedItemStack sis : al) {
 						v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
 					}
-					partiesAndChests.put(partyName, v);
-				}				
+					partiesAndChests.put(partyName, v.clone());
+				}
+				return partiesAndChests;
 			}
-		}
+			return null;
+		} else
+			return null;
 	}
 
 	/**
@@ -600,7 +603,15 @@ public class FilesManager {
 						playerAndChest.get(playerName).put(chestName, v);
 					}
 
-				}			
+				}
+				for (String player : playerAndChest.keySet())
+					for (String chestName : playerAndChest.get(player).keySet()) {
+						int i = 0;
+						for (ItemStack is : playerAndChest.get(player).get(chestName).getContents())
+							if (is != null)
+								i++;
+						System.out.println("Load : Taille " + player + " : " + chestName + " -> " + i);
+					}
 			}
 		}
 	}

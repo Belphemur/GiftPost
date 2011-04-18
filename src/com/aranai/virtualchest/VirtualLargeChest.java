@@ -37,9 +37,8 @@ public class VirtualLargeChest extends VirtualChest {
 	}
 
 	public VirtualLargeChest(VirtualLargeChest v) {
-		super(v);
-		this.subChest2 = v.subChest2;
-		this.lc = new InventoryLargeChest(chest.getName(), chest, subChest2);
+		this(v.getName());
+		this.addItemStack(v.getContents());
 	}
 
 	public VirtualLargeChest(VirtualChest v) {
@@ -149,5 +148,16 @@ public class VirtualLargeChest extends VirtualChest {
 			subChest2.removeItemStack(i - chest.q_());
 		else
 			super.removeItemStack(i);
+	}
+	@Override
+	public VirtualLargeChest clone()
+	{
+		try {
+			VirtualLargeChest result = (VirtualLargeChest) super.clone();
+			result.addItemStack(subChest2.getContents().clone());
+			return result;
+		} catch (Exception e) {
+			throw new AssertionError();
+		}
 	}
 }

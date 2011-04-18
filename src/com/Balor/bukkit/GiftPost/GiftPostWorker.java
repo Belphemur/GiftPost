@@ -271,7 +271,11 @@ public class GiftPostWorker {
 	 */
 	public synchronized void loadParties() {
 		this.config.load();
-		this.fMan.loadParties("parties.dat",parties);
+		HashMap<String, VirtualChest> loaded = this.fMan.loadParties("parties.dat");
+		if (loaded != null) {
+			parties.clear();
+			parties.putAll(loaded);
+		}
 	}
 
 	/**
