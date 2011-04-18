@@ -153,7 +153,6 @@ public class VirtualChest implements Cloneable {
 	public VirtualChest clone() {
 		try {
 			VirtualChest result = (VirtualChest) super.clone();
-			result.addItemStack(chest.getContents().clone());
 			return result;
 		} catch (CloneNotSupportedException e) {
 			throw new AssertionError();

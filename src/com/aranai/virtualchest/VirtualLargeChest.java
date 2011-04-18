@@ -154,7 +154,6 @@ public class VirtualLargeChest extends VirtualChest {
 	{
 		try {
 			VirtualLargeChest result = (VirtualLargeChest) super.clone();
-			result.addItemStack(subChest2.getContents().clone());
 			return result;
 		} catch (Exception e) {
 			throw new AssertionError();
