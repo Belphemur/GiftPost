@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 //Bukkit
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
@@ -250,21 +251,19 @@ public class GiftPostWorker {
 	 */
 	public synchronized void load() {
 		this.config.load();
-		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan.loadChests("chests.dat");
-		if (loaded != null) {
-			chests = loaded;
-			TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
-			TreeMap<String, String> tmp2 = fMan.getAllPlayerSendChest();
-			String chestName;
-			if (tmp != null)
-				for (String player : tmp.keySet()) {
-					defaultChests.put(player, getChest(player, tmp.get(player)));
-					if ((chestName = tmp2.get(player)) == null)
-						sendReceiveChests.put(player, defaultChests.get(player));
-					else
-						sendReceiveChests.put(player, getChest(player, chestName));
-				}
-		}
+		this.fMan.loadChests("chests.dat",chests);
+		TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
+		TreeMap<String, String> tmp2 = fMan.getAllPlayerSendChest();
+		String chestName;
+		if (tmp != null)
+			for (String player : tmp.keySet()) {
+				defaultChests.put(player, getChest(player, tmp.get(player)));
+				if ((chestName = tmp2.get(player)) == null)
+					sendReceiveChests.put(player, defaultChests.get(player));
+				else
+					sendReceiveChests.put(player, getChest(player, chestName));
+			}
+
 	}
 
 	/**
@@ -272,10 +271,7 @@ public class GiftPostWorker {
 	 */
 	public synchronized void loadParties() {
 		this.config.load();
-		HashMap<String, VirtualChest> loaded = this.fMan.loadParties("parties.dat");
-		if (loaded != null) {
-			parties = loaded;
-		}
+		this.fMan.loadParties("parties.dat",parties);
 	}
 
 	/**
