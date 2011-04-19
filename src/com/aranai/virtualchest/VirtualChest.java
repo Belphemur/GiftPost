@@ -145,6 +145,36 @@ public class VirtualChest implements Cloneable {
 	public void removeItemStack(int i) {
 		chest.removeItemStack(i);
 	}
+	/**
+	 * Return the itemStack
+	 * @param i
+	 * @return
+	 */
+	public ItemStack getItemStack(int i)
+	{
+		return chest.c_(i);
+	}
+	/**
+	 * Set a given itemStack
+	 * @param i
+	 * @param is
+	 */
+	public void setItemStack(int i, ItemStack is)
+	{
+		chest.a(i,is);
+	}
+	/**
+	 * Swap 2 items stacks
+	 * @param from
+	 * @param to
+	 */
+	public void swapItemStack(int from, int to)
+	{
+		ItemStack first = getItemStack(from);
+		ItemStack second = getItemStack(to);
+		setItemStack(from, second);
+		setItemStack(to, first);
+	}
 
 	public String getName() {
 		return this.chest.getName();

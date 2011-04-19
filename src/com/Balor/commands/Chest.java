@@ -17,6 +17,7 @@ package com.Balor.commands;
 import static com.Balor.utils.Display.chestKeeper;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.Balor.utils.Stacker;
 import com.aranai.virtualchest.VirtualChest;
 import com.nijiko.coelho.iConomy.iConomy;
 
@@ -46,8 +47,13 @@ public class Chest implements GPCommand {
 			v = gpw.getDefaultChest(p.getName());
 
 		if (v != null) {
-			if (iConomyCheck(gpw, p))
+			if (iConomyCheck(gpw, p)) {
+				if (gpw.getConfig().getString("auto-sort", "true").matches("true"))
+					Stacker.sortChest(v);
+				if (gpw.getConfig().getString("auto-stack", "true").matches("true"))
+					Stacker.stackChest(v);
 				v.openChest((Player) sender);
+			}
 		} else
 			p.sendMessage(chestKeeper() + ChatColor.RED + "You don't have a chest. To buy one type "
 					+ ChatColor.GOLD + "/gp buy (large|normal)");
@@ -64,7 +70,7 @@ public class Chest implements GPCommand {
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
 		if (GiftPostWorker.getiConomy() != null
 				&& gpw.getConfig().getString("iConomy", "false").matches("true")
-				&& !gpw.hasPerm(player, "giftpost.admin.free")) {
+				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
 						"iConomy-openchest-price", 1.0)) {

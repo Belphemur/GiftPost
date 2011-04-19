@@ -24,6 +24,8 @@ import org.bukkit.entity.Player;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.commands.GPCommand;
+import com.Balor.utils.Stacker;
+import com.aranai.virtualchest.VirtualChest;
 import com.gmail.nossr50.mcMMO;
 
 /**
@@ -44,7 +46,12 @@ public class OpenPartyChest implements GPCommand {
 		if (GiftPostWorker.getmcMMO() != null) {
 			if (mcMMO.inParty(player)) {
 				if (gpw.getParties().containsKey(mcMMO.getPartyName(player))) {
-					gpw.getParties().get(mcMMO.getPartyName(player)).openChest(player);
+					VirtualChest v= gpw.getParties().get(mcMMO.getPartyName(player));
+					if (gpw.getConfig().getString("auto-sort", "true").matches("true"))
+						Stacker.sortChest(v);
+					if (gpw.getConfig().getString("auto-stack", "true").matches("true"))
+						Stacker.stackChest(v);
+					v.openChest(player);
 				} else
 					sender.sendMessage(chestKeeper() + ChatColor.RED + "Your party don't have a chest.");
 			} else

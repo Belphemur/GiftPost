@@ -105,7 +105,7 @@ public class Send implements GPCommand {
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
 		if (GiftPostWorker.getiConomy() != null
 				&& gpw.getConfig().getString("iConomy", "false").matches("true")
-				&& !gpw.hasPerm(player, "giftpost.admin.free")) {
+				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
 				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
 						"iConomy-send-price", 1.0)) {

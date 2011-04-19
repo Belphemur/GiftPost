@@ -31,25 +31,25 @@ public class Display {
 		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
 		sender.sendMessage("--------------------\n");
 		if (gpw.hasPerm(player, "giftpost.chest.everywhere",false))
-			sender.sendMessage(ChatColor.GOLD + "/gp (chest OR c) (ChestName OR nothing)" + ChatColor.WHITE
+			sender.sendMessage(ChatColor.GOLD + "/gp c (ChestName OR nothing)" + ChatColor.WHITE
 					+ ": to open your chest if you don't set a ChestName, open your default chest.\n");
 		if (gpw.hasPerm(player, "giftpost.chest.open",false)) {
-			sender.sendMessage(ChatColor.GOLD + "/gp (buy OR b) (large OR normal) ChestName"
+			sender.sendMessage(ChatColor.GOLD + "/gp b (large OR normal) ChestName"
 					+ ChatColor.WHITE + ": to buy a large or normal chest \n");
-			sender.sendMessage(ChatColor.GOLD + "/gp (upgrade OR u) (ChestName OR nothing)" + ChatColor.WHITE
+			sender.sendMessage(ChatColor.GOLD + "/gp u (ChestName OR nothing)" + ChatColor.WHITE
 					+ ": if you have a normal chest, upgrade to a large chest.");
 			sender.sendMessage(ChatColor.GOLD
 					+ "/gp set ChestName (default|send)"
 					+ ChatColor.WHITE
 					+ ": set the ChestName as your default chest (open when using a chest) or send/receive chest (for gifts)");
-			sender.sendMessage(ChatColor.GOLD + "/gp (list OR l) " + ChatColor.WHITE
+			sender.sendMessage(ChatColor.GOLD + "/gp l " + ChatColor.WHITE
 					+ ": list all your chests");
 		}
 		if (gpw.hasPerm(player, "giftpost.chest.send",false))
-			sender.sendMessage(ChatColor.GOLD + "/gp (send OR s) player " + ChatColor.WHITE
+			sender.sendMessage(ChatColor.GOLD + "/gp s player " + ChatColor.WHITE
 					+ ": send the content of your chest to the player's chest. case sensitive)");
 		if (gpw.hasPerm(player, "giftpost.admin.limit",false))
-			sender.sendMessage(ChatColor.GOLD + "/gp (limit OR lim) PlayerName limit" + ChatColor.WHITE
+			sender.sendMessage(ChatColor.GOLD + "/gp lim PlayerName limit" + ChatColor.WHITE
 					+ ": set the chest's limit for the PlayerName(case sensitive)");
 
 		if (GiftPostWorker.getmcMMO() != null && gpw.hasPerm(player, "mcmmo.commands.party",false)) {

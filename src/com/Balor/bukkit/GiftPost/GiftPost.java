@@ -123,6 +123,10 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("iConomy-largeChest-price: 20.0");
 				out.newLine();
+				out.write("auto-stack: 'true'");
+				out.newLine();
+				out.write("auto-sort: 'true'");
+				out.newLine();
 
 				// Close the output stream
 				out.close();
@@ -151,6 +155,7 @@ public class GiftPost extends JavaPlugin {
 		return server;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void onEnable() {
 		server = getServer();
 		setupConfigFiles();

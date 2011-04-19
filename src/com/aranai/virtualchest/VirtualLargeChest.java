@@ -149,6 +149,26 @@ public class VirtualLargeChest extends VirtualChest {
 		else
 			super.removeItemStack(i);
 	}
+	/**
+	 * Return the itemStack
+	 * @param i
+	 * @return
+	 */
+	@Override
+	public ItemStack getItemStack(int i)
+	{
+		return lc.c_(i);
+	}
+	/**
+	 * Set the itemStack
+	 * @param i
+	 * @param is
+	 */
+	@Override
+	public void setItemStack(int i, ItemStack is)
+	{
+		lc.a(i,is);
+	}
 	@Override
 	public VirtualLargeChest clone()
 	{
