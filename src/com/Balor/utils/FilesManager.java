@@ -604,14 +604,6 @@ public class FilesManager {
 					}
 
 				}
-				for (String player : playerAndChest.keySet())
-					for (String chestName : playerAndChest.get(player).keySet()) {
-						int i = 0;
-						for (ItemStack is : playerAndChest.get(player).get(chestName).getContents())
-							if (is != null)
-								i++;
-						System.out.println("Load : Taille " + player + " : " + chestName + " -> " + i);
-					}
 			}
 		}
 	}
