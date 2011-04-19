@@ -47,7 +47,7 @@ public class Display {
 		}
 		if (gpw.hasPerm(player, "giftpost.chest.send",false))
 			sender.sendMessage(ChatColor.GOLD + "/gp s player " + ChatColor.WHITE
-					+ ": send the content of your chest to the player's chest. case sensitive)");
+					+ ": send the content of your send chest to the player (case sensitive)");
 		if (gpw.hasPerm(player, "giftpost.admin.limit",false))
 			sender.sendMessage(ChatColor.GOLD + "/gp lim PlayerName limit" + ChatColor.WHITE
 					+ ": set the chest's limit for the PlayerName(case sensitive)");
