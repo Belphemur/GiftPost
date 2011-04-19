@@ -39,7 +39,7 @@ public class PartiesGarbageCollector extends Thread {
 	}
 
 	private void garbageCollectorAndSave() {
-		if (!gpw.getParties().isEmpty()) {
+		if (GiftPostWorker.getmcMMO() != null && !gpw.getParties().isEmpty()) {
 			TreeMap<String, VirtualChest> tmp = new TreeMap<String, VirtualChest>();
 			List<String> names = new ArrayList<String>();
 			List<String> types = new ArrayList<String>();
