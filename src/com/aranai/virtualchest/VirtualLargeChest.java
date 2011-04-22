@@ -144,8 +144,8 @@ public class VirtualLargeChest extends VirtualChest {
 
 	@Override
 	public void removeItemStack(int i) {
-		if (i > chest.q_())
-			subChest2.removeItemStack(i - chest.q_());
+		if (i > chest.getSize())
+			subChest2.removeItemStack(i - chest.getSize());
 		else
 			super.removeItemStack(i);
 	}
@@ -157,7 +157,7 @@ public class VirtualLargeChest extends VirtualChest {
 	@Override
 	public ItemStack getItemStack(int i)
 	{
-		return lc.c_(i);
+		return lc.getItem(i);
 	}
 	/**
 	 * Set the itemStack
@@ -167,7 +167,7 @@ public class VirtualLargeChest extends VirtualChest {
 	@Override
 	public void setItemStack(int i, ItemStack is)
 	{
-		lc.a(i,is);
+		lc.setItem(i,is);
 	}
 	@Override
 	public VirtualLargeChest clone()

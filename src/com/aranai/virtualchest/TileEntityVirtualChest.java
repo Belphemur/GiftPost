@@ -32,8 +32,8 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	}
 
 	private void initEmptyCases() {
-		emptyCases = new ArrayDeque<Integer>(q_());
-		for (int i = 0; i < q_(); i++)
+		emptyCases = new ArrayDeque<Integer>(getSize());
+		for (int i = 0; i < getSize(); i++)
 			emptyCases.add(i);
 	}
 
@@ -56,7 +56,7 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	 * @return
 	 */
 	public boolean isEmpty() {
-		return emptyCases.size() == q_();
+		return emptyCases.size() == getSize();
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	 * @return
 	 */
 	public int size() {
-		return q_();
+		return getSize();
 	}
 
 	/**
@@ -88,15 +88,15 @@ public class TileEntityVirtualChest extends TileEntityChest {
 		if (i == null)
 			return false;
 		else {
-			super.a(i, itemstack);
+			super.setItem(i, itemstack);
 			return true;
 		}
 	}
 
 	@Override
-	public void a(int i, ItemStack itemstack) {
+	public void setItem(int i, ItemStack itemstack) {
 		emptyCases.remove(i);
-		super.a(i, itemstack);
+		super.setItem(i, itemstack);
 	}
 
 	public void emptyChest() {
@@ -118,25 +118,17 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	}
 
 	public void removeItemStack(int i) {
-		if (this.getContents()[i] != null && i >= 0 && i <= q_()) {
+		if (this.getContents()[i] != null && i >= 0 && i <= getSize()) {
 			this.getContents()[i] = null;
 			emptyCases.add(i);
 		}
 	}
 
 	@Override
-	public String c() {
+	public String getName() {
 		return name;
 	}
 
-	/**
-	 * Alias to c()
-	 * 
-	 * @return
-	 */
-	public String getName() {
-		return this.c();
-	}
 
 	@Override
 	public boolean a_(EntityHuman entityhuman) {

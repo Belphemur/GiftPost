@@ -152,7 +152,7 @@ public class VirtualChest implements Cloneable {
 	 */
 	public ItemStack getItemStack(int i)
 	{
-		return chest.c_(i);
+		return chest.getItem(i);
 	}
 	/**
 	 * Set a given itemStack
@@ -161,7 +161,7 @@ public class VirtualChest implements Cloneable {
 	 */
 	public void setItemStack(int i, ItemStack is)
 	{
-		chest.a(i,is);
+		chest.setItem(i,is);
 	}
 	/**
 	 * Swap 2 items stacks
