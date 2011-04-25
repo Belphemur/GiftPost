@@ -88,7 +88,7 @@ public class SetChest implements GPCommand {
 		return ChatColor.GOLD
 				+ "/gp set ChestName (default|send)"
 				+ ChatColor.WHITE
-				+ ": set the ChestName as your default chest (open when using a chest) or send/receive chest (for gifts)";
+				+ ": set the ChestName as your default chest (open when using a chest) or send chest (for gifts)";
 	}
 
 }
