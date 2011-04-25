@@ -47,7 +47,7 @@ public class Display {
 			sendHelp(sender, ChestList.class);
 			sendHelp(sender, Upgrade.class);
 			sendHelp(sender, Rename.class);
-			sendHelp(sender, EmptyChest.class);
+			// sendHelp(sender, EmptyChest.class);
 		}
 		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.send", false))
 			sendHelp(sender, Send.class);
