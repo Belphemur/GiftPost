@@ -48,15 +48,20 @@ public class Chest implements GPCommand {
 
 		if (v != null) {
 			if (iConomyCheck(gpw, p)) {
-				if (gpw.getConfig().getString("auto-sort", "true").matches("true"))
+				if (gpw.getConfig().getString("auto-sort", "true")
+						.matches("true"))
 					Stacker.sortChest(v);
-				if (gpw.getConfig().getString("auto-stack", "true").matches("true"))
+				if (gpw.getConfig().getString("auto-stack", "true")
+						.matches("true"))
 					Stacker.stackChest(v);
 				v.openChest((Player) sender);
 			}
 		} else
-			p.sendMessage(chestKeeper() + ChatColor.RED + "You don't have a chest. To buy one type "
-					+ ChatColor.GOLD + "/gp buy (large|normal) nameOfTheChest");
+			p.sendMessage(chestKeeper() + ChatColor.RED
+					+ "You don't have this (" + ChatColor.DARK_RED
+					+ args[1].toLowerCase() + ChatColor.RED
+					+ ") chest. To buy one type " + ChatColor.GOLD
+					+ "/gp buy (large|normal) nameOfTheChest");
 	}
 
 	/**
@@ -69,21 +74,30 @@ public class Chest implements GPCommand {
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
 		if (GiftPostWorker.getiConomy() != null
-				&& gpw.getConfig().getString("iConomy", "false").matches("true")
+				&& gpw.getConfig().getString("iConomy", "false")
+						.matches("true")
 				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
-				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
-						"iConomy-openchest-price", 1.0)) {
-					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have enough "
-							+ iConomy.getBank().getCurrency() + " to pay the Chests Keeper !");
+				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
+						.getConfig().getDouble("iConomy-openchest-price", 1.0)) {
+					player.sendMessage(chestKeeper() + ChatColor.RED
+							+ "You don't have enough "
+							+ iConomy.getBank().getCurrency()
+							+ " to pay the Chests Keeper !");
 					return false;
 				} else {
-					iConomy.getBank().getAccount(player.getName())
-							.subtract(gpw.getConfig().getDouble("iConomy-openchest-price", 1.0));
-					if (gpw.getConfig().getDouble("iConomy-openchest-price", 1.0) != 0)
+					iConomy.getBank()
+							.getAccount(player.getName())
+							.subtract(
+									gpw.getConfig().getDouble(
+											"iConomy-openchest-price", 1.0));
+					if (gpw.getConfig().getDouble("iConomy-openchest-price",
+							1.0) != 0)
 						player.sendMessage(chestKeeper()
-								+ gpw.getConfig().getDouble("iConomy-openchest-price", 1.0) + " "
-								+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
+								+ gpw.getConfig().getDouble(
+										"iConomy-openchest-price", 1.0) + " "
+								+ iConomy.getBank().getCurrency()
+								+ ChatColor.DARK_GRAY
 								+ " used to pay the Chest Keeper.");
 					return true;
 				}
@@ -105,9 +119,10 @@ public class Chest implements GPCommand {
 	 * @param args
 	 * @return
 	 */
-	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (args.length >= 1 && (gpw.hasFlag(args, "c") || gpw.hasFlag(args, "chest")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+	public boolean validate(GiftPostWorker gpw, CommandSender sender,
+			String[] args) {
+		return (args.length >= 1 && (gpw.hasFlag(args, "c") || gpw.hasFlag(
+				args, "chest"))) && gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/**

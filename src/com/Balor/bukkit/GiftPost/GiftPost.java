@@ -69,15 +69,16 @@ public class GiftPost extends JavaPlugin {
 
 	private void registerCommands() {
 		registerCommand(Chest.class);
-		registerCommand(Send.class);
-		registerCommand(EmptyChest.class);
 		registerCommand(Buy.class);
-		registerCommand(Upgrade.class);
-		registerCommand(SetChest.class);
+		registerCommand(Send.class);
 		registerCommand(ChestList.class);
+		registerCommand(EmptyChest.class);		
+		registerCommand(Upgrade.class);
+		registerCommand(SetChest.class);		
+		registerCommand(Rename.class);
 		registerCommand(BuyPartyChest.class);
 		registerCommand(OpenPartyChest.class);
-		registerCommand(SetChestLimit.class);
+		registerCommand(SetChestLimit.class);		
 	}
 
 	private void setupConfigFiles() {

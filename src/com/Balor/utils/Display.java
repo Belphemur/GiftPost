@@ -44,6 +44,8 @@ public class Display {
 					+ ": set the ChestName as your default chest (open when using a chest) or send/receive chest (for gifts)");
 			sender.sendMessage(ChatColor.GOLD + "/gp l " + ChatColor.WHITE
 					+ ": list all your chests");
+			sender.sendMessage(ChatColor.GOLD + "/gp r oldName newName" + ChatColor.WHITE
+					+ ": rename the chest.");
 		}
 		if (gpw.hasPerm(player, "giftpost.chest.send",false))
 			sender.sendMessage(ChatColor.GOLD + "/gp s player " + ChatColor.WHITE

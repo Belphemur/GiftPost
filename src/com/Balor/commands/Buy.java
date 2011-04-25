@@ -45,31 +45,34 @@ public class Buy implements GPCommand {
 		String type = args[1].toLowerCase();
 		Player player = (Player) sender;
 		String chestName;
-		if(args.length == 3)
-		 chestName = args[2].toLowerCase();
-		else
-		{
+		if (args.length == 3)
+			chestName = args[2].toLowerCase();
+		else {
 			Random generator = new Random();
-			chestName = ("c"+type+generator.nextInt(20)).toLowerCase();
+			chestName = ("c" + type + generator.nextInt(20)).toLowerCase();
 		}
-		
+
 		if (gpw.numberOfChest(player) > 0 && gpw.chestExists(player, chestName))
-			sender.sendMessage(chestKeeper() + ChatColor.RED + "You have have already a chest named : "
-					+ ChatColor.AQUA + chestName);
+			sender.sendMessage(chestKeeper() + ChatColor.RED
+					+ "You have have already a chest named : " + ChatColor.AQUA
+					+ chestName);
 		else if (type.matches("normal") || type.matches("large")) {
-			if (gpw.numberOfChest(player) + 1 <= gpw.getFileMan().openChestLimitFile(player)) {
+			if (gpw.numberOfChest(player) + 1 <= gpw.getFileMan()
+					.openChestLimitFile(player)) {
 				if (iConomyCheck(gpw, player, type)) {
 					if (type.matches("normal"))
 						gpw.addChest(player, new VirtualChest(chestName));
 					if (type.matches("large"))
 						gpw.addChest(player, new VirtualLargeChest(chestName));
-					player.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE
-							+ "] Chest succefuly created. " + ChatColor.GOLD + "(command /gp c " + chestName
+					player.sendMessage(chestKeeper()
+							+ " Chest succefuly created. " + ChatColor.GOLD
+							+ "(command /gp c " + chestName
 							+ " OR use a chest with left click to open it)");
 				}
 			} else
-				sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
-						+ ChatColor.RED + "You have reach your limit of chest." + ChatColor.DARK_RED + "("
+				sender.sendMessage(chestKeeper() + ChatColor.RED
+						+ "You have reach your limit of chest."
+						+ ChatColor.DARK_RED + "("
 						+ gpw.getFileMan().openChestLimitFile(player) + ")");
 		} else
 			sender.sendMessage(chestKeeper() + ChatColor.RED

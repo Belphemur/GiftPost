@@ -79,7 +79,8 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public VirtualChest getChest(String playerName, String chestName) {
-		if (chests.containsKey(playerName) && chests.get(playerName).containsKey(chestName))
+		if (chests.containsKey(playerName)
+				&& chests.get(playerName).containsKey(chestName))
 			return chests.get(playerName).get(chestName);
 		else
 			return null;
@@ -93,7 +94,8 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public boolean chestExists(Player player, String chestName) {
-		return chests.containsKey(player.getName()) && chests.get(player.getName()).containsKey(chestName);
+		return chests.containsKey(player.getName())
+				&& chests.get(player.getName()).containsKey(chestName);
 	}
 
 	/**
@@ -210,6 +212,27 @@ public class GiftPostWorker {
 	}
 
 	/**
+	 * Rename a chest
+	 * 
+	 * @param player
+	 * @param oldName
+	 * @param newName
+	 */
+	public void renameChest(Player player, String oldName, String newName) {
+		String playerName = player.getName();
+		VirtualChest v = getChest(playerName, oldName);
+		if (v != null) {
+			chests.get(playerName).remove(oldName);
+			chests.get(playerName).put(newName, v);
+			fMan.renameChestFile(playerName, oldName, newName);
+			if(defaultChests.containsKey(v))
+				fMan.createDefaultChest(playerName, newName);
+			if(sendReceiveChests.containsKey(v))
+				fMan.createSendReceiveChest(playerName, newName);
+		}
+	}
+
+	/**
 	 * Get a command represented by a specific class
 	 * 
 	 * @param clazz
@@ -251,7 +274,7 @@ public class GiftPostWorker {
 	 */
 	public synchronized void load() {
 		this.config.load();
-		this.fMan.loadChests("chests.dat",chests);
+		this.fMan.loadChests("chests.dat", chests);
 		TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
 		TreeMap<String, String> tmp2 = fMan.getAllPlayerSendChest();
 		String chestName;
@@ -271,7 +294,8 @@ public class GiftPostWorker {
 	 */
 	public synchronized void loadParties() {
 		this.config.load();
-		HashMap<String, VirtualChest> loaded = this.fMan.loadParties("parties.dat");
+		HashMap<String, VirtualChest> loaded = this.fMan
+				.loadParties("parties.dat");
 		if (loaded != null) {
 			parties.clear();
 			parties.putAll(loaded);
@@ -284,13 +308,15 @@ public class GiftPostWorker {
 	 * @deprecated
 	 */
 	public synchronized void transfer() {
-		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan.transfer("chest.dat");
+		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan
+				.transfer("chest.dat");
 		if (loaded != null) {
 			chests = loaded;
 			TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
 			if (tmp != null)
 				for (String player : tmp.keySet())
-					defaultChests.put(player, getChest(player, tmp.get(player)));
+					defaultChests
+							.put(player, getChest(player, tmp.get(player)));
 		}
 	}
 
@@ -327,7 +353,8 @@ public class GiftPostWorker {
 			} else {
 				permissions.get(playerName).put(perm, false);
 				if (errorMsg)
-					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
+					player.sendMessage(ChatColor.RED
+							+ "You don't have the Permissions to do that "
 							+ ChatColor.BLUE + "(" + perm + ")");
 			}
 		} else {
@@ -338,7 +365,8 @@ public class GiftPostWorker {
 			} else {
 				permissions.get(playerName).put(perm, false);
 				if (errorMsg)
-					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
+					player.sendMessage(ChatColor.RED
+							+ "You don't have the Permissions to do that "
 							+ ChatColor.BLUE + "(" + perm + ")");
 			}
 
