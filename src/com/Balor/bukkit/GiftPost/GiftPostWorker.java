@@ -225,9 +225,9 @@ public class GiftPostWorker {
 			chests.get(playerName).remove(oldName);
 			chests.get(playerName).put(newName, v);
 			fMan.renameChestFile(playerName, oldName, newName);
-			if(defaultChests.containsKey(v))
+			if(defaultChests.containsValue(v))
 				fMan.createDefaultChest(playerName, newName);
-			if(sendReceiveChests.containsKey(v))
+			if(sendReceiveChests.containsValue(v))
 				fMan.createSendReceiveChest(playerName, newName);
 		}
 	}
