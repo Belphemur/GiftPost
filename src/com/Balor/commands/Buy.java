@@ -50,7 +50,7 @@ public class Buy implements GPCommand {
 		else
 		{
 			Random generator = new Random();
-			chestName = player.getName()+(generator.nextInt()%20);
+			chestName = ("c"+type+generator.nextInt(20)).toLowerCase();
 		}
 		
 		if (gpw.numberOfChest(player) > 0 && gpw.chestExists(player, chestName))
