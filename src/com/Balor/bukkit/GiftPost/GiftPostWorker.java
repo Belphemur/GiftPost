@@ -349,7 +349,7 @@ public class GiftPostWorker {
 		String playerName = player.getName();
 		if (permissions.containsKey(playerName)) {
 			if (permissions.get(playerName).containsKey(perm))
-				permissions.get(playerName).get(perm);
+				return permissions.get(playerName).get(perm);
 
 			if (permission.has(player, perm)) {
 				permissions.get(playerName).put(perm, true);

@@ -39,11 +39,6 @@ public class Chest implements GPCommand {
 	 * @param args
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if(args.length < 1)
-		{
-			sender.sendMessage(getHelp());
-			return;
-		}
 		Player p = (Player) sender;
 		VirtualChest v = null;
 		if (args != null && args.length == 2)
