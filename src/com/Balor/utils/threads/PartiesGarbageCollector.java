@@ -29,20 +29,16 @@ import com.aranai.virtualchest.VirtualLargeChest;
  * 
  */
 public class PartiesGarbageCollector extends Thread {
-	private GiftPostWorker gpw;
-
-	public PartiesGarbageCollector(GiftPostWorker worker) {
-		gpw = worker;
-	}
-
 	private void garbageCollectorAndSave() {
-		if (GiftPostWorker.getmcMMO() != null && !gpw.getParties().isEmpty()) {
+		if (GiftPostWorker.getmcMMO() != null
+				&& !GiftPostWorker.getInstance().getParties().isEmpty()) {
 			TreeMap<String, VirtualChest> tmp = new TreeMap<String, VirtualChest>();
 			List<String> names = new ArrayList<String>();
 			List<String> types = new ArrayList<String>();
 			for (String party : GiftPostWorker.getmcMMO().getParties()) {
-				if (party != null && !tmp.containsKey(party) && gpw.getParties().containsKey(party)) {
-					VirtualChest v = gpw.getParties().get(party);
+				if (party != null && !tmp.containsKey(party)
+						&& GiftPostWorker.getInstance().getParties().containsKey(party)) {
+					VirtualChest v = GiftPostWorker.getInstance().getParties().get(party);
 					names.add(party);
 					tmp.put(party, v);
 					if (v instanceof VirtualLargeChest)
@@ -51,16 +47,15 @@ public class PartiesGarbageCollector extends Thread {
 						types.add("normal");
 				}
 			}
-			gpw.getParties().clear();
-			gpw.getFileManager().createPartyFile(names, types);
+			GiftPostWorker.getInstance().getParties().clear();
+			GiftPostWorker.getInstance().getFileManager().createPartyFile(names, types);
 			if (!tmp.isEmpty())
-				gpw.getParties().putAll(tmp);
-			gpw.saveParties();
+				GiftPostWorker.getInstance().getParties().putAll(tmp);
+			GiftPostWorker.getInstance().saveParties();
 		}
 	}
 
 	public void run() {
-
 		garbageCollectorAndSave();
 
 	}

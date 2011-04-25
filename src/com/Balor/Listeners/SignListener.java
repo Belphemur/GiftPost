@@ -31,8 +31,8 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
 public class SignListener extends BlockListener {
 	private GiftPostWorker worker;
 
-	public SignListener(GiftPostWorker gpw) {
-		worker = gpw;
+	public SignListener() {
+		worker = GiftPostWorker.getInstance();
 	}
 
 	@Override

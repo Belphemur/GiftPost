@@ -17,6 +17,7 @@ package com.Balor.bukkit.GiftPost;
 import com.Balor.Listeners.GPPlayerListener;
 import com.Balor.Listeners.PluginListener;
 import com.Balor.Listeners.SignListener;
+import com.Balor.Listeners.WorldSaveListener;
 import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
@@ -48,15 +49,12 @@ public class GiftPost extends JavaPlugin {
 
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private GiftPostWorker gpw;
-	private GPPlayerListener pListener;
-	private SignListener sListener;
 	private static Server server = null;
-	private static PluginListener pluginListener = null;
 
 	private void registerCommand(Class<?> clazz) {
 		try {
 			GPCommand command = (GPCommand) clazz.newInstance();
-			gpw.getCommands().add(command);
+			GiftPostWorker.getInstance().getCommands().add(command);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -136,9 +134,10 @@ public class GiftPost extends JavaPlugin {
 	}
 
 	private void setupListeners() {
-		pListener = new GPPlayerListener(gpw);
-		pluginListener = new PluginListener();
-		sListener = new SignListener(gpw);
+		PluginListener pluginListener = new PluginListener();
+		GPPlayerListener pListener = new GPPlayerListener();
+		SignListener sListener = new SignListener();
+		WorldSaveListener wListener = new WorldSaveListener();
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
@@ -147,6 +146,7 @@ public class GiftPost extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.SIGN_CHANGE, sListener, Event.Priority.Highest, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, sListener, Event.Priority.Highest, this);
+		pm.registerEvent(Event.Type.WORLD_SAVE, wListener, Priority.Normal, this);
 	}
 
 	public static Server getBukkitServer() {
@@ -159,7 +159,9 @@ public class GiftPost extends JavaPlugin {
 		setupConfigFiles();
 		log.info("[" + this.getDescription().getName() + "]" + " (version "
 				+ this.getDescription().getVersion() + ")");
-		gpw = new GiftPostWorker(getConfiguration(), getDataFolder().toString());
+		gpw = GiftPostWorker.getInstance();
+		gpw.setConfig(getConfiguration());
+		gpw.setfManager(getDataFolder().toString());
 		setupListeners();
 		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
 			gpw.transfer();
@@ -171,13 +173,14 @@ public class GiftPost extends JavaPlugin {
 
 			@Override
 			public void run() {
-				gpw.save();
+				GiftPostWorker.getInstance().save();
 			}
 		}, (getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
 				getConfiguration().getInt("auto-save-time", 10) * 1200);
 		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
+			GiftPostWorker.getInstance().loadParties();
 			getServer().getScheduler().scheduleAsyncRepeatingTask(this,
-					new PartiesGarbageCollector(gpw),
+					new PartiesGarbageCollector(),
 					(getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
 					getConfiguration().getInt("auto-save-time", 10) * 1200);
 		}

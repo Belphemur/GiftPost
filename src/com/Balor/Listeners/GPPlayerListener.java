@@ -36,8 +36,8 @@ import com.Balor.commands.Chest;
 public class GPPlayerListener extends PlayerListener {
 	private GiftPostWorker worker;
 
-	public GPPlayerListener(GiftPostWorker gpw) {
-		worker = gpw;
+	public GPPlayerListener() {
+		worker = GiftPostWorker.getInstance();
 	}
 
 	@Override

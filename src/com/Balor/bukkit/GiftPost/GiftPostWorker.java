@@ -41,27 +41,32 @@ import org.bukkit.util.config.Configuration;
  */
 public class GiftPostWorker {
 
-	private HashMap<String, HashMap<String, VirtualChest>> chests;
-	private HashMap<String, VirtualChest> defaultChests;
-	private HashMap<String, VirtualChest> sendReceiveChests;
+	private HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
+	private HashMap<String, VirtualChest> defaultChests = new HashMap<String, VirtualChest>();
+	private HashMap<String, VirtualChest> sendReceiveChests = new HashMap<String, VirtualChest>();;
 	private static PermissionHandler permission = null;
-	private List<GPCommand> commands;
+	private List<GPCommand> commands =new ArrayList<GPCommand>();
 	private Configuration config;
 	private FilesManager fManager;
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private static iConomy iConomy = null;
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
-	private HashMap<String, HashMap<String, Boolean>> permissions;
+	private HashMap<String, HashMap<String, Boolean>> permissions = new HashMap<String, HashMap<String, Boolean>>();
+	private static GiftPostWorker instance;
 
-	public GiftPostWorker(Configuration config, String dataFolder) {
-		chests = new HashMap<String, HashMap<String, VirtualChest>>();
-		defaultChests = new HashMap<String, VirtualChest>();
-		sendReceiveChests = new HashMap<String, VirtualChest>();
-		commands = new ArrayList<GPCommand>();
-		permissions = new HashMap<String, HashMap<String, Boolean>>();
+	private GiftPostWorker() {
+	}
+	public static GiftPostWorker getInstance() {
+		if(instance == null)
+			instance=new GiftPostWorker();
+		return instance;
+	}
+	public void setConfig(Configuration config) {
 		this.config = config;
-		fManager = new FilesManager(dataFolder);
+	}
+	public void setfManager(String path) {
+		this.fManager = new FilesManager(path);
 	}
 
 	public FilesManager getFileManager() {
@@ -79,8 +84,7 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public VirtualChest getChest(String playerName, String chestName) {
-		if (chests.containsKey(playerName)
-				&& chests.get(playerName).containsKey(chestName))
+		if (chests.containsKey(playerName) && chests.get(playerName).containsKey(chestName))
 			return chests.get(playerName).get(chestName);
 		else
 			return null;
@@ -225,9 +229,9 @@ public class GiftPostWorker {
 			chests.get(playerName).remove(oldName);
 			chests.get(playerName).put(newName, v);
 			fManager.renameChestFile(playerName, oldName, newName);
-			if(defaultChests.containsValue(v))
+			if (defaultChests.containsValue(v))
 				fManager.createDefaultChest(playerName, newName);
-			if(sendReceiveChests.containsValue(v))
+			if (sendReceiveChests.containsValue(v))
 				fManager.createSendReceiveChest(playerName, newName);
 		}
 	}
@@ -294,8 +298,7 @@ public class GiftPostWorker {
 	 */
 	public synchronized void loadParties() {
 		this.config.load();
-		HashMap<String, VirtualChest> loaded = this.fManager
-				.loadParties("parties.dat");
+		HashMap<String, VirtualChest> loaded = this.fManager.loadParties("parties.dat");
 		if (loaded != null) {
 			parties.clear();
 			parties.putAll(loaded);
@@ -308,15 +311,13 @@ public class GiftPostWorker {
 	 * @deprecated
 	 */
 	public synchronized void transfer() {
-		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fManager
-				.transfer("chest.dat");
+		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fManager.transfer("chest.dat");
 		if (loaded != null) {
 			chests = loaded;
 			TreeMap<String, String> tmp = fManager.getAllPlayerDefaultChest();
 			if (tmp != null)
 				for (String player : tmp.keySet())
-					defaultChests
-							.put(player, getChest(player, tmp.get(player)));
+					defaultChests.put(player, getChest(player, tmp.get(player)));
 		}
 	}
 
@@ -353,8 +354,7 @@ public class GiftPostWorker {
 			} else {
 				permissions.get(playerName).put(perm, false);
 				if (errorMsg)
-					player.sendMessage(ChatColor.RED
-							+ "You don't have the Permissions to do that "
+					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
 							+ ChatColor.BLUE + "(" + perm + ")");
 			}
 		} else {
@@ -365,8 +365,7 @@ public class GiftPostWorker {
 			} else {
 				permissions.get(playerName).put(perm, false);
 				if (errorMsg)
-					player.sendMessage(ChatColor.RED
-							+ "You don't have the Permissions to do that "
+					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
 							+ ChatColor.BLUE + "(" + perm + ")");
 			}
 
