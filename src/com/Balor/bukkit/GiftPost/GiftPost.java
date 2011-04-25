@@ -20,7 +20,6 @@ import com.Balor.Listeners.SignListener;
 import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
-import com.Balor.utils.threads.AutoSaveThread;
 import com.Balor.utils.threads.PartiesGarbageCollector;
 
 import java.io.BufferedWriter;
@@ -51,8 +50,6 @@ public class GiftPost extends JavaPlugin {
 	private GiftPostWorker gpw;
 	private GPPlayerListener pListener;
 	private SignListener sListener;
-	private AutoSaveThread autoSave;
-	private PartiesGarbageCollector partiesGC;
 	private static Server server = null;
 	private static PluginListener pluginListener = null;
 
@@ -72,13 +69,13 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(Buy.class);
 		registerCommand(Send.class);
 		registerCommand(ChestList.class);
-		registerCommand(EmptyChest.class);		
+		registerCommand(EmptyChest.class);
 		registerCommand(Upgrade.class);
-		registerCommand(SetChest.class);		
+		registerCommand(SetChest.class);
 		registerCommand(Rename.class);
 		registerCommand(BuyPartyChest.class);
 		registerCommand(OpenPartyChest.class);
-		registerCommand(SetChestLimit.class);		
+		registerCommand(SetChestLimit.class);
 	}
 
 	private void setupConfigFiles() {
@@ -106,7 +103,7 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("use-wand: 'true'");
 				out.newLine();
-				out.write("wand-item-id: "+Material.CHEST.getId());
+				out.write("wand-item-id: " + Material.CHEST.getId());
 				out.newLine();
 				out.write("auto-save-time: 10");
 				out.newLine();
@@ -148,8 +145,8 @@ public class GiftPost extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
 		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
-		pm.registerEvent(Event.Type.SIGN_CHANGE,sListener,Event.Priority.Highest,this);
-		pm.registerEvent(Event.Type.BLOCK_BREAK,sListener,Event.Priority.Highest,this);
+		pm.registerEvent(Event.Type.SIGN_CHANGE, sListener, Event.Priority.Highest, this);
+		pm.registerEvent(Event.Type.BLOCK_BREAK, sListener, Event.Priority.Highest, this);
 	}
 
 	public static Server getBukkitServer() {
@@ -170,25 +167,32 @@ public class GiftPost extends JavaPlugin {
 		} else
 			gpw.load();
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
-		autoSave = new AutoSaveThread(gpw);
-		autoSave.start();
+		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+
+			@Override
+			public void run() {
+				gpw.save();
+			}
+		}, (getConfiguration().getInt("auto-save-time", 10) * 1000 * 60) / 2,
+				getConfiguration().getInt("auto-save-time", 10) * 1000 * 60);
 		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
-			partiesGC = new PartiesGarbageCollector(gpw);
-			partiesGC.start();
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this,
+					new PartiesGarbageCollector(gpw),
+					(getConfiguration().getInt("auto-save-time", 10) * 1000 * 60) / 2,
+					getConfiguration().getInt("auto-save-time", 10) * 1000 * 60);
 		}
 	}
 
 	public void onDisable() {
 		PluginDescriptionFile pdfFile = this.getDescription();
-		autoSave.stopIt();
-		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version" + pdfFile.getVersion() + ")");
-		if (getServer().getPluginManager().getPlugin("mcMMO") != null)
-			partiesGC.stopIt();
+		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version"
+				+ pdfFile.getVersion() + ")");
 
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
+	public boolean onCommand(CommandSender sender, Command command, String commandLabel,
+			String[] args) {
 		if (!(sender instanceof Player)) {
 			sender.sendMessage(ChatColor.RED + "You have to be a player!");
 			return true;
@@ -198,9 +202,9 @@ public class GiftPost extends JavaPlugin {
 				gpw.getCommand(OpenPartyChest.class).execute(gpw, sender, null);
 				return true;
 			}
-			
+
 			if (args.length == 0) {
-				sendHelp(gpw,sender);
+				sendHelp(gpw, sender);
 				return true;
 			}
 
@@ -218,7 +222,7 @@ public class GiftPost extends JavaPlugin {
 				}
 			}
 			if (i == 0)
-				sendHelp(gpw,sender);
+				sendHelp(gpw, sender);
 		}
 		return true;
 	}

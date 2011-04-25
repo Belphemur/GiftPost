@@ -29,13 +29,10 @@ import com.aranai.virtualchest.VirtualLargeChest;
  * 
  */
 public class PartiesGarbageCollector extends Thread {
-	private boolean stop = false;
-	private int wait;
 	private GiftPostWorker gpw;
 
 	public PartiesGarbageCollector(GiftPostWorker worker) {
 		gpw = worker;
-		this.wait = gpw.getConfig().getInt("auto-save-time", 10) * 1000 * 60;
 	}
 
 	private void garbageCollectorAndSave() {
@@ -63,24 +60,8 @@ public class PartiesGarbageCollector extends Thread {
 	}
 
 	public void run() {
-		boolean fin = false;
-		gpw.loadParties();
-		while (!fin) {
-			try {
-				garbageCollectorAndSave();
-				synchronized (this) {
-					Thread.yield();
-					fin = this.stop;
-				}
-				Thread.sleep(wait);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
-	public synchronized void stopIt() {
 		garbageCollectorAndSave();
-		this.stop = true;
+
 	}
 }
