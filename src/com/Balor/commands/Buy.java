@@ -16,6 +16,8 @@
  ************************************************************************/
 package com.Balor.commands;
 
+import java.util.Random;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,8 +43,16 @@ public class Buy implements GPCommand {
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		String type = args[1].toLowerCase();
-		String chestName = args[2].toLowerCase();
 		Player player = (Player) sender;
+		String chestName;
+		if(args.length == 3)
+		 chestName = args[2].toLowerCase();
+		else
+		{
+			Random generator = new Random();
+			chestName = player.getName()+(generator.nextInt()%20);
+		}
+		
 		if (gpw.numberOfChest(player) > 0 && gpw.chestExists(player, chestName))
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "You have have already a chest named : "
 					+ ChatColor.AQUA + chestName);
@@ -77,21 +87,34 @@ public class Buy implements GPCommand {
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player, String type) {
 		if (GiftPostWorker.getiConomy() != null
-				&& gpw.getConfig().getString("iConomy", "false").matches("true")
+				&& gpw.getConfig().getString("iConomy", "false")
+						.matches("true")
 				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
-				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
-						"iConomy-" + type + "Chest-price", 10.0)) {
-					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have enough "
-							+ iConomy.getBank().getCurrency() + " to pay the Chests Keeper !");
+				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
+						.getConfig().getDouble(
+								"iConomy-" + type + "Chest-price", 10.0)) {
+					player.sendMessage(chestKeeper() + ChatColor.RED
+							+ "You don't have enough "
+							+ iConomy.getBank().getCurrency()
+							+ " to pay the Chests Keeper !");
 					return false;
 				} else {
-					if (gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) != 0) {
-						iConomy.getBank().getAccount(player.getName())
-								.subtract(gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0));
+					if (gpw.getConfig().getDouble(
+							"iConomy-" + type + "Chest-price", 10.0) != 0) {
+						iConomy.getBank()
+								.getAccount(player.getName())
+								.subtract(
+										gpw.getConfig().getDouble(
+												"iConomy-" + type
+														+ "Chest-price", 10.0));
 						player.sendMessage(chestKeeper()
-								+ gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
-								+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
+								+ gpw.getConfig()
+										.getDouble(
+												"iConomy-" + type
+														+ "Chest-price", 10.0)
+								+ " " + iConomy.getBank().getCurrency()
+								+ ChatColor.DARK_GRAY
 								+ " used to pay the Chests Keeper.");
 					}
 					return true;
@@ -112,9 +135,10 @@ public class Buy implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (args.length == 3 && (gpw.hasFlag(args, "b") || gpw.hasFlag(args, "buy")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+	public boolean validate(GiftPostWorker gpw, CommandSender sender,
+			String[] args) {
+		return (args.length >= 2 && (gpw.hasFlag(args, "b") || gpw.hasFlag(
+				args, "buy"))) && gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*

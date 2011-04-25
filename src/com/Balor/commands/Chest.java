@@ -56,7 +56,7 @@ public class Chest implements GPCommand {
 			}
 		} else
 			p.sendMessage(chestKeeper() + ChatColor.RED + "You don't have a chest. To buy one type "
-					+ ChatColor.GOLD + "/gp buy (large|normal)");
+					+ ChatColor.GOLD + "/gp buy (large|normal) nameOfTheChest");
 	}
 
 	/**

@@ -58,7 +58,7 @@ public class Stacker {
 	 * Stacks the contents of a chest.
 	 */
 	public static boolean stackChest(VirtualChest chest)  {
-		for (int index = 0; index < 54; index++) {
+		for (int index = 0; index < chest.getContents().length; index++) {
 			ItemStack stack = chest.getItemStack(index);
 			if (stack != null && stack.count != 0 && stack.id != 0) {
 				int i = 0;
