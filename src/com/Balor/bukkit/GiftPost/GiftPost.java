@@ -173,13 +173,13 @@ public class GiftPost extends JavaPlugin {
 			public void run() {
 				gpw.save();
 			}
-		}, (getConfiguration().getInt("auto-save-time", 10) * 1000 * 60) / 2,
-				getConfiguration().getInt("auto-save-time", 10) * 1000 * 60);
+		}, (getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
+				getConfiguration().getInt("auto-save-time", 10) * 1200);
 		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
 			getServer().getScheduler().scheduleAsyncRepeatingTask(this,
 					new PartiesGarbageCollector(gpw),
-					(getConfiguration().getInt("auto-save-time", 10) * 1000 * 60) / 2,
-					getConfiguration().getInt("auto-save-time", 10) * 1000 * 60);
+					(getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
+					getConfiguration().getInt("auto-save-time", 10) * 1200);
 		}
 	}
 
