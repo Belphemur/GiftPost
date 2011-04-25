@@ -49,6 +49,9 @@ public class GiftPost extends JavaPlugin {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private GiftPostWorker gpw;
 	private static Server server = null;
+	private PluginListener pluginListener;
+	private SignListener sListener;
+	private GPPlayerListener pListener;
 
 	private void registerCommand(Class<?> clazz) {
 		try {
@@ -133,10 +136,10 @@ public class GiftPost extends JavaPlugin {
 
 	}
 
-	private void setupListeners() {
-		PluginListener pluginListener = new PluginListener();
-		GPPlayerListener pListener = new GPPlayerListener();
-		SignListener sListener = new SignListener();
+	private void setupListeners() {		
+		pluginListener = new PluginListener();
+		sListener=new SignListener();
+		pListener = new GPPlayerListener();
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
