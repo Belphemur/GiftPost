@@ -47,7 +47,7 @@ public class GiftPostWorker {
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands;
 	private Configuration config;
-	private FilesManager fMan;
+	private FilesManager fManager;
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private static iConomy iConomy = null;
 	private static mcMMO mcMMO = null;
@@ -61,11 +61,11 @@ public class GiftPostWorker {
 		commands = new ArrayList<GPCommand>();
 		permissions = new HashMap<String, HashMap<String, Boolean>>();
 		this.config = config;
-		fMan = new FilesManager(dataFolder);
+		fManager = new FilesManager(dataFolder);
 	}
 
-	public FilesManager getFileMan() {
-		return fMan;
+	public FilesManager getFileManager() {
+		return fManager;
 	}
 
 	public Configuration getConfig() {
@@ -159,7 +159,7 @@ public class GiftPostWorker {
 	public boolean setDefaultChest(String playerName, VirtualChest v) {
 		if (chests.get(playerName).containsValue(v)) {
 			defaultChests.put(playerName, v);
-			fMan.createDefaultChest(playerName, v.getName());
+			fManager.createDefaultChest(playerName, v.getName());
 			return true;
 		}
 		return false;
@@ -180,7 +180,7 @@ public class GiftPostWorker {
 	public boolean setSendChest(String playerName, VirtualChest v) {
 		if (chests.get(playerName).containsValue(v)) {
 			sendReceiveChests.put(playerName, v);
-			fMan.createSendReceiveChest(playerName, v.getName());
+			fManager.createSendReceiveChest(playerName, v.getName());
 			return true;
 		}
 		return false;
@@ -203,9 +203,9 @@ public class GiftPostWorker {
 			chests.put(player.getName(), tmp);
 		}
 		if (vChest instanceof VirtualLargeChest)
-			fMan.createChestFile(player, vChest.getName(), "large");
+			fManager.createChestFile(player, vChest.getName(), "large");
 		else
-			fMan.createChestFile(player, vChest.getName(), "normal");
+			fManager.createChestFile(player, vChest.getName(), "normal");
 		if (numberOfChest(player) == 1)
 			setDefaultChest(player.getName(), vChest);
 
@@ -224,11 +224,11 @@ public class GiftPostWorker {
 		if (v != null) {
 			chests.get(playerName).remove(oldName);
 			chests.get(playerName).put(newName, v);
-			fMan.renameChestFile(playerName, oldName, newName);
+			fManager.renameChestFile(playerName, oldName, newName);
 			if(defaultChests.containsValue(v))
-				fMan.createDefaultChest(playerName, newName);
+				fManager.createDefaultChest(playerName, newName);
 			if(sendReceiveChests.containsValue(v))
-				fMan.createSendReceiveChest(playerName, newName);
+				fManager.createSendReceiveChest(playerName, newName);
 		}
 	}
 
@@ -257,7 +257,7 @@ public class GiftPostWorker {
 	 * Save all the chests.
 	 */
 	public synchronized void save() {
-		this.fMan.saveChests(chests, "chests.dat");
+		this.fManager.saveChests(chests, "chests.dat");
 		log.info("[VirtualChest] Chests Saved !");
 	}
 
@@ -265,7 +265,7 @@ public class GiftPostWorker {
 	 * Save the parties
 	 */
 	public synchronized void saveParties() {
-		this.fMan.saveParties(parties, "parties.dat");
+		this.fManager.saveParties(parties, "parties.dat");
 		log.info("[VirtualChest] Parties Saved !");
 	}
 
@@ -274,9 +274,9 @@ public class GiftPostWorker {
 	 */
 	public synchronized void load() {
 		this.config.load();
-		this.fMan.loadChests("chests.dat", chests);
-		TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
-		TreeMap<String, String> tmp2 = fMan.getAllPlayerSendChest();
+		this.fManager.loadChests("chests.dat", chests);
+		TreeMap<String, String> tmp = fManager.getAllPlayerDefaultChest();
+		TreeMap<String, String> tmp2 = fManager.getAllPlayerSendChest();
 		String chestName;
 		if (tmp != null)
 			for (String player : tmp.keySet()) {
@@ -294,7 +294,7 @@ public class GiftPostWorker {
 	 */
 	public synchronized void loadParties() {
 		this.config.load();
-		HashMap<String, VirtualChest> loaded = this.fMan
+		HashMap<String, VirtualChest> loaded = this.fManager
 				.loadParties("parties.dat");
 		if (loaded != null) {
 			parties.clear();
@@ -308,11 +308,11 @@ public class GiftPostWorker {
 	 * @deprecated
 	 */
 	public synchronized void transfer() {
-		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fMan
+		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fManager
 				.transfer("chest.dat");
 		if (loaded != null) {
 			chests = loaded;
-			TreeMap<String, String> tmp = fMan.getAllPlayerDefaultChest();
+			TreeMap<String, String> tmp = fManager.getAllPlayerDefaultChest();
 			if (tmp != null)
 				for (String player : tmp.keySet())
 					defaultChests

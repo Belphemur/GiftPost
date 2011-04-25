@@ -57,7 +57,7 @@ public class Buy implements GPCommand {
 					+ "You have have already a chest named : " + ChatColor.AQUA
 					+ chestName);
 		else if (type.matches("normal") || type.matches("large")) {
-			if (gpw.numberOfChest(player) + 1 <= gpw.getFileMan()
+			if (gpw.numberOfChest(player) + 1 <= gpw.getFileManager()
 					.openChestLimitFile(player)) {
 				if (iConomyCheck(gpw, player, type)) {
 					if (type.matches("normal"))
@@ -73,7 +73,7 @@ public class Buy implements GPCommand {
 				sender.sendMessage(chestKeeper() + ChatColor.RED
 						+ "You have reach your limit of chest."
 						+ ChatColor.DARK_RED + "("
-						+ gpw.getFileMan().openChestLimitFile(player) + ")");
+						+ gpw.getFileManager().openChestLimitFile(player) + ")");
 		} else
 			sender.sendMessage(chestKeeper() + ChatColor.RED
 					+ "There is only 2 type of Chests : large and normal");

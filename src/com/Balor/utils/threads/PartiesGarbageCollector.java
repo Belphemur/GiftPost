@@ -55,7 +55,7 @@ public class PartiesGarbageCollector extends Thread {
 				}
 			}
 			gpw.getParties().clear();
-			gpw.getFileMan().createPartyFile(names, types);
+			gpw.getFileManager().createPartyFile(names, types);
 			if (!tmp.isEmpty())
 				gpw.getParties().putAll(tmp);
 			gpw.saveParties();

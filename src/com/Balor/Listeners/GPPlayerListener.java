@@ -46,7 +46,7 @@ public class GPPlayerListener extends PlayerListener {
 			event.getPlayer().sendMessage("Virtual Chest is installed : /gp help to see all commands");
 		if (worker.getDefaultChest(event.getPlayer().getName()) != null
 				&& !worker.getDefaultChest(event.getPlayer().getName()).isEmpty()) {
-			worker.getFileMan().openOfflineFile(event.getPlayer());
+			worker.getFileManager().openOfflineFile(event.getPlayer());
 			event.getPlayer().sendMessage(
 					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c" + ChatColor.GOLD
 							+ " to see your chest.)");
@@ -56,7 +56,7 @@ public class GPPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (worker.getConfig().getString("allow-offline", "true").matches("true"))
-			worker.getFileMan().createWorldFile(event.getPlayer());
+			worker.getFileManager().createWorldFile(event.getPlayer());
 	}
 
 	public void onSign(PlayerInteractEvent event) {

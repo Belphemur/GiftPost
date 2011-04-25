@@ -70,7 +70,7 @@ public class Send implements GPCommand {
 			} else {
 				if (gpw.getConfig().getString("allow-offline", "false").matches("true")) {
 					if (inSameWorld(gpw, player.getWorld().getName(),
-							gpw.getFileMan().openWorldFile(targetName))) {
+							gpw.getFileManager().openWorldFile(targetName))) {
 						if (iConomyCheck(gpw, player)) {
 							sender.sendMessage(chestKeeper() + ChatColor.BLUE
 									+ "Succefuly send your gift to " + ChatColor.GREEN + targetName
@@ -78,7 +78,7 @@ public class Send implements GPCommand {
 									+ " but he's offline, he'll receve it when he'll connect.");
 							gpw.getSendChest(targetName).addItemStack(
 									gpw.getSendChest(player.getName()).getContents());
-							gpw.getFileMan().createOfflineFile(targetName,
+							gpw.getFileManager().createOfflineFile(targetName,
 									gpw.getSendChest(player.getName()).getContents(), player.getName());
 							gpw.getSendChest(player.getName()).emptyChest();
 						}

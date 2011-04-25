@@ -37,7 +37,7 @@ public class SetChestLimit implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		gpw.getFileMan().createChestLimitFile(args[1], Integer.parseInt(args[2]));
+		gpw.getFileManager().createChestLimitFile(args[1], Integer.parseInt(args[2]));
 		sender.sendMessage(chestKeeper() + args[1]
 				+ " chest's limit is now " + args[2]);
 
