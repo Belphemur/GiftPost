@@ -111,7 +111,7 @@ public class Upgrade implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (args.length >= 1 && (gpw.hasFlag(args, "u") || gpw.hasFlag(args, "upgrade")))
+		return ((gpw.hasFlag(args, "u") || gpw.hasFlag(args, "upgrade")))
 				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
@@ -122,6 +122,11 @@ public class Upgrade implements GPCommand {
 	 */
 	public String getPermName() {
 		return "giftpost.chest.upgrade";
+	}
+	public String getHelp()
+	{
+		return ChatColor.GOLD + "/gp u (ChestName OR nothing)" + ChatColor.WHITE
+		+ ": if you have a normal chest, upgrade to a large chest.";
 	}
 
 }

@@ -45,4 +45,9 @@ public interface GPCommand
      * @return the name of the perm to add in the permFile.
      */
     public String getPermName();
+    /**
+     * 
+     * @return the command help
+     */
+    public String getHelp();
 }

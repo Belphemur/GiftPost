@@ -46,19 +46,21 @@ public class OpenPartyChest implements GPCommand {
 		if (GiftPostWorker.getmcMMO() != null) {
 			if (mcMMO.inParty(player)) {
 				if (gpw.getParties().containsKey(mcMMO.getPartyName(player))) {
-					VirtualChest v= gpw.getParties().get(mcMMO.getPartyName(player));
+					VirtualChest v = gpw.getParties().get(mcMMO.getPartyName(player));
 					if (gpw.getConfig().getString("auto-sort", "true").matches("true"))
 						Stacker.sortChest(v);
 					if (gpw.getConfig().getString("auto-stack", "true").matches("true"))
 						Stacker.stackChest(v);
 					v.openChest(player);
 				} else
-					sender.sendMessage(chestKeeper() + ChatColor.RED + "Your party don't have a chest.");
+					sender.sendMessage(chestKeeper() + ChatColor.RED
+							+ "Your party don't have a chest.");
 			} else
 				sender.sendMessage(chestKeeper() + ChatColor.DARK_RED
 						+ "You must be in a party to buy a party chest");
 		} else
-			sender.sendMessage(chestKeeper() + ChatColor.DARK_RED + "You don't have mcMMO installed !");
+			sender.sendMessage(chestKeeper() + ChatColor.DARK_RED
+					+ "You don't have mcMMO installed !");
 
 	}
 
@@ -69,8 +71,8 @@ public class OpenPartyChest implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (GiftPostWorker.getmcMMO() != null && (gpw.hasFlag(args, "open") || gpw.hasFlag(args, "o")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+		return (GiftPostWorker.getmcMMO() != null && (gpw.hasFlag(args, "open") || gpw.hasFlag(
+				args, "o"))) && gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*
@@ -80,6 +82,11 @@ public class OpenPartyChest implements GPCommand {
 	 */
 	public String getPermName() {
 		return "mcmmo.commands.party";
+	}
+
+	public String getHelp() {
+		return ChatColor.GOLD + "/pchest" + ChatColor.WHITE
+				+ ": to open your party chest if you are in a party";
 	}
 
 }

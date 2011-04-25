@@ -44,11 +44,11 @@ public class ChestList implements GPCommand {
 		Player player = (Player) sender;
 		HashMap<String, VirtualChest> chestList = gpw.listOfChest(player);
 		if (chestList == null)
-			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] " + ChatColor.RED
-					+ "You don't have any chest.");
+			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
+					+ ChatColor.RED + "You don't have any chest.");
 		else {
-			String msg = chestKeeper() + ChatColor.GREEN + "List of all your chest (" + chestList.size()
-					+ "): " + ChatColor.DARK_RED;
+			String msg = chestKeeper() + ChatColor.GREEN + "List of all your chest ("
+					+ chestList.size() + "): " + ChatColor.DARK_RED;
 			for (String chestName : chestList.keySet())
 				msg += chestName + ", ";
 			msg = msg.substring(0, msg.length() - 2);
@@ -75,6 +75,10 @@ public class ChestList implements GPCommand {
 	 */
 	public String getPermName() {
 		return "giftpost.chest.open";
+	}
+
+	public String getHelp() {
+		return ChatColor.GOLD + "/gp l " + ChatColor.WHITE + ": list all your chests";
 	}
 
 }

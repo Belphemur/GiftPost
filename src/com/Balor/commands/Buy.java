@@ -27,7 +27,6 @@ import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 import com.nijiko.coelho.iConomy.iConomy;
 import static com.Balor.utils.Display.chestKeeper;
-
 /**
  * @author Antoine
  * 
@@ -42,6 +41,11 @@ public class Buy implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		if(args.length < 2)
+		{
+			sender.sendMessage(getHelp());
+			return;
+		}
 		String type = args[1].toLowerCase();
 		Player player = (Player) sender;
 		String chestName;
@@ -54,25 +58,21 @@ public class Buy implements GPCommand {
 
 		if (gpw.numberOfChest(player) > 0 && gpw.chestExists(player, chestName))
 			sender.sendMessage(chestKeeper() + ChatColor.RED
-					+ "You have have already a chest named : " + ChatColor.AQUA
-					+ chestName);
+					+ "You have have already a chest named : " + ChatColor.AQUA + chestName);
 		else if (type.matches("normal") || type.matches("large")) {
-			if (gpw.numberOfChest(player) + 1 <= gpw.getFileManager()
-					.openChestLimitFile(player)) {
+			if (gpw.numberOfChest(player) + 1 <= gpw.getFileManager().openChestLimitFile(player)) {
 				if (iConomyCheck(gpw, player, type)) {
 					if (type.matches("normal"))
 						gpw.addChest(player, new VirtualChest(chestName));
 					if (type.matches("large"))
 						gpw.addChest(player, new VirtualLargeChest(chestName));
-					player.sendMessage(chestKeeper()
-							+ " Chest succefuly created. " + ChatColor.GOLD
-							+ "(command /gp c " + chestName
+					player.sendMessage(chestKeeper() + " Chest succefuly created. "
+							+ ChatColor.GOLD + "(command /gp c " + chestName
 							+ " OR use a chest with left click to open it)");
 				}
 			} else
 				sender.sendMessage(chestKeeper() + ChatColor.RED
-						+ "You have reach your limit of chest."
-						+ ChatColor.DARK_RED + "("
+						+ "You have reach your limit of chest." + ChatColor.DARK_RED + "("
 						+ gpw.getFileManager().openChestLimitFile(player) + ")");
 		} else
 			sender.sendMessage(chestKeeper() + ChatColor.RED
@@ -90,34 +90,25 @@ public class Buy implements GPCommand {
 	 */
 	private boolean iConomyCheck(GiftPostWorker gpw, Player player, String type) {
 		if (GiftPostWorker.getiConomy() != null
-				&& gpw.getConfig().getString("iConomy", "false")
-						.matches("true")
+				&& gpw.getConfig().getString("iConomy", "false").matches("true")
 				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
-				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw
-						.getConfig().getDouble(
-								"iConomy-" + type + "Chest-price", 10.0)) {
-					player.sendMessage(chestKeeper() + ChatColor.RED
-							+ "You don't have enough "
-							+ iConomy.getBank().getCurrency()
-							+ " to pay the Chests Keeper !");
+				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig()
+						.getDouble("iConomy-" + type + "Chest-price", 10.0)) {
+					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have enough "
+							+ iConomy.getBank().getCurrency() + " to pay the Chests Keeper !");
 					return false;
 				} else {
-					if (gpw.getConfig().getDouble(
-							"iConomy-" + type + "Chest-price", 10.0) != 0) {
+					if (gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) != 0) {
 						iConomy.getBank()
 								.getAccount(player.getName())
 								.subtract(
 										gpw.getConfig().getDouble(
-												"iConomy-" + type
-														+ "Chest-price", 10.0));
+												"iConomy-" + type + "Chest-price", 10.0));
 						player.sendMessage(chestKeeper()
 								+ gpw.getConfig()
-										.getDouble(
-												"iConomy-" + type
-														+ "Chest-price", 10.0)
-								+ " " + iConomy.getBank().getCurrency()
-								+ ChatColor.DARK_GRAY
+										.getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
+								+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
 								+ " used to pay the Chests Keeper.");
 					}
 					return true;
@@ -138,10 +129,9 @@ public class Buy implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	public boolean validate(GiftPostWorker gpw, CommandSender sender,
-			String[] args) {
-		return (args.length >= 2 && (gpw.hasFlag(args, "b") || gpw.hasFlag(
-				args, "buy"))) && gpw.hasPerm((Player) sender, getPermName());
+	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		return ((gpw.hasFlag(args, "b") || gpw.hasFlag(args, "buy")))
+				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*
@@ -151,6 +141,11 @@ public class Buy implements GPCommand {
 	 */
 	public String getPermName() {
 		return "giftpost.chest.open";
+	}
+
+	public String getHelp() {
+		return ChatColor.GOLD + "/gp b (large OR normal) ChestName" + ChatColor.WHITE
+				+ ": to buy a large or normal chest \n";
 	}
 
 }

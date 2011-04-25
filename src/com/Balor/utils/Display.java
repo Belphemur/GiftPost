@@ -20,51 +20,48 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.Balor.commands.*;
+import com.Balor.commands.mcMMO.BuyPartyChest;
+import com.Balor.commands.mcMMO.OpenPartyChest;
 
 /**
  * 
  * @author Balor
  */
 public class Display {
-	public static void sendHelp(GiftPostWorker gpw, CommandSender sender) {
+	public static void sendHelp(CommandSender sender, Class<?> command) {
+		GPCommand gpCom = GiftPostWorker.getInstance().getCommand(command);
+		if (gpCom != null)
+			sender.sendMessage(gpCom.getHelp());
+	}
+
+	public static void sendHelp(CommandSender sender) {
 		Player player = (Player) sender;
 		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
 		sender.sendMessage("--------------------\n");
-		if (gpw.hasPerm(player, "giftpost.chest.everywhere",false))
-			sender.sendMessage(ChatColor.GOLD + "/gp c (ChestName OR nothing)" + ChatColor.WHITE
-					+ ": to open your chest if you don't set a ChestName, open your default chest.\n");
-		if (gpw.hasPerm(player, "giftpost.chest.open",false)) {
-			sender.sendMessage(ChatColor.GOLD + "/gp b (large OR normal) ChestName"
-					+ ChatColor.WHITE + ": to buy a large or normal chest \n");
-			sender.sendMessage(ChatColor.GOLD + "/gp u (ChestName OR nothing)" + ChatColor.WHITE
-					+ ": if you have a normal chest, upgrade to a large chest.");
-			sender.sendMessage(ChatColor.GOLD
-					+ "/gp set ChestName (default|send)"
-					+ ChatColor.WHITE
-					+ ": set the ChestName as your default chest (open when using a chest) or send/receive chest (for gifts)");
-			sender.sendMessage(ChatColor.GOLD + "/gp l " + ChatColor.WHITE
-					+ ": list all your chests");
-			sender.sendMessage(ChatColor.GOLD + "/gp r oldName newName" + ChatColor.WHITE
-					+ ": rename the chest.");
+		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.everywhere", false))
+			sendHelp(sender, Chest.class);
+		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.open", false)) {
+			sendHelp(sender, Buy.class);
+			sendHelp(sender, SetChest.class);
+			sendHelp(sender, ChestList.class);
+			sendHelp(sender, SetChest.class);
+			sendHelp(sender, Rename.class);
 		}
-		if (gpw.hasPerm(player, "giftpost.chest.send",false))
-			sender.sendMessage(ChatColor.GOLD + "/gp s player " + ChatColor.WHITE
-					+ ": send the content of your send chest to the player (case sensitive)");
-		if (gpw.hasPerm(player, "giftpost.admin.limit",false))
-			sender.sendMessage(ChatColor.GOLD + "/gp lim PlayerName limit" + ChatColor.WHITE
-					+ ": set the chest's limit for the PlayerName(case sensitive)");
-
-		if (GiftPostWorker.getmcMMO() != null && gpw.hasPerm(player, "mcmmo.commands.party",false)) {
+		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.send", false))
+			sendHelp(sender, Send.class);
+		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.admin.limit", false))
+			sendHelp(sender, SetChestLimit.class);
+		if (GiftPostWorker.getmcMMO() != null
+				&& GiftPostWorker.getInstance().hasPerm(player, "mcmmo.commands.party", false)) {
 			sender.sendMessage(ChatColor.AQUA + "mcMMO commands ! ");
-			sender.sendMessage(ChatColor.GOLD + "/pchest" + ChatColor.WHITE
-					+ ": to open your party chest if you are in a party");
-			sender.sendMessage(ChatColor.GOLD + "/gp party (large OR normal)" + ChatColor.WHITE
-					+ ": to buy a party chest for your party");
+			sendHelp(sender, OpenPartyChest.class);
+			sendHelp(sender, BuyPartyChest.class);
 		}
 
 	}
-	public static String chestKeeper()
-	{
+
+	public static String chestKeeper() {
 		return "[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] ";
 	}
 

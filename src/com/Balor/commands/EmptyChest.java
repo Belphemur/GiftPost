@@ -69,4 +69,8 @@ public class EmptyChest implements GPCommand {
 		return "giftpost.chest.empty";
 	}
 
+	public String getHelp() {
+		return ChatColor.GOLD + "/gp e" + ChatColor.WHITE + ": empty your default chest.";
+	}
+
 }

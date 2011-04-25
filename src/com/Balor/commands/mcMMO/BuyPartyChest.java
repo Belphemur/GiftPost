@@ -43,6 +43,11 @@ public class BuyPartyChest implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		if(args.length != 2)
+		{
+			sender.sendMessage(getHelp());
+			return;
+		}
 		Player player = (Player) sender;
 		String type = args[1].toLowerCase();
 		if (GiftPostWorker.getmcMMO() != null) {
@@ -59,21 +64,23 @@ public class BuyPartyChest implements GPCommand {
 							McParty.getInstance().sendMessage(
 									player,
 									chestKeeper() + player.getName() + " bought a Virtual " + type
-											+ " Chest for the party (" + ChatColor.GOLD + "command /pchest"
-											+ ChatColor.WHITE + " to open it)");
+											+ " Chest for the party (" + ChatColor.GOLD
+											+ "command /pchest" + ChatColor.WHITE + " to open it)");
 						}
 
 					} else
 						sender.sendMessage(chestKeeper() + ChatColor.RED
 								+ "There is only 2 type of Chests : large and normal");
 				} else
-					sender.sendMessage(chestKeeper() + ChatColor.RED + "Your party have already a chest : "
-							+ ChatColor.GOLD + "/pchest" + ChatColor.RED + " to see it.");
+					sender.sendMessage(chestKeeper() + ChatColor.RED
+							+ "Your party have already a chest : " + ChatColor.GOLD + "/pchest"
+							+ ChatColor.RED + " to see it.");
 			} else
 				sender.sendMessage(chestKeeper() + ChatColor.DARK_RED
 						+ "You must be in a party to buy a party chest");
 		} else
-			sender.sendMessage(chestKeeper() + ChatColor.DARK_RED + "You don't have mcMMO installed !");
+			sender.sendMessage(chestKeeper() + ChatColor.DARK_RED
+					+ "You don't have mcMMO installed !");
 
 	}
 
@@ -90,17 +97,21 @@ public class BuyPartyChest implements GPCommand {
 				&& gpw.getConfig().getString("iConomy", "false").matches("true")
 				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
 			if (iConomy.getBank().hasAccount(player.getName())) {
-				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig().getDouble(
-						"iConomy-" + type + "Chest-price", 10.0)) {
+				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig()
+						.getDouble("iConomy-" + type + "Chest-price", 10.0)) {
 					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have enough "
 							+ iConomy.getBank().getCurrency() + " to pay the Chests Keeper !");
 					return false;
 				} else {
 					if (gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) != 0) {
-						iConomy.getBank().getAccount(player.getName())
-								.subtract(gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0));
+						iConomy.getBank()
+								.getAccount(player.getName())
+								.subtract(
+										gpw.getConfig().getDouble(
+												"iConomy-" + type + "Chest-price", 10.0));
 						player.sendMessage(chestKeeper()
-								+ gpw.getConfig().getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
+								+ gpw.getConfig()
+										.getDouble("iConomy-" + type + "Chest-price", 10.0) + " "
 								+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
 								+ " used to pay the Chests Keeper.");
 					}
@@ -123,8 +134,9 @@ public class BuyPartyChest implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (GiftPostWorker.getmcMMO() != null && args.length == 2 && (gpw.hasFlag(args, "party") || gpw
-				.hasFlag(args, "p"))) && gpw.hasPerm((Player) sender, getPermName());
+		return (GiftPostWorker.getmcMMO() != null && (gpw
+				.hasFlag(args, "party") || gpw.hasFlag(args, "p")))
+				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*
@@ -134,6 +146,11 @@ public class BuyPartyChest implements GPCommand {
 	 */
 	public String getPermName() {
 		return "mcmmo.commands.party";
+	}
+
+	public String getHelp() {
+		return ChatColor.GOLD + "/gp party (large OR normal)" + ChatColor.WHITE
+				+ ": to buy a party chest for your party";
 	}
 
 }

@@ -38,6 +38,10 @@ public class SetChest implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		if (args.length != 3) {
+			sender.sendMessage(getHelp());
+			return;
+		}
 		String chestName = args[1].toLowerCase();
 		String type = args[2].toLowerCase();
 		if (type.equals("default") || type.equals("send")) {
@@ -56,7 +60,8 @@ public class SetChest implements GPCommand {
 					sender.sendMessage(chestKeeper() + ChatColor.RED + "You don't have this chest.");
 			}
 		} else
-			sender.sendMessage(chestKeeper() + ChatColor.RED + " Only 2 choose possible : default and send");
+			sender.sendMessage(chestKeeper() + ChatColor.RED
+					+ " Only 2 choose possible : default and send");
 
 	}
 
@@ -67,7 +72,7 @@ public class SetChest implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (args.length == 3 && gpw.hasFlag(args, "set") && gpw.hasPerm((Player) sender, getPermName()));
+		return (gpw.hasFlag(args, "set") && gpw.hasPerm((Player) sender, getPermName()));
 	}
 
 	/*
@@ -77,6 +82,13 @@ public class SetChest implements GPCommand {
 	 */
 	public String getPermName() {
 		return "giftpost.chest.open";
+	}
+
+	public String getHelp() {
+		return ChatColor.GOLD
+				+ "/gp set ChestName (default|send)"
+				+ ChatColor.WHITE
+				+ ": set the ChestName as your default chest (open when using a chest) or send/receive chest (for gifts)";
 	}
 
 }

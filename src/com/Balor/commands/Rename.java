@@ -40,6 +40,11 @@ public class Rename implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		if(args.length < 2)
+		{
+			sender.sendMessage(getHelp());
+			return;
+		}
 		String oldName = args[1].toLowerCase();
 		Player player = (Player) sender;
 		String newName;
@@ -52,16 +57,16 @@ public class Rename implements GPCommand {
 		if (gpw.chestExists(player, oldName)) {
 			if (!gpw.chestExists(player, newName)) {
 				gpw.renameChest(player, oldName, newName);
-				sender.sendMessage(chestKeeper()+"Chest "+ChatColor.BLUE+oldName+ChatColor.WHITE+" is now named "+ChatColor.GOLD+newName);
+				sender.sendMessage(chestKeeper() + "Chest " + ChatColor.BLUE + oldName
+						+ ChatColor.WHITE + " is now named " + ChatColor.GOLD + newName);
 
 			} else
 				sender.sendMessage(chestKeeper() + ChatColor.RED
-						+ "You have already a chest named : " + ChatColor.WHITE
-						+ newName);
+						+ "You have already a chest named : " + ChatColor.WHITE + newName);
 		} else
 			sender.sendMessage(chestKeeper() + ChatColor.RED
-					+ "You don't have a chest. To buy one type "
-					+ ChatColor.GOLD + "/gp buy (large|normal) nameOfTheChest");
+					+ "You don't have a chest. To buy one type " + ChatColor.GOLD
+					+ "/gp buy (large|normal) nameOfTheChest");
 	}
 
 	/*
@@ -70,10 +75,8 @@ public class Rename implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	public boolean validate(GiftPostWorker gpw, CommandSender sender,
-			String[] args) {
-		return (args.length >= 2 && (gpw.hasFlag(args, "r") || gpw.hasFlag(
-				args, "rename")))
+	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		return ((gpw.hasFlag(args, "r") || gpw.hasFlag(args, "rename")))
 				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
@@ -84,6 +87,10 @@ public class Rename implements GPCommand {
 	 */
 	public String getPermName() {
 		return "giftpost.chest.open";
+	}
+
+	public String getHelp() {
+		return ChatColor.GOLD + "/gp r oldName newName" + ChatColor.WHITE + ": rename the chest.";
 	}
 
 }

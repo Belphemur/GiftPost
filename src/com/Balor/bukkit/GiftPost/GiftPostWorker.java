@@ -45,7 +45,7 @@ public class GiftPostWorker {
 	private HashMap<String, VirtualChest> defaultChests = new HashMap<String, VirtualChest>();
 	private HashMap<String, VirtualChest> sendReceiveChests = new HashMap<String, VirtualChest>();;
 	private static PermissionHandler permission = null;
-	private List<GPCommand> commands =new ArrayList<GPCommand>();
+	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
 	private FilesManager fManager;
 	public static final Logger log = Logger.getLogger("Minecraft");
@@ -57,14 +57,17 @@ public class GiftPostWorker {
 
 	private GiftPostWorker() {
 	}
+
 	public static GiftPostWorker getInstance() {
-		if(instance == null)
-			instance=new GiftPostWorker();
+		if (instance == null)
+			instance = new GiftPostWorker();
 		return instance;
 	}
+
 	public void setConfig(Configuration config) {
 		this.config = config;
 	}
+
 	public void setfManager(String path) {
 		this.fManager = new FilesManager(path);
 	}
@@ -383,8 +386,11 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public boolean hasFlag(String[] args, String checkFlag) {
-		String flag = args[0].toLowerCase();
-		return flag.equals(checkFlag) || flag.equals("-" + checkFlag);
+		if (args.length >= 1) {
+			String flag = args[0].toLowerCase();
+			return flag.equals(checkFlag) || flag.equals("-" + checkFlag);
+		}
+		return false;
 	}
 
 	/**
