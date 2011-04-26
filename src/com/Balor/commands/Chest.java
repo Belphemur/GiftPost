@@ -54,10 +54,14 @@ public class Chest implements GPCommand {
 					Stacker.stackChest(v);
 				v.openChest((Player) sender);
 			}
-		} else
+		} else if (args != null && args.length == 2)
 			p.sendMessage(chestKeeper() + ChatColor.RED + "You don't have this ("
 					+ ChatColor.DARK_RED + args[1].toLowerCase() + ChatColor.RED
-					+ ") chest. To buy one type " + ChatColor.GOLD
+					+ ") chest. To buy one type " + ChatColor.GOLD + "/gp buy (large|normal) "
+					+ args[1].toLowerCase());
+		else
+			p.sendMessage(chestKeeper() + ChatColor.RED
+					+ "You don't have a chest. To buy one type " + ChatColor.GOLD
 					+ "/gp buy (large|normal) nameOfTheChest");
 	}
 
