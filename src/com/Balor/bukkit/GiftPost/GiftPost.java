@@ -41,7 +41,6 @@ import org.bukkit.event.Event.Priority;
 import static com.Balor.utils.Display.sendHelp;
 
 /**
- * 
  * @author Balor
  */
 public class GiftPost extends JavaPlugin {
