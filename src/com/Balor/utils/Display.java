@@ -53,6 +53,8 @@ public class Display {
 			sendHelp(sender, Send.class);
 		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.admin.limit", false))
 			sendHelp(sender, SetChestLimit.class);
+		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.admin.item", false))
+			sendHelp(sender,GiveItem.class);
 		if (GiftPostWorker.getmcMMO() != null
 				&& GiftPostWorker.getInstance().hasPerm(player, "mcmmo.commands.party", false)) {
 			sender.sendMessage(ChatColor.AQUA + "mcMMO commands ! ");
