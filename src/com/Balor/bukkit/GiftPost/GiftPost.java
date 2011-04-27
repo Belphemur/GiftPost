@@ -67,13 +67,15 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(Send.class);
 		registerCommand(ChestList.class);
 		registerCommand(EmptyChest.class);
-		registerCommand(Upgrade.class);
+		if (!GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
+				.equals("true"))
+			registerCommand(Upgrade.class);
 		registerCommand(SetChest.class);
 		registerCommand(Rename.class);
 		registerCommand(SetChestLimit.class);
-		registerCommand(OpenPartyChest.class);	
+		registerCommand(OpenPartyChest.class);
 		registerCommand(BuyPartyChest.class);
-			
+
 	}
 
 	private void setupConfigFiles() {
@@ -122,6 +124,8 @@ public class GiftPost extends JavaPlugin {
 				out.write("auto-stack: 'true'");
 				out.newLine();
 				out.write("auto-sort: 'true'");
+				out.newLine();
+				out.write("only-normal: 'false'");
 				out.newLine();
 
 				// Close the output stream

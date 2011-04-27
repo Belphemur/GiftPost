@@ -45,7 +45,9 @@ public class Display {
 			sendHelp(sender, Buy.class);
 			sendHelp(sender, SetChest.class);
 			sendHelp(sender, ChestList.class);
-			sendHelp(sender, Upgrade.class);
+			if (!GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
+					.equals("true"))
+				sendHelp(sender, Upgrade.class);
 			sendHelp(sender, Rename.class);
 			// sendHelp(sender, EmptyChest.class);
 		}

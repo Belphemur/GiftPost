@@ -27,6 +27,7 @@ import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 import com.nijiko.coelho.iConomy.iConomy;
 import static com.Balor.utils.Display.chestKeeper;
+
 /**
  * @author Antoine
  * 
@@ -41,12 +42,18 @@ public class Buy implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if(args.length < 2)
-		{
+		if (args.length < 2
+				&& !GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
+						.equals("true")) {
 			sender.sendMessage(getHelp());
 			return;
 		}
-		String type = args[1].toLowerCase();
+		String type;
+		if (GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
+				.equals("true"))
+			type = "normal";
+		else
+			type = args[1].toLowerCase();
 		Player player = (Player) sender;
 		String chestName;
 		if (args.length == 3)
@@ -144,6 +151,9 @@ public class Buy implements GPCommand {
 	}
 
 	public String getHelp() {
+		if (GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
+				.equals("true"))
+			return ChatColor.GOLD + "/gp b" + ChatColor.WHITE + ": to buy a normal chest \n";
 		return ChatColor.GOLD + "/gp b (large OR normal) ChestName" + ChatColor.WHITE
 				+ ": to buy a large or normal chest \n";
 	}
