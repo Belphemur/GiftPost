@@ -16,8 +16,6 @@
  ************************************************************************/
 package com.Balor.commands;
 
-import java.util.Random;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -58,10 +56,8 @@ public class Buy implements GPCommand {
 		String chestName;
 		if (args.length == 3)
 			chestName = args[2].toLowerCase();
-		else {
-			Random generator = new Random();
-			chestName = ("c" + type + generator.nextInt(20)).toLowerCase();
-		}
+		else 
+			chestName = ( type + (gpw.numberOfChest(player)+1)).toLowerCase();		
 
 		if (gpw.numberOfChest(player) > 0 && gpw.chestExists(player, chestName))
 			sender.sendMessage(chestKeeper() + ChatColor.RED
