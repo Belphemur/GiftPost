@@ -37,7 +37,7 @@ public class Send implements GPCommand {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
-		if (targetName.equals("allusers") && !gpw.hasPerm(player, "giftpost.admin.sendallusers")) {
+		if (targetName.equals("allusers") && gpw.hasPerm(player, "giftpost.admin.sendallusers")) {
 			sendToAll(player);
 			return;
 		}
