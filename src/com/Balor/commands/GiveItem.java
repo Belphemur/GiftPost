@@ -97,7 +97,7 @@ public class GiveItem implements GPCommand {
 	 */
 	public String getHelp() {
 		return ChatColor.GOLD + "/gp i (id|name) numberOfItems" + ChatColor.WHITE
-				+ ": add the item to your send chest \n";
+				+ ": add the item to your send chest\n";
 	}
 
 	/**
