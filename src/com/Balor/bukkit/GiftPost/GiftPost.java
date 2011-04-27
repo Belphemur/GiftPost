@@ -17,6 +17,7 @@ package com.Balor.bukkit.GiftPost;
 import com.Balor.Listeners.GPPlayerListener;
 import com.Balor.Listeners.PluginListener;
 import com.Balor.Listeners.SignListener;
+import com.Balor.Listeners.WorldGPListener;
 import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
@@ -136,6 +137,7 @@ public class GiftPost extends JavaPlugin {
 		PluginListener pluginListener = new PluginListener();
 		GPPlayerListener pListener = new GPPlayerListener();
 		SignListener sListener = new SignListener();
+		WorldGPListener wListener = new WorldGPListener();
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
@@ -144,6 +146,7 @@ public class GiftPost extends JavaPlugin {
 		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
 		pm.registerEvent(Event.Type.SIGN_CHANGE, sListener, Event.Priority.Highest, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, sListener, Event.Priority.Highest, this);
+		pm.registerEvent(Event.Type.WORLD_SAVE, wListener, Event.Priority.Normal, this);
 	}
 
 	public static Server getBukkitServer() {
