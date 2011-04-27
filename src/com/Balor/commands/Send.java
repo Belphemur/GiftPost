@@ -150,8 +150,11 @@ public class Send implements GPCommand {
 
 		}
 		gpw.getSendChest(senderName).emptyChest();
-		sender.sendMessage(chestKeeper() + ChatColor.BLUE
-				+ "Successfully send your gift to all users");
+		String msg = chestKeeper() + ChatColor.BLUE
+				+ "Successfully send your gift to all users";
+		if(gpw.getConfig().getString("use-max-range", "false ").matches("true"))
+			msg+=" in your range.";
+		sender.sendMessage(msg);
 	}
 
 	/**
