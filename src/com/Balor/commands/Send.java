@@ -37,6 +37,10 @@ public class Send implements GPCommand {
 		String targetName = args[1];
 		Player target = sender.getServer().getPlayer(targetName);
 		Player player = (Player) sender;
+		if (targetName.equals("allusers") && !gpw.hasPerm(player, "giftpost.admin.sendallusers")) {
+			sendToAll(player);
+			return;
+		}
 		if (gpw.getSendChest(player.getName()) == null)
 			sender.sendMessage(chestKeeper() + ChatColor.RED
 					+ "You don't have a chest. To buy one type " + ChatColor.GOLD
@@ -69,7 +73,7 @@ public class Send implements GPCommand {
 								+ ChatColor.GOLD + "/gp c "
 								+ gpw.getSendChest(targetName).getName() + ChatColor.GRAY + ").");
 						sender.sendMessage(chestKeeper() + ChatColor.BLUE
-								+ "Succefuly send your gift to " + ChatColor.GREEN + targetName);
+								+ "Successfully send your gift to " + ChatColor.GREEN + targetName);
 					}
 
 				} else
@@ -81,8 +85,8 @@ public class Send implements GPCommand {
 							.openWorldFile(targetName))) {
 						if (iConomyCheck(gpw, player)) {
 							sender.sendMessage(chestKeeper() + ChatColor.BLUE
-									+ "Succefuly send your gift to " + ChatColor.GREEN + targetName
-									+ ChatColor.RED
+									+ "Successfully send your gift to " + ChatColor.GREEN
+									+ targetName + ChatColor.RED
 									+ " but he's offline, he'll receve it when he'll connect.");
 							gpw.getSendChest(targetName).addItemStack(
 									gpw.getSendChest(player.getName()).getContents());
@@ -101,6 +105,53 @@ public class Send implements GPCommand {
 
 		}
 
+	}
+
+	/**
+	 * Send the content of the chest to all player who have a chest.
+	 * 
+	 * @param sender
+	 */
+	private void sendToAll(Player sender) {
+		GiftPostWorker gpw = GiftPostWorker.getInstance();
+		String senderName = sender.getName();
+		if (gpw.getSendChest(senderName).isEmpty())
+			sender.sendMessage(chestKeeper() + ChatColor.DARK_GRAY
+					+ "Your chest is empty, nothing to send");
+		for (String player : gpw.getAllOwner()) {
+			if (!player.equals(senderName)) {
+				Player target;
+				if ((target = sender.getServer().getPlayer(player)) != null) {
+					if (!gpw.getSendChest(player).isFull()
+							&& gpw.getSendChest(player).leftCases() >= gpw.getSendChest(senderName)
+									.usedCases()) {
+						if (checkMaxRange(gpw, sender, target) && inSameWorld(gpw, sender, target)) {
+							gpw.getSendChest(player).addItemStack(
+									gpw.getSendChest(senderName).getContents());
+							target.sendMessage(chestKeeper() + ChatColor.GREEN + senderName
+									+ ChatColor.GRAY
+									+ " send you a gift, look in your send chest (using command "
+									+ ChatColor.GOLD + "/gp c "
+									+ gpw.getSendChest(player).getName() + ChatColor.GRAY + ").");
+						}
+					}
+				} else {
+					if (gpw.getConfig().getString("allow-offline", "false").matches("true")) {
+						if (inSameWorld(gpw, sender.getWorld().getName(), gpw.getFileManager()
+								.openWorldFile(player))) {
+							gpw.getSendChest(player).addItemStack(
+									gpw.getSendChest(senderName).getContents());
+							gpw.getFileManager().createOfflineFile(player,
+									gpw.getSendChest(senderName).getContents(), senderName);
+						}
+					}
+				}
+			}
+
+		}
+		gpw.getSendChest(senderName).emptyChest();
+		sender.sendMessage(chestKeeper() + ChatColor.BLUE
+				+ "Successfully send your gift to all users");
 	}
 
 	/**

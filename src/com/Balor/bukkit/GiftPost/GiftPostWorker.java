@@ -27,6 +27,7 @@ import com.nijiko.permissions.PermissionHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 //Bukkit
@@ -473,5 +474,13 @@ public class GiftPostWorker {
 	 */
 	public HashMap<String, VirtualChest> getParties() {
 		return parties;
+	}
+
+	/**
+	 * 
+	 * @return a keyset with all the name of the player owning a chest.
+	 */
+	public Set<String> getAllOwner() {
+		return chests.keySet();
 	}
 }
