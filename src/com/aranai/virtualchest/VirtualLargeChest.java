@@ -159,6 +159,11 @@ public class VirtualLargeChest extends VirtualChest {
 	{
 		return lc.getItem(i);
 	}
+	@Override
+	public void setName(String name)
+	{
+		lc = new InventoryLargeChest(name, chest, subChest2);
+	}
 	/**
 	 * Set the itemStack
 	 * @param i

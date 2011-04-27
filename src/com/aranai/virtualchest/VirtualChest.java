@@ -179,6 +179,10 @@ public class VirtualChest implements Cloneable {
 	public String getName() {
 		return this.chest.getName();
 	}
+	public void setName(String name)
+	{
+		this.chest.setName(name);
+	}
 
 	public VirtualChest clone() {
 		try {

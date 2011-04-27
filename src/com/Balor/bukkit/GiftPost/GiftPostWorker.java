@@ -229,6 +229,7 @@ public class GiftPostWorker {
 		String playerName = player.getName();
 		VirtualChest v = getChest(playerName, oldName);
 		if (v != null) {
+			v.setName(newName);
 			chests.get(playerName).remove(oldName);
 			chests.get(playerName).put(newName, v);
 			fManager.renameChestFile(playerName, oldName, newName);
