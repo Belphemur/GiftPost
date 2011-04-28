@@ -42,7 +42,7 @@ public class GiveItem implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if (args.length < 3) {
+		if (args.length < 2) {
 			sender.sendMessage(getHelp());
 			return;
 		}
@@ -52,13 +52,17 @@ public class GiveItem implements GPCommand {
 			Material m = checkMaterial(args[1], p);
 			if (m == null)
 				return;
+
 			int nb;
-			try {
-				nb = Integer.parseInt(args[2]);
-			} catch (NumberFormatException e) {
-				p.sendMessage(chestKeeper() + ChatColor.RED + args[2] + " is not a number.");
-				return;
-			}
+			if (args.length == 2)
+				nb = 1;
+			else
+				try {
+					nb = Integer.parseInt(args[2]);
+				} catch (NumberFormatException e) {
+					p.sendMessage(chestKeeper() + ChatColor.RED + args[2] + " is not a number.");
+					return;
+				}
 			v.addItemStack(new ItemStack(m.getId(), nb, 0));
 			p.sendMessage(chestKeeper() + ChatColor.WHITE + "Successfuly added " + ChatColor.GOLD
 					+ nb + " " + m.name() + ChatColor.WHITE + " to your send chest ("
