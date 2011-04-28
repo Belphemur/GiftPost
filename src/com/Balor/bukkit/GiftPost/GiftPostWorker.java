@@ -188,7 +188,7 @@ public class GiftPostWorker {
 	}
 
 	public boolean setSendChest(String playerName, VirtualChest v) {
-		if (chests.get(playerName).containsValue(v)) {
+		if (chests.containsKey(playerName) && chests.get(playerName).containsValue(v)) {
 			sendReceiveChests.put(playerName, v);
 			fManager.createSendReceiveChest(playerName, v.getName());
 			return true;
