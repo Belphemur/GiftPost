@@ -55,10 +55,9 @@ public class Chest implements GPCommand {
 				v.openChest((Player) sender);
 			}
 		} else if (args != null && args.length == 2)
-			p.sendMessage(chestKeeper() + ChatColor.RED + "You don't have this ("
-					+ ChatColor.DARK_RED + args[1].toLowerCase() + ChatColor.RED
-					+ ") chest. To buy one type " + ChatColor.GOLD + "/gp buy (large|normal) "
-					+ args[1].toLowerCase());
+			p.sendMessage(chestKeeper() + ChatColor.RED
+					+ "You don't have this chest. To buy one type " + ChatColor.GOLD
+					+ "/gp buy (large|normal) " + args[1].toLowerCase());
 		else
 			p.sendMessage(chestKeeper() + ChatColor.RED
 					+ "You don't have a chest. To buy one type " + ChatColor.GOLD

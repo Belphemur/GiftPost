@@ -182,7 +182,9 @@ public class GiftPostWorker {
 	 */
 	public boolean setSendChest(String playerName, String vChest) {
 		VirtualChest v = getChest(playerName, vChest);
-		return setSendChest(playerName, v);
+		if (v != null)
+			return setSendChest(playerName, v);
+		return false;
 	}
 
 	public boolean setSendChest(String playerName, VirtualChest v) {
