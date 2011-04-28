@@ -140,7 +140,7 @@ public class Send implements GPCommand {
 						if (inSameWorld(gpw, sender.getWorld().getName(), gpw.getFileManager()
 								.openWorldFile(player))) {
 							gpw.getSendChest(player).addItemStack(
-									gpw.getSendChest(senderName).getContents());
+									gpw.getSendChest(senderName).getContents(), true);
 							gpw.getFileManager().createOfflineFile(player,
 									gpw.getSendChest(senderName).getContents(), senderName);
 						}
