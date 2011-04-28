@@ -127,7 +127,7 @@ public class Send implements GPCommand {
 									.usedCases()) {
 						if (checkMaxRange(gpw, sender, target) && inSameWorld(gpw, sender, target)) {
 							gpw.getSendChest(player).addItemStack(
-									gpw.getSendChest(senderName).getContents());
+									gpw.getSendChest(senderName).getContents(), true);
 							target.sendMessage(chestKeeper() + ChatColor.GREEN + senderName
 									+ ChatColor.GRAY
 									+ " send you a gift, look in your send chest (using command "
@@ -150,10 +150,9 @@ public class Send implements GPCommand {
 
 		}
 		gpw.getSendChest(senderName).emptyChest();
-		String msg = chestKeeper() + ChatColor.BLUE
-				+ "Successfully send your gift to all users";
-		if(gpw.getConfig().getString("use-max-range", "false ").matches("true"))
-			msg+=" in your range.";
+		String msg = chestKeeper() + ChatColor.BLUE + "Successfully send your gift to all users";
+		if (gpw.getConfig().getString("use-max-range", "false ").matches("true"))
+			msg += " in your range.";
 		sender.sendMessage(msg);
 	}
 

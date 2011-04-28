@@ -59,9 +59,25 @@ public class VirtualChest implements Cloneable {
 	 * @param iss
 	 */
 	public void addItemStack(ItemStack[] iss) {
-		for (ItemStack is : iss)
-			if (is != null)
-				addItemStack(is);
+		addItemStack(iss, false);
+	}
+
+	/**
+	 * If we want to create new itemStacks and add it.
+	 * 
+	 * @param iss
+	 * @param create
+	 */
+	public void addItemStack(ItemStack[] iss, boolean create) {
+		if (!create) {
+			for (ItemStack is : iss)
+				if (is != null)
+					addItemStack(is);
+		} else {
+			for (ItemStack is : iss)
+				if (is != null)
+					addItemStack(new ItemStack(is.id, is.count, is.damage));
+		}
 	}
 
 	/**
@@ -145,31 +161,34 @@ public class VirtualChest implements Cloneable {
 	public void removeItemStack(int i) {
 		chest.removeItemStack(i);
 	}
+
 	/**
 	 * Return the itemStack
+	 * 
 	 * @param i
 	 * @return
 	 */
-	public ItemStack getItemStack(int i)
-	{
+	public ItemStack getItemStack(int i) {
 		return chest.getItem(i);
 	}
+
 	/**
 	 * Set a given itemStack
+	 * 
 	 * @param i
 	 * @param is
 	 */
-	public void setItemStack(int i, ItemStack is)
-	{
-		chest.setItem(i,is);
+	public void setItemStack(int i, ItemStack is) {
+		chest.setItem(i, is);
 	}
+
 	/**
 	 * Swap 2 items stacks
+	 * 
 	 * @param from
 	 * @param to
 	 */
-	public void swapItemStack(int from, int to)
-	{
+	public void swapItemStack(int from, int to) {
 		ItemStack first = getItemStack(from);
 		ItemStack second = getItemStack(to);
 		setItemStack(from, second);
@@ -179,8 +198,8 @@ public class VirtualChest implements Cloneable {
 	public String getName() {
 		return this.chest.getName();
 	}
-	public void setName(String name)
-	{
+
+	public void setName(String name) {
 		this.chest.setName(name);
 	}
 
