@@ -43,8 +43,7 @@ public class BuyPartyChest implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if(args.length != 2)
-		{
+		if (args.length != 2) {
 			sender.sendMessage(getHelp());
 			return;
 		}
@@ -61,11 +60,9 @@ public class BuyPartyChest implements GPCommand {
 							if (type.matches("large"))
 								gpw.getParties().put(mcMMO.getPartyName(player),
 										new VirtualLargeChest(mcMMO.getPartyName(player)));
-							McParty.getInstance().sendMessage(
-									player,
-									chestKeeper() + player.getName() + " bought a Virtual " + type
-											+ " Chest for the party (" + ChatColor.GOLD
-											+ "command /pchest" + ChatColor.WHITE + " to open it)");
+							player.sendMessage(chestKeeper() + " You bought a Virtual " + type
+									+ " Chest for the party (" + ChatColor.GOLD + "command /pchest"
+									+ ChatColor.WHITE + " to open it)");
 						}
 
 					} else
@@ -134,9 +131,8 @@ public class BuyPartyChest implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (GiftPostWorker.getmcMMO() != null && (gpw
-				.hasFlag(args, "party") || gpw.hasFlag(args, "p")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+		return (GiftPostWorker.getmcMMO() != null && (gpw.hasFlag(args, "party") || gpw.hasFlag(
+				args, "p"))) && gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*
