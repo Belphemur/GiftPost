@@ -224,21 +224,24 @@ public class GiftPostWorker {
 	public boolean removeChest(Player player, VirtualChest vChest) {
 		String pName = player.getName();
 		if (chests.containsKey(pName)) {
-			HashMap<String, VirtualChest> playerChests;
-			playerChests = chests.get(pName);
-			playerChests.remove(vChest);
-			fManager.deleteChestFile(pName, vChest.getName());
-			String newDefaultChest = fManager.openChestTypeFile(pName).names.get(0);
-			if (defaultChests.containsValue(vChest)) {
-				defaultChests.put(pName, getChest(player.getName(), newDefaultChest));
-				fManager.createDefaultChest(pName, newDefaultChest);
+			HashMap<String, VirtualChest> playerChests = chests.get(pName);
+			if (playerChests.remove(vChest.getName()) != null) {
+				fManager.deleteChestFile(pName, vChest.getName());
+				String newDefaultChest = fManager.openChestTypeFile(pName).names.get(0);
+				if (defaultChests.containsValue(vChest)) {
+					defaultChests.put(pName, getChest(player.getName(), newDefaultChest));
+					fManager.createDefaultChest(pName, newDefaultChest);
+				}
+				if (sendReceiveChests.containsValue(vChest)) {
+					sendReceiveChests.put(pName, defaultChests.get(pName));
+					fManager.createSendReceiveChest(pName, newDefaultChest);
+				}
+				vChest = null;
+				chests.remove(pName);
+				chests.put(pName, playerChests);
+				return true;
 			}
-			if (sendReceiveChests.containsValue(vChest)) {
-				sendReceiveChests.put(pName, defaultChests.get(pName));
-				fManager.createSendReceiveChest(pName, newDefaultChest);
-			}
-			vChest = null;
-			return true;
+			return false;
 		}
 		return false;
 	}
