@@ -237,8 +237,6 @@ public class GiftPostWorker {
 					fManager.createSendReceiveChest(pName, newDefaultChest);
 				}
 				vChest = null;
-				chests.remove(pName);
-				chests.put(pName, playerChests);
 				return true;
 			}
 			return false;
