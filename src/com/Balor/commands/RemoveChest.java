@@ -68,8 +68,6 @@ public class RemoveChest implements GPCommand {
 						+ "/gp buy (large|normal) ");
 		}
 
-		sender.sendMessage(chestKeeper() + ChatColor.GREEN + "Chest emptied succefuly");
-
 	}
 
 	/*
