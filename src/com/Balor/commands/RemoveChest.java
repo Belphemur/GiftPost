@@ -55,17 +55,7 @@ public class RemoveChest implements GPCommand {
 						+ "/gp buy (large|normal) " + args[1].toLowerCase());
 
 		} else {
-			VirtualChest v;
-			if ((v = gpw.getDefaultChest(p.getName())) != null)
-				if (gpw.removeChest(p, v))
-					p.sendMessage(chestKeeper() + "Chest destroyed with success");
-				else
-					p.sendMessage(chestKeeper()
-							+ "There were a problem when I tried to destroy the chest");
-			else
-				p.sendMessage(chestKeeper() + ChatColor.RED
-						+ "You don't have a chest. To buy one type " + ChatColor.GOLD
-						+ "/gp buy (large|normal) ");
+			p.sendMessage(getHelp());
 		}
 
 	}
