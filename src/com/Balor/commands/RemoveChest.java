@@ -90,7 +90,7 @@ public class RemoveChest implements GPCommand {
 	@Override
 	public String getHelp() {
 		return ChatColor.GOLD + "/gp rm (ChestName)" + ChatColor.WHITE
-				+ ": to remove the chest, if no ChestName remove your default chest.\n";
+				+ ": to remove the chest.\n";
 	}
 
 }
