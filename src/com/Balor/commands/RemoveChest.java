@@ -29,7 +29,7 @@ import com.aranai.virtualchest.VirtualChest;
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class EmptyChest implements GPCommand {
+public class RemoveChest implements GPCommand {
 
 	/*
 	 * (non-Javadoc)
@@ -38,13 +38,18 @@ public class EmptyChest implements GPCommand {
 	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
+	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player p = (Player) sender;
 		if (args.length > 1) {
 			VirtualChest v;
-			if ((v = gpw.getChest(p.getName(), args[1])) != null)
-				v.emptyChest();
-			else
+			if ((v = gpw.getChest(p.getName(), args[1])) != null) {
+				if (gpw.removeChest(p, v))
+					p.sendMessage(chestKeeper() + "Chest destroyed with success");
+				else
+					p.sendMessage(chestKeeper()
+							+ "There were a problem when I tried to destroy the chest");
+			} else
 				p.sendMessage(chestKeeper() + ChatColor.RED
 						+ "You don't have this chest. To buy one type " + ChatColor.GOLD
 						+ "/gp buy (large|normal) " + args[1].toLowerCase());
@@ -52,7 +57,11 @@ public class EmptyChest implements GPCommand {
 		} else {
 			VirtualChest v;
 			if ((v = gpw.getDefaultChest(p.getName())) != null)
-				v.emptyChest();
+				if (gpw.removeChest(p, v))
+					p.sendMessage(chestKeeper() + "Chest destroyed with success");
+				else
+					p.sendMessage(chestKeeper()
+							+ "There were a problem when I tried to destroy the chest");
 			else
 				p.sendMessage(chestKeeper() + ChatColor.RED
 						+ "You don't have a chest. To buy one type " + ChatColor.GOLD
@@ -69,10 +78,10 @@ public class EmptyChest implements GPCommand {
 	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
+	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (gpw.hasFlag(args, "e") || gpw.hasFlag(args, "empty"))
-				&& (gpw.hasPerm((Player) sender, getPermName()) || gpw.hasPerm((Player) sender,
-						"giftpost.admin.empty"));
+		return ((gpw.hasFlag(args, "rm") || gpw.hasFlag(args, "remove")))
+				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
 	/*
@@ -80,12 +89,20 @@ public class EmptyChest implements GPCommand {
 	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
+	@Override
 	public String getPermName() {
-		return "giftpost.chest.empty";
+		return "giftpost.chest.open";
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.Balor.commands.GPCommand#getHelp()
+	 */
+	@Override
 	public String getHelp() {
-		return ChatColor.GOLD + "/gp e <chest>" + ChatColor.WHITE + ": emty the <chest>.";
+		return ChatColor.GOLD + "/gp rm (ChestName)" + ChatColor.WHITE
+				+ ": to remove the chest, if no ChestName remove your default chest.\n";
 	}
 
 }

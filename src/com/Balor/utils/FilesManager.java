@@ -242,6 +242,25 @@ public class FilesManager {
 			conf.save();
 		}
 	}
+	/**
+	 * Remove the chest.
+	 * @param pName
+	 * @param chestName
+	 */
+	public void deleteChestFile(String pName,String chestName)
+	{
+		Configuration conf = this.getFile("Players", pName + ".yml");
+		List<String> chests = conf.getStringList("ChestsNames", null);
+		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
+		if (chests.contains(chestName)) {
+			int i = chests.indexOf(chestName);
+			chests.remove(i);
+			chestsTypes.remove(i);
+			conf.setProperty("ChestsNames", chests);
+			conf.setProperty("ChestsTypes", chestsTypes);
+			conf.save();
+		}
+	}
 
 	/**
 	 * Upgrade the selected chest.
@@ -344,8 +363,8 @@ public class FilesManager {
 	 */
 	public PlayerChests openChestTypeFile(String name) {
 		Configuration conf = this.getFile("Players", name + ".yml");
-		return new PlayerChests(conf.getStringList("ChestsTypes", null),
-				conf.getStringList("ChestsNames", null));
+		return new PlayerChests(conf.getStringList("ChestsTypes", new ArrayList<String>()),
+				conf.getStringList("ChestsNames", new ArrayList<String>()));
 	}
 
 	/**

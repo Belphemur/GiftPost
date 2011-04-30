@@ -38,7 +38,6 @@ public class Display {
 	public static void sendHelp(CommandSender sender) {
 		Player player = (Player) sender;
 		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
-		sender.sendMessage("--------------------\n");
 		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.everywhere", false))
 			sendHelp(sender, Chest.class);
 		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.open", false)) {
@@ -47,6 +46,7 @@ public class Display {
 			sendHelp(sender, ChestList.class);
 			sendHelp(sender, Upgrade.class);
 			sendHelp(sender, Rename.class);
+			sendHelp(sender, RemoveChest.class);
 			// sendHelp(sender, EmptyChest.class);
 		}
 		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.send", false))

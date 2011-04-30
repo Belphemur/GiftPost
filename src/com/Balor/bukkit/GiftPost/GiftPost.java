@@ -72,6 +72,7 @@ public class GiftPost extends JavaPlugin {
 			registerCommand(Upgrade.class);
 		registerCommand(SetChest.class);
 		registerCommand(Rename.class);
+		registerCommand(RemoveChest.class);
 		registerCommand(SetChestLimit.class);
 		registerCommand(OpenPartyChest.class);
 		registerCommand(BuyPartyChest.class);
