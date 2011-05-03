@@ -23,7 +23,7 @@ import org.bukkit.event.server.ServerListener;
 import com.Balor.bukkit.GiftPost.GiftPost;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.gmail.nossr50.mcMMO;
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.iConomy;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
 import org.bukkit.plugin.Plugin;

@@ -19,7 +19,7 @@ import static com.Balor.utils.Display.chestKeeper;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.utils.Stacker;
 import com.aranai.virtualchest.VirtualChest;
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.iConomy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -76,19 +76,22 @@ public class Chest implements GPCommand {
 		if (GiftPostWorker.getiConomy() != null
 				&& gpw.getConfig().getString("iConomy", "false").matches("true")
 				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
-			if (iConomy.getBank().hasAccount(player.getName())) {
-				if (iConomy.getBank().getAccount(player.getName()).getBalance() < gpw.getConfig()
-						.getDouble("iConomy-openchest-price", 1.0)) {
-					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have enough "
-							+ iConomy.getBank().getCurrency() + " to pay the Chests Keeper !");
+			if (iConomy.hasAccount(player.getName())) {
+				if (!iConomy.getAccount(player.getName()).getHoldings()
+						.hasEnough(gpw.getConfig().getDouble("iConomy-openchest-price", 1.0))) {
+					player.sendMessage(chestKeeper()
+							+ ChatColor.RED
+							+ "You don't have "
+							+ iConomy.format(gpw.getConfig().getDouble("iConomy-openchest-price",
+									1.0)) + " to pay the Chests Keeper !");
 					return false;
 				} else {
-					iConomy.getBank().getAccount(player.getName())
+					iConomy.getAccount(player.getName()).getHoldings()
 							.subtract(gpw.getConfig().getDouble("iConomy-openchest-price", 1.0));
 					if (gpw.getConfig().getDouble("iConomy-openchest-price", 1.0) != 0)
 						player.sendMessage(chestKeeper()
-								+ gpw.getConfig().getDouble("iConomy-openchest-price", 1.0) + " "
-								+ iConomy.getBank().getCurrency() + ChatColor.DARK_GRAY
+								+ iConomy.format(gpw.getConfig().getDouble(
+										"iConomy-openchest-price", 1.0)) + ChatColor.DARK_GRAY
 								+ " used to pay the Chest Keeper.");
 					return true;
 				}

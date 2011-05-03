@@ -21,7 +21,7 @@ import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 //Plugins
 import com.gmail.nossr50.mcMMO;
-import com.nijiko.coelho.iConomy.iConomy;
+import com.iConomy.iConomy;
 import com.nijiko.permissions.PermissionHandler;
 //Java
 import java.util.ArrayList;
