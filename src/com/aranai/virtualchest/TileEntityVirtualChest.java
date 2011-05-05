@@ -17,6 +17,7 @@ package com.aranai.virtualchest;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+
 import net.minecraft.server.EntityHuman;
 import net.minecraft.server.ItemStack;
 import net.minecraft.server.TileEntityChest;
@@ -93,6 +94,11 @@ public class TileEntityVirtualChest extends TileEntityChest {
 		}
 	}
 
+	public int firstFree() {
+		Integer firstFree = emptyCases.poll();
+		return firstFree == null ? -1 : firstFree;
+	}
+
 	@Override
 	public void setItem(int i, ItemStack itemstack) {
 		emptyCases.remove(i);
@@ -128,7 +134,6 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	public String getName() {
 		return name;
 	}
-
 
 	@Override
 	public boolean a_(EntityHuman entityhuman) {

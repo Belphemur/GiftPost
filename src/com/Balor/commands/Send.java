@@ -65,7 +65,7 @@ public class Send implements GPCommand {
 				if (checkMaxRange(gpw, player, target) && inSameWorld(gpw, player, target)) {
 					if (iConomyCheck(gpw, player)) {
 						gpw.getSendChest(targetName).addItemStack(
-								gpw.getSendChest(player.getName()).getContents());
+								gpw.getSendChest(player.getName()).getMcContents());
 						gpw.getSendChest(player.getName()).emptyChest();
 						target.sendMessage(chestKeeper() + ChatColor.GREEN + player.getName()
 								+ ChatColor.GRAY
@@ -89,9 +89,9 @@ public class Send implements GPCommand {
 									+ targetName + ChatColor.RED
 									+ " but he's offline, he'll receve it when he'll connect.");
 							gpw.getSendChest(targetName).addItemStack(
-									gpw.getSendChest(player.getName()).getContents());
+									gpw.getSendChest(player.getName()).getMcContents());
 							gpw.getFileManager().createOfflineFile(targetName,
-									gpw.getSendChest(player.getName()).getContents(),
+									gpw.getSendChest(player.getName()).getMcContents(),
 									player.getName());
 							gpw.getSendChest(player.getName()).emptyChest();
 						}
@@ -127,7 +127,7 @@ public class Send implements GPCommand {
 									.usedCases()) {
 						if (checkMaxRange(gpw, sender, target) && inSameWorld(gpw, sender, target)) {
 							gpw.getSendChest(player).addItemStack(
-									gpw.getSendChest(senderName).getContents(), true);
+									gpw.getSendChest(senderName).getMcContents(), true);
 							target.sendMessage(chestKeeper() + ChatColor.GREEN + senderName
 									+ ChatColor.GRAY
 									+ " send you a gift, look in your send chest (using command "
@@ -140,9 +140,9 @@ public class Send implements GPCommand {
 						if (inSameWorld(gpw, sender.getWorld().getName(), gpw.getFileManager()
 								.openWorldFile(player))) {
 							gpw.getSendChest(player).addItemStack(
-									gpw.getSendChest(senderName).getContents(), true);
+									gpw.getSendChest(senderName).getMcContents(), true);
 							gpw.getFileManager().createOfflineFile(player,
-									gpw.getSendChest(senderName).getContents(), senderName);
+									gpw.getSendChest(senderName).getMcContents(), senderName);
 						}
 					}
 				}

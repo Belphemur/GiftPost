@@ -18,6 +18,7 @@ import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.InventoryLargeChest;
 import net.minecraft.server.ItemStack;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 
 /**
@@ -38,7 +39,7 @@ public class VirtualLargeChest extends VirtualChest {
 
 	public VirtualLargeChest(VirtualLargeChest v) {
 		this(v.getName());
-		this.addItemStack(v.getContents());
+		this.addItemStack(v.getMcContents());
 	}
 
 	public VirtualLargeChest(VirtualChest v) {
@@ -72,6 +73,33 @@ public class VirtualLargeChest extends VirtualChest {
 	}
 
 	/**
+	 * Craftbukkit ItemStack
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public org.bukkit.inventory.ItemStack getItem(int index) {
+		return new CraftItemStack(lc.getItem(index));
+	}
+
+	/**
+	 * Transform every item to a craftbukkit item
+	 * 
+	 * @return
+	 */
+	@Override
+	public org.bukkit.inventory.ItemStack[] getContents() {
+		org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[lc.getSize()];
+		net.minecraft.server.ItemStack[] mcItems = lc.getContents();
+
+		for (int i = 0; i < mcItems.length; i++) {
+			items[i] = mcItems[i] == null ? null : new CraftItemStack(mcItems[i]);
+		}
+
+		return items;
+	}
+
+	/**
 	 * is Chest Full
 	 * 
 	 * @return
@@ -81,6 +109,24 @@ public class VirtualLargeChest extends VirtualChest {
 		return super.isFull() && subChest2.isFull();
 	}
 
+	/**
+	 * return the firstIndex where the case is empty.
+	 * 
+	 * @return
+	 */
+	@Override
+	protected int firstEmpty() {
+		int firstFree = super.firstEmpty();
+		if (firstFree == -1)
+			return subChest2.firstFree() + chest.size();
+		else
+			return firstFree;
+	}
+
+	@Override
+	protected int getMaxItemStack() {
+		return lc.getMaxStackSize();
+	}
 	/**
 	 * is Chest Empty
 	 * 
@@ -125,7 +171,7 @@ public class VirtualLargeChest extends VirtualChest {
 	 * @return
 	 */
 	@Override
-	public ItemStack[] getContents() {
+	public ItemStack[] getMcContents() {
 		return lc.getContents();
 	}
 
@@ -149,34 +195,36 @@ public class VirtualLargeChest extends VirtualChest {
 		else
 			super.removeItemStack(i);
 	}
+
 	/**
 	 * Return the itemStack
+	 * 
 	 * @param i
 	 * @return
 	 */
 	@Override
-	public ItemStack getItemStack(int i)
-	{
+	public ItemStack getItemStack(int i) {
 		return lc.getItem(i);
 	}
+
 	@Override
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		lc = new InventoryLargeChest(name, chest, subChest2);
 	}
+
 	/**
 	 * Set the itemStack
+	 * 
 	 * @param i
 	 * @param is
 	 */
 	@Override
-	public void setItemStack(int i, ItemStack is)
-	{
-		lc.setItem(i,is);
+	public void setItemStack(int i, ItemStack is) {
+		lc.setItem(i, is);
 	}
+
 	@Override
-	public VirtualLargeChest clone()
-	{
+	public VirtualLargeChest clone() {
 		try {
 			VirtualLargeChest result = (VirtualLargeChest) super.clone();
 			return result;

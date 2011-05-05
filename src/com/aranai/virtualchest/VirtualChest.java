@@ -14,11 +14,15 @@
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.aranai.virtualchest;
 
+import java.util.HashMap;
+
 import net.minecraft.server.EntityPlayer;
 import net.minecraft.server.ItemStack;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 
 /**
  * VirtualChest for Bukkit
@@ -140,18 +144,180 @@ public class VirtualChest implements Cloneable {
 	 * 
 	 * @return
 	 */
-	public ItemStack[] getContents() {
+	public ItemStack[] getMcContents() {
 		return chest.getContents();
 	}
 
+	// CraftBukkit Code
+	protected int firstPartial(int materialId) {
+		org.bukkit.inventory.ItemStack[] inventory = getContents();
+		for (int i = 0; i < inventory.length; i++) {
+			org.bukkit.inventory.ItemStack item = inventory[i];
+			if (item != null && item.getTypeId() == materialId
+					&& item.getAmount() < item.getMaxStackSize()) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	protected int firstPartial(Material material) {
+		return firstPartial(material.getId());
+	}
+
+	protected int firstPartial(org.bukkit.inventory.ItemStack item) {
+		org.bukkit.inventory.ItemStack[] inventory = getContents();
+		if (item == null) {
+			return -1;
+		}
+		for (int i = 0; i < inventory.length; i++) {
+			org.bukkit.inventory.ItemStack cItem = inventory[i];
+			if (cItem != null && cItem.getTypeId() == item.getTypeId()
+					&& cItem.getAmount() < cItem.getMaxStackSize()
+					&& cItem.getDurability() == item.getDurability()) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * return the firstIndex where the case is empty.
+	 * 
+	 * @return
+	 */
+	protected int firstEmpty() {
+		return chest.firstFree();
+	}
+
+	protected int getMaxItemStack() {
+		return chest.getMaxStackSize();
+	}
+
+	public void setItem(int index, org.bukkit.inventory.ItemStack item) {
+		setItemStack(
+				index,
+				(item == null ? null : new net.minecraft.server.ItemStack(item.getTypeId(), item
+						.getAmount(), item.getDurability())));
+	}
+
+	public HashMap<Integer, org.bukkit.inventory.ItemStack> addItem(
+			org.bukkit.inventory.ItemStack... items) {
+		HashMap<Integer, org.bukkit.inventory.ItemStack> leftover = new HashMap<Integer, org.bukkit.inventory.ItemStack>();
+
+		/*
+		 * TODO: some optimization - Create a 'firstPartial' with a 'fromIndex'
+		 * - Record the lastPartial per Material
+		 */
+
+		for (int i = 0; i < items.length; i++) {
+			org.bukkit.inventory.ItemStack item = items[i];
+			while (true) {
+				// Do we already have a stack of it?
+				int firstPartial = firstPartial(item);
+
+				// Drat! no partial stack
+				if (firstPartial == -1) {
+					// Find a free spot!
+					int firstFree = firstEmpty();
+
+					if (firstFree == -1) {
+						// No space at all!
+						leftover.put(i, item);
+						break;
+					} else {
+						// More than a single stack!
+						if (item.getAmount() > getMaxItemStack()) {
+							setItem(firstFree, new CraftItemStack(item.getTypeId(),
+									getMaxItemStack(), item.getDurability()));
+							item.setAmount(item.getAmount() - getMaxItemStack());
+						} else {
+							// Just store it
+							setItem(firstFree, item);
+							break;
+						}
+					}
+				} else {
+					// So, apparently it might only partially fit, well lets do
+					// just that
+					org.bukkit.inventory.ItemStack partialItem = getItem(firstPartial);
+
+					int amount = item.getAmount();
+					int partialAmount = partialItem.getAmount();
+					int maxAmount = partialItem.getMaxStackSize();
+
+					// Check if it fully fits
+					if (amount + partialAmount <= maxAmount) {
+						partialItem.setAmount(amount + partialAmount);
+						break;
+					}
+
+					// It fits partially
+					partialItem.setAmount(maxAmount);
+					item.setAmount(amount + partialAmount - maxAmount);
+				}
+			}
+		}
+		return leftover;
+	}
+
+	public void remove(int materialId) {
+		org.bukkit.inventory.ItemStack[] items = getContents();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] != null && items[i].getTypeId() == materialId) {
+				setItem(i, null);
+			}
+		}
+	}
+
+	public void remove(Material material) {
+		remove(material.getId());
+	}
+
+	public void remove(ItemStack item) {
+		org.bukkit.inventory.ItemStack[] items = getContents();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] != null && items[i].equals(item)) {
+				setItem(i, null);
+			}
+		}
+	}
+
+	/**
+	 * Craftbukkit ItemStack
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public org.bukkit.inventory.ItemStack getItem(int index) {
+		return new CraftItemStack(chest.getItem(index));
+	}
+
+	/**
+	 * Transform every item to a craftbukkit item
+	 * 
+	 * @return
+	 */
+	public org.bukkit.inventory.ItemStack[] getContents() {
+		org.bukkit.inventory.ItemStack[] items = new org.bukkit.inventory.ItemStack[chest.getSize()];
+		net.minecraft.server.ItemStack[] mcItems = chest.getContents();
+
+		for (int i = 0; i < mcItems.length; i++) {
+			items[i] = mcItems[i] == null ? null : new CraftItemStack(mcItems[i]);
+		}
+
+		return items;
+	}
+
+	// End of CraftBukkit Code
 	/**
 	 * Search for a given itemStack and remove it.
 	 * 
 	 * @param is
 	 */
 	public boolean removeItemStack(ItemStack is) {
-		for (int i = 0; i < this.getContents().length; i++)
-			if (this.getContents()[i].equals(is)) {
+		for (int i = 0; i < this.getMcContents().length; i++)
+			if (this.getMcContents()[i].equals(is)) {
 				chest.removeItemStack(i);
 				return true;
 			}

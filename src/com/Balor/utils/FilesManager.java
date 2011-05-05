@@ -419,7 +419,7 @@ public class FilesManager {
 					createChestFile(pNames, chestName, "large");
 				else
 					createChestFile(pNames, chestName, "normal");
-				for (ItemStack is : v.getContents()) {
+				for (ItemStack is : v.getMcContents()) {
 					if (is != null)
 						itemstacks.add(new SerializedItemStack(is.id, is.count,
 								is.damage));
@@ -547,7 +547,7 @@ public class FilesManager {
 
 		for (String partyName : chest.keySet()) {
 			VirtualChest v = chest.get(partyName);
-			for (ItemStack is : v.getContents()) {
+			for (ItemStack is : v.getMcContents()) {
 				if (is != null)
 					itemstacks.add(new SerializedItemStack(is.id, is.count,
 							is.damage));

@@ -29,7 +29,7 @@ public class Stacker {
 
 		int swapStackI = 0;
 		ItemStack swapStack;
-		int size = chest.getContents().length;
+		int size = chest.getMcContents().length;
 		for (int index = 0; index < size; index++) {
 			ItemStack stack = chest.getItemStack(index);
 			swapStack = stack;
@@ -58,11 +58,11 @@ public class Stacker {
 	 * Stacks the contents of a chest.
 	 */
 	public static boolean stackChest(VirtualChest chest)  {
-		for (int index = 0; index < chest.getContents().length; index++) {
+		for (int index = 0; index < chest.getMcContents().length; index++) {
 			ItemStack stack = chest.getItemStack(index);
 			if (stack != null && stack.count != 0 && stack.id != 0) {
 				int i = 0;
-				for (ItemStack stack2 : chest.getContents()) {
+				for (ItemStack stack2 : chest.getMcContents()) {
 					if (stack2 != null && i != index && stack2.count != 0 && stack2.count < stack2.b()
 							&& stack2.id == stack.id) {
 						stack.count = Math.min(stack2.b(), stack.count + stack2.count);
