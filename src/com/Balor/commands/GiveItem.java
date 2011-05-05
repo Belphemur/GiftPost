@@ -18,12 +18,11 @@ package com.Balor.commands;
 
 import static com.Balor.utils.Display.chestKeeper;
 
-import net.minecraft.server.ItemStack;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.aranai.virtualchest.VirtualChest;
@@ -63,7 +62,7 @@ public class GiveItem implements GPCommand {
 					p.sendMessage(chestKeeper() + ChatColor.RED + args[2] + " is not a number.");
 					return;
 				}
-			v.addItemStack(new ItemStack(m.getId(), nb, 0));
+			v.addItem(new ItemStack(m, nb));
 			p.sendMessage(chestKeeper() + ChatColor.WHITE + "Successfuly added " + ChatColor.GOLD
 					+ nb + " " + m.name() + ChatColor.WHITE + " to your send chest ("
 					+ ChatColor.GREEN + v.getName() + ChatColor.WHITE + ")");
