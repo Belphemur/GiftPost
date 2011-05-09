@@ -508,4 +508,12 @@ public class GiftPostWorker {
 	public Set<String> getAllOwner() {
 		return chests.keySet();
 	}
+	/**
+	 * Remove all permissions node for the player from the cache.
+	 * @param player
+	 */
+	public void removePermissionNode(String player)
+	{
+		permissions.remove(player);
+	}
 }

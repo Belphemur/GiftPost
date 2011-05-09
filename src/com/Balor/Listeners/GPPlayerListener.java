@@ -43,13 +43,15 @@ public class GPPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		if (worker.getConfig().getString("message-of-the-day", "true").matches("true"))
-			event.getPlayer().sendMessage("Virtual Chest is installed : /gp help to see all commands");
+			event.getPlayer().sendMessage(
+					"Virtual Chest is installed : /gp help to see all commands");
 		if (worker.getDefaultChest(event.getPlayer().getName()) != null
 				&& !worker.getDefaultChest(event.getPlayer().getName()).isEmpty()) {
 			worker.getFileManager().openOfflineFile(event.getPlayer());
-			event.getPlayer().sendMessage(
-					ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c" + ChatColor.GOLD
-							+ " to see your chest.)");
+			if (worker.getConfig().getString("message-of-the-day", "true").matches("true"))
+				event.getPlayer().sendMessage(
+						ChatColor.GOLD + "(command" + ChatColor.RED + " /gp c" + ChatColor.GOLD
+								+ " to see your chest.)");
 		}
 	}
 
@@ -57,14 +59,17 @@ public class GPPlayerListener extends PlayerListener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		if (worker.getConfig().getString("allow-offline", "true").matches("true"))
 			worker.getFileManager().createWorldFile(event.getPlayer());
+		worker.removePermissionNode(event.getPlayer().getName());
 	}
 
 	public void onSign(PlayerInteractEvent event) {
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			Block block = event.getClickedBlock();
-			if (block.getType().equals(Material.WALL_SIGN) || block.getType().equals(Material.SIGN_POST)) {
+			if (block.getType().equals(Material.WALL_SIGN)
+					|| block.getType().equals(Material.SIGN_POST)) {
 				Sign sign = (Sign) block.getState();
-				if (sign.getLine(0).indexOf("[Chest Keeper]") == 0 && sign.getLine(0).indexOf("]") != -1
+				if (sign.getLine(0).indexOf("[Chest Keeper]") == 0
+						&& sign.getLine(0).indexOf("]") != -1
 						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
 					new Chest().execute(worker, event.getPlayer(), null);
 				}
@@ -75,7 +80,9 @@ public class GPPlayerListener extends PlayerListener {
 	@Override
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		onSign(event);
-		if (worker.getConfig().getString("use-wand","true").matches("true") && (event.getPlayer().getItemInHand().getType().getId() == worker.getConfig().getInt("wand-item-id", Material.CHEST.getId()))
+		if (worker.getConfig().getString("use-wand", "true").matches("true")
+				&& (event.getPlayer().getItemInHand().getType().getId() == worker.getConfig()
+						.getInt("wand-item-id", Material.CHEST.getId()))
 				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(
 						Action.LEFT_CLICK_BLOCK))
 				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere")) {
