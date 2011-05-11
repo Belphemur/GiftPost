@@ -66,7 +66,18 @@ public class FilesManager {
 	 * @return the configuration file
 	 */
 	private Configuration getYml(String directory, String fileName) {
-
+		Configuration config = new Configuration(getFile(directory, fileName));
+		config.load();
+		return config;
+	}
+	/**
+	 * Open the file and return the File object
+	 * 
+	 * @param directory
+	 * @param fileName
+	 * @return the configuration file
+	 */
+	private File getFile(String directory, String fileName) {
 		if (!new File(this.path + File.separator + directory).exists()) {
 			new File(this.path + File.separator + directory).mkdir();
 		}
@@ -81,15 +92,46 @@ public class FilesManager {
 				System.out.println("cannot create file " + file.getPath());
 			}
 		}
-		Configuration config = new Configuration(file);
-		config.load();
-		return config;
+		return file;
 
 	}
-	public void saveConverter()
+	/**
+	 * Convert the old save to the new save format
+	 * @param chest
+	 */
+	public void saveConverter(HashMap<String, HashMap<String, VirtualChest>> chest)
 	{
-		HashMap<String, HashMap<String, VirtualChest>> loaded = new HashMap<String, HashMap<String,VirtualChest>>();
-		this.loadChests("chests.dat", loaded);
+		FileOutputStream fos = null;
+		ObjectOutputStream out = null;
+		ArrayList<SerializedItemStack> itemstacks = new ArrayList<SerializedItemStack>();
+		HashMap<String, ArrayList<SerializedItemStack>> tmp = new HashMap<String, ArrayList<SerializedItemStack>>();
+		for (String pNames : chest.keySet()) {
+			HashMap<String, VirtualChest> hMap = chest.get(pNames);
+			for (String chestName : hMap.keySet()) {
+				VirtualChest v = hMap.get(chestName);
+				if (v instanceof VirtualLargeChest)
+					createChestFile(pNames, chestName, "large");
+				else
+					createChestFile(pNames, chestName, "normal");
+				for (ItemStack is : v.getMcContents()) {
+					if (is != null)
+						itemstacks.add(new SerializedItemStack(is.id, is.count,
+								is.damage));
+				}
+				tmp.put(chestName, new ArrayList<SerializedItemStack>(
+						itemstacks));
+				itemstacks = new ArrayList<SerializedItemStack>();
+			}
+			try {
+				fos = new FileOutputStream(getFile("chests", pNames+".chest"));
+				out = new ObjectOutputStream(fos);
+				out.writeObject(tmp);
+				out.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			tmp = new HashMap<String, ArrayList<SerializedItemStack>>();
+		}
 	}
 	/**
 	 * Create the offline file for the player
