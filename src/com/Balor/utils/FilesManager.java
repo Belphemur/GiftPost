@@ -65,7 +65,7 @@ public class FilesManager {
 	 * @param fileName
 	 * @return the configuration file
 	 */
-	private Configuration getFile(String directory, String fileName) {
+	private Configuration getYml(String directory, String fileName) {
 
 		if (!new File(this.path + File.separator + directory).exists()) {
 			new File(this.path + File.separator + directory).mkdir();
@@ -86,7 +86,11 @@ public class FilesManager {
 		return config;
 
 	}
-
+	public void saveConverter()
+	{
+		HashMap<String, HashMap<String, VirtualChest>> loaded = new HashMap<String, HashMap<String,VirtualChest>>();
+		this.loadChests("chests.dat", loaded);
+	}
 	/**
 	 * Create the offline file for the player
 	 * 
@@ -95,7 +99,7 @@ public class FilesManager {
 	 * @param from
 	 */
 	public void createOfflineFile(String to, ItemStack[] items, String from) {
-		Configuration conf = this.getFile("Players", to + ".yml");
+		Configuration conf = this.getYml("Players", to + ".yml");
 		List<String> itemsNames = new ArrayList<String>();
 		List<Integer> itemsAmount = new ArrayList<Integer>();
 		List<String> playerNames = new ArrayList<String>();
@@ -138,7 +142,7 @@ public class FilesManager {
 	 * @param player
 	 */
 	public void emptyOfflineFile(Player player) {
-		Configuration conf = this.getFile("Players", player.getName() + ".yml");
+		Configuration conf = this.getYml("Players", player.getName() + ".yml");
 		conf.setProperty("Players", null);
 		conf.setProperty("From", null);
 		conf.save();
@@ -176,7 +180,7 @@ public class FilesManager {
 	 * @param p
 	 */
 	public void createWorldFile(Player p) {
-		Configuration conf = getFile("Players", p.getName() + ".yml");
+		Configuration conf = getYml("Players", p.getName() + ".yml");
 		conf.setProperty("World", p.getWorld().getName());
 		conf.save();
 	}
@@ -188,7 +192,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public String openWorldFile(String name) {
-		return this.getFile("Players", name + ".yml").getString("World",
+		return this.getYml("Players", name + ".yml").getString("World",
 				"world");
 	}
 
@@ -203,7 +207,7 @@ public class FilesManager {
 	}
 
 	private void createChestFile(String pName, String chestName, String type) {
-		Configuration conf = this.getFile("Players", pName + ".yml");
+		Configuration conf = this.getYml("Players", pName + ".yml");
 		List<String> chests = conf.getStringList("ChestsNames", null);
 		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
 		if (chests == null)
@@ -227,7 +231,7 @@ public class FilesManager {
 	 * @param newName
 	 */
 	public void renameChestFile(String pName, String oldName, String newName) {
-		Configuration conf = this.getFile("Players", pName + ".yml");
+		Configuration conf = this.getYml("Players", pName + ".yml");
 		List<String> chests = conf.getStringList("ChestsNames", null);
 		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
 		if (chests.contains(oldName)) {
@@ -249,7 +253,7 @@ public class FilesManager {
 	 */
 	public void deleteChestFile(String pName,String chestName)
 	{
-		Configuration conf = this.getFile("Players", pName + ".yml");
+		Configuration conf = this.getYml("Players", pName + ".yml");
 		List<String> chests = conf.getStringList("ChestsNames", null);
 		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
 		if (chests.contains(chestName)) {
@@ -270,7 +274,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public boolean upgradeChest(Player p, String chestName) {
-		Configuration conf = this.getFile("Players", p.getName() + ".yml");
+		Configuration conf = this.getYml("Players", p.getName() + ".yml");
 		List<String> chests = conf.getStringList("ChestsNames", null);
 		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
 		if (chests.contains(chestName)) {
@@ -283,7 +287,7 @@ public class FilesManager {
 	}
 
 	public void createChestLimitFile(String player, int limit) {
-		Configuration conf = this.getFile("Players", player + ".yml");
+		Configuration conf = this.getYml("Players", player + ".yml");
 		conf.setProperty("ChestLimit", limit);
 		conf.save();
 	}
@@ -292,7 +296,7 @@ public class FilesManager {
 		Configuration config = new Configuration(new File(path + File.separator
 				+ "config.yml"));
 		config.load();
-		return this.getFile("Players", p.getName() + ".yml").getInt(
+		return this.getYml("Players", p.getName() + ".yml").getInt(
 				"ChestLimit", config.getInt("max-number-chest", 10));
 	}
 
@@ -304,7 +308,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public boolean createDefaultChest(String player, String chest) {
-		Configuration conf = this.getFile("Players", player + ".yml");
+		Configuration conf = this.getYml("Players", player + ".yml");
 		if (openChestTypeFile(player).concat().containsKey(chest)) {
 			conf.setProperty("DefaultChest", chest);
 			conf.save();
@@ -321,7 +325,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public boolean createSendReceiveChest(String player, String chest) {
-		Configuration conf = this.getFile("Players", player + ".yml");
+		Configuration conf = this.getYml("Players", player + ".yml");
 		if (openChestTypeFile(player).concat().containsKey(chest)) {
 			conf.setProperty("SendChest", chest);
 			conf.save();
@@ -340,7 +344,7 @@ public class FilesManager {
 		String def = null;
 		if (!openChestTypeFile(player).names.isEmpty())
 			def = openChestTypeFile(player).names.get(0);
-		return this.getFile("Players", player + ".yml").getString(
+		return this.getYml("Players", player + ".yml").getString(
 				"DefaultChest", def);
 	}
 
@@ -351,7 +355,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public String openSendChest(String player) {
-		return this.getFile("Players", player + ".yml").getString("SendChest",
+		return this.getYml("Players", player + ".yml").getString("SendChest",
 				null);
 	}
 
@@ -362,7 +366,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public PlayerChests openChestTypeFile(String name) {
-		Configuration conf = this.getFile("Players", name + ".yml");
+		Configuration conf = this.getYml("Players", name + ".yml");
 		return new PlayerChests(conf.getStringList("ChestsTypes", new ArrayList<String>()),
 				conf.getStringList("ChestsNames", new ArrayList<String>()));
 	}
@@ -374,7 +378,7 @@ public class FilesManager {
 	 * @param p
 	 */
 	public void openOfflineFile(Player p) {
-		Configuration conf = this.getFile("Players", p.getName() + ".yml");
+		Configuration conf = this.getYml("Players", p.getName() + ".yml");
 		List<String> playerNames = new ArrayList<String>();
 		List<String> itemsNames = new ArrayList<String>();
 		List<Integer> itemsAmount = new ArrayList<Integer>();
@@ -448,7 +452,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public HashMap<String, String> openAllParties() {
-		Configuration conf = getFile("Parties", "parties.yml");
+		Configuration conf = getYml("Parties", "parties.yml");
 		HashMap<String, String> result = new HashMap<String, String>();
 		List<String> names = conf.getStringList("Names", null);
 		List<String> types = conf.getStringList("ChestTypes", null);
@@ -470,7 +474,7 @@ public class FilesManager {
 	 * @param types
 	 */
 	public void createPartyFile(List<String> names, List<String> types) {
-		Configuration conf = getFile("Parties", "parties.yml");
+		Configuration conf = getYml("Parties", "parties.yml");
 		conf.setProperty("Names", names);
 		conf.setProperty("ChestTypes", types);
 		conf.save();
