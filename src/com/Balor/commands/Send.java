@@ -144,6 +144,7 @@ public class Send implements GPCommand {
 									gpw.getSendChest(senderName).getMcContents(), true);
 							gpw.getFileManager().createOfflineFile(player,
 									gpw.getSendChest(senderName).getMcContents(), senderName);
+							gpw.deloadPlayerChests(player);
 						}
 					}
 				}
