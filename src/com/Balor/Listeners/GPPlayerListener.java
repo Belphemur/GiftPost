@@ -64,7 +64,7 @@ public class GPPlayerListener extends PlayerListener {
 			worker.getFileManager().createWorldFile(p);
 		worker.removePermissionNode(pName);
 		if (worker.haveAChestInMemory(pName))
-			worker.deloadPlayerChests(pName);
+			worker.unloadPlayerChests(pName);
 	}
 
 	public void onSign(PlayerInteractEvent event) {

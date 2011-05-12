@@ -148,12 +148,12 @@ public class GiftPostWorker {
 	 * 
 	 * @param player
 	 */
-	public void deloadPlayerChests(String player) {
+	public void unloadPlayerChests(String player) {
 		fManager.savePlayerChest(player, chests.get(player));
 		defaultChests.remove(player);
 		sendReceiveChests.remove(player);
 		chests.remove(player);
-		workerLog.info("Chests of " + player + " deloaded from memory.");
+		workerLog.info("Chests of " + player + " unloaded from memory.");
 	}
 
 	/**

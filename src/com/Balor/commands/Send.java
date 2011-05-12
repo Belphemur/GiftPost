@@ -94,7 +94,7 @@ public class Send implements GPCommand {
 									gpw.getSendChest(player.getName()).getMcContents(),
 									player.getName());
 							gpw.getSendChest(player.getName()).emptyChest();
-							gpw.deloadPlayerChests(targetName);
+							gpw.unloadPlayerChests(targetName);
 						}
 					} else
 						sender.sendMessage(chestKeeper() + targetName + ChatColor.RED
@@ -144,7 +144,7 @@ public class Send implements GPCommand {
 									gpw.getSendChest(senderName).getMcContents(), true);
 							gpw.getFileManager().createOfflineFile(player,
 									gpw.getSendChest(senderName).getMcContents(), senderName);
-							gpw.deloadPlayerChests(player);
+							gpw.unloadPlayerChests(player);
 						}
 					}
 				}
