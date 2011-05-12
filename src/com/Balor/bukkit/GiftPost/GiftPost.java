@@ -172,8 +172,13 @@ public class GiftPost extends JavaPlugin {
 		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
 			gpw.transfer();
 			new File(getDataFolder() + File.separator + "chest.dat").delete();
-		} else
-			gpw.load();
+		} else if(new File(getDataFolder() + File.separator + "chests.dat").exists())
+		{
+			gpw.convertSave();
+			new File(getDataFolder() + File.separator + "chests.dat").delete();
+		}
+		else
+			gpw.newLoad();
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 

@@ -20,6 +20,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -57,9 +58,13 @@ public class GPPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerQuit(PlayerQuitEvent event) {
+		Player p = event.getPlayer();
+		String pName = p.getName();
 		if (worker.getConfig().getString("allow-offline", "true").matches("true"))
-			worker.getFileManager().createWorldFile(event.getPlayer());
-		worker.removePermissionNode(event.getPlayer().getName());
+			worker.getFileManager().createWorldFile(p);
+		worker.removePermissionNode(pName);
+		if (worker.haveAChestInMemory(pName))
+			worker.deloadPlayerChests(pName);
 	}
 
 	public void onSign(PlayerInteractEvent event) {

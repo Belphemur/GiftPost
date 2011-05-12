@@ -94,6 +94,7 @@ public class Send implements GPCommand {
 									gpw.getSendChest(player.getName()).getMcContents(),
 									player.getName());
 							gpw.getSendChest(player.getName()).emptyChest();
+							gpw.deloadPlayerChests(targetName);
 						}
 					} else
 						sender.sendMessage(chestKeeper() + targetName + ChatColor.RED

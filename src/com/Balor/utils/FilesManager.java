@@ -33,6 +33,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
+import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 
@@ -70,6 +71,7 @@ public class FilesManager {
 		config.load();
 		return config;
 	}
+
 	/**
 	 * Open the file and return the File object
 	 * 
@@ -78,13 +80,16 @@ public class FilesManager {
 	 * @return the configuration file
 	 */
 	private File getFile(String directory, String fileName) {
+		return getFile(directory, fileName, true);
+	}
+
+	private File getFile(String directory, String fileName, boolean create) {
 		if (!new File(this.path + File.separator + directory).exists()) {
 			new File(this.path + File.separator + directory).mkdir();
 		}
-		File file = new File(path + File.separator + directory + File.separator
-				+ fileName);
+		File file = new File(path + File.separator + directory + File.separator + fileName);
 
-		if (!file.exists()) {
+		if (!file.exists() && create) {
 
 			try {
 				file.createNewFile();
@@ -93,46 +98,55 @@ public class FilesManager {
 			}
 		}
 		return file;
-
 	}
+
 	/**
-	 * Convert the old save to the new save format
-	 * @param chest
+	 * Save the player chest.
+	 * 
+	 * @param pName
+	 * @param chests
 	 */
-	public void saveConverter(HashMap<String, HashMap<String, VirtualChest>> chest)
-	{
+	public void savePlayerChest(String pName, HashMap<String, VirtualChest> chests) {
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		ArrayList<SerializedItemStack> itemstacks = new ArrayList<SerializedItemStack>();
 		HashMap<String, ArrayList<SerializedItemStack>> tmp = new HashMap<String, ArrayList<SerializedItemStack>>();
+		for (String chestName : chests.keySet()) {
+			VirtualChest v = chests.get(chestName);
+			if (v instanceof VirtualLargeChest)
+				createChestFile(pName, chestName, "large");
+			else
+				createChestFile(pName, chestName, "normal");
+			for (ItemStack is : v.getMcContents()) {
+				if (is != null)
+					itemstacks.add(new SerializedItemStack(is.id, is.count, is.damage));
+			}
+			tmp.put(chestName, new ArrayList<SerializedItemStack>(itemstacks));
+			itemstacks = new ArrayList<SerializedItemStack>();
+		}
+		try {
+			fos = new FileOutputStream(getFile("Chests", pName + ".chest"));
+			out = new ObjectOutputStream(fos);
+			out.writeObject(tmp);
+			out.close();
+		} catch (IOException ex) {
+			GiftPostWorker.workerLog.severe(ex.toString());
+		}
+		GiftPostWorker.workerLog.fine("Chests of "+pName+" Saved.");
+	}
+
+	/**
+	 * Convert the old save to the new save format
+	 * 
+	 * @param chest
+	 */
+	public void savePerPlayer(HashMap<String, HashMap<String, VirtualChest>> chest) {
 		for (String pNames : chest.keySet()) {
 			HashMap<String, VirtualChest> hMap = chest.get(pNames);
-			for (String chestName : hMap.keySet()) {
-				VirtualChest v = hMap.get(chestName);
-				if (v instanceof VirtualLargeChest)
-					createChestFile(pNames, chestName, "large");
-				else
-					createChestFile(pNames, chestName, "normal");
-				for (ItemStack is : v.getMcContents()) {
-					if (is != null)
-						itemstacks.add(new SerializedItemStack(is.id, is.count,
-								is.damage));
-				}
-				tmp.put(chestName, new ArrayList<SerializedItemStack>(
-						itemstacks));
-				itemstacks = new ArrayList<SerializedItemStack>();
-			}
-			try {
-				fos = new FileOutputStream(getFile("chests", pNames+".chest"));
-				out = new ObjectOutputStream(fos);
-				out.writeObject(tmp);
-				out.close();
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-			tmp = new HashMap<String, ArrayList<SerializedItemStack>>();
+			savePlayerChest(pNames, hMap);
 		}
 	}
+
 	/**
 	 * Create the offline file for the player
 	 * 
@@ -147,8 +161,8 @@ public class FilesManager {
 		List<String> playerNames = new ArrayList<String>();
 		for (ItemStack is : items)
 			if (is != null) {
-				itemsNames.add(Material.getMaterial(is.id).toString()
-						.toLowerCase().replace('_', ' '));
+				itemsNames.add(Material.getMaterial(is.id).toString().toLowerCase()
+						.replace('_', ' '));
 				itemsAmount.add(is.count);
 			}
 
@@ -206,8 +220,7 @@ public class FilesManager {
 	 * @param fileName
 	 */
 	private void deleteFile(String directory, String fileName) {
-		File toDel = new File(path + File.separator + directory
-				+ File.separator + fileName);
+		File toDel = new File(path + File.separator + directory + File.separator + fileName);
 		if (toDel.exists())
 			try {
 				toDel.delete();
@@ -234,8 +247,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public String openWorldFile(String name) {
-		return this.getYml("Players", name + ".yml").getString("World",
-				"world");
+		return this.getYml("Players", name + ".yml").getString("World", "world");
 	}
 
 	/**
@@ -288,13 +300,14 @@ public class FilesManager {
 			conf.save();
 		}
 	}
+
 	/**
 	 * Remove the chest.
+	 * 
 	 * @param pName
 	 * @param chestName
 	 */
-	public void deleteChestFile(String pName,String chestName)
-	{
+	public void deleteChestFile(String pName, String chestName) {
 		Configuration conf = this.getYml("Players", pName + ".yml");
 		List<String> chests = conf.getStringList("ChestsNames", null);
 		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
@@ -335,11 +348,10 @@ public class FilesManager {
 	}
 
 	public int openChestLimitFile(Player p) {
-		Configuration config = new Configuration(new File(path + File.separator
-				+ "config.yml"));
+		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
 		config.load();
-		return this.getYml("Players", p.getName() + ".yml").getInt(
-				"ChestLimit", config.getInt("max-number-chest", 10));
+		return this.getYml("Players", p.getName() + ".yml").getInt("ChestLimit",
+				config.getInt("max-number-chest", 10));
 	}
 
 	/**
@@ -384,10 +396,10 @@ public class FilesManager {
 	 */
 	public String openDefaultChest(String player) {
 		String def = null;
-		if (!openChestTypeFile(player).names.isEmpty())
-			def = openChestTypeFile(player).names.get(0);
-		return this.getYml("Players", player + ".yml").getString(
-				"DefaultChest", def);
+		PlayerChests pC = openChestTypeFile(player);
+		if (!pC.isEmpty())
+			def = pC.names.get(0);
+		return this.getYml("Players", player + ".yml").getString("DefaultChest", def);
 	}
 
 	/**
@@ -397,8 +409,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public String openSendChest(String player) {
-		return this.getYml("Players", player + ".yml").getString("SendChest",
-				null);
+		return this.getYml("Players", player + ".yml").getString("SendChest", null);
 	}
 
 	/**
@@ -427,15 +438,12 @@ public class FilesManager {
 		playerNames = conf.getStringList("Players", null);
 		if (playerNames != null) {
 			for (String name : playerNames) {
-				itemsNames = conf.getStringList("From." + name + ".Items",
-						itemsNames);
-				itemsAmount = conf.getIntList("From." + name + ".Amount",
-						itemsAmount);
-				String msg = ChatColor.GREEN + name + ChatColor.WHITE
-						+ " send you : " + ChatColor.GOLD;
+				itemsNames = conf.getStringList("From." + name + ".Items", itemsNames);
+				itemsAmount = conf.getIntList("From." + name + ".Amount", itemsAmount);
+				String msg = ChatColor.GREEN + name + ChatColor.WHITE + " send you : "
+						+ ChatColor.GOLD;
 				for (int i = 0; i < itemsNames.size(); i++)
-					msg += itemsAmount.toArray()[i] + " "
-							+ itemsNames.toArray()[i] + ", ";
+					msg += itemsAmount.toArray()[i] + " " + itemsNames.toArray()[i] + ", ";
 				p.sendMessage(msg.subSequence(0, msg.length() - 2).toString());
 			}
 		}
@@ -447,9 +455,7 @@ public class FilesManager {
 	 * 
 	 * @param chest
 	 */
-	public void saveChests(
-			HashMap<String, HashMap<String, VirtualChest>> chest,
-			String fileName) {
+	public void saveChests(HashMap<String, HashMap<String, VirtualChest>> chest, String fileName) {
 		String filename = this.path + File.separator + fileName;
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
@@ -467,15 +473,12 @@ public class FilesManager {
 					createChestFile(pNames, chestName, "normal");
 				for (ItemStack is : v.getMcContents()) {
 					if (is != null)
-						itemstacks.add(new SerializedItemStack(is.id, is.count,
-								is.damage));
+						itemstacks.add(new SerializedItemStack(is.id, is.count, is.damage));
 				}
-				tmp.put(chestName, new ArrayList<SerializedItemStack>(
-						itemstacks));
+				tmp.put(chestName, new ArrayList<SerializedItemStack>(itemstacks));
 				itemstacks = new ArrayList<SerializedItemStack>();
 			}
-			saved.put(pNames,
-					new HashMap<String, ArrayList<SerializedItemStack>>(tmp));
+			saved.put(pNames, new HashMap<String, ArrayList<SerializedItemStack>>(tmp));
 			tmp = new HashMap<String, ArrayList<SerializedItemStack>>();
 		}
 		try {
@@ -527,13 +530,15 @@ public class FilesManager {
 	 * 
 	 * @return
 	 */
-	private TreeMap<String, PlayerChests> getAllPlayerChestType() {
+	public TreeMap<String, PlayerChests> getAllPlayerChestType() {
 		TreeMap<String, PlayerChests> result = new TreeMap<String, PlayerChests>();
 		File dir = new File(this.path + File.separator + "Players");
 		if (dir.exists()) {
 			for (String s : dir.list()) {
 				s = s.subSequence(0, s.length() - 4).toString();
-				result.put(s, openChestTypeFile(s));
+				PlayerChests typesNames = openChestTypeFile(s);
+				if (!typesNames.isEmpty())
+					result.put(s, typesNames.clone());
 			}
 			return result;
 		}
@@ -595,8 +600,7 @@ public class FilesManager {
 			VirtualChest v = chest.get(partyName);
 			for (ItemStack is : v.getMcContents()) {
 				if (is != null)
-					itemstacks.add(new SerializedItemStack(is.id, is.count,
-							is.damage));
+					itemstacks.add(new SerializedItemStack(is.id, is.count, is.damage));
 			}
 			saved.put(partyName, new ArrayList<SerializedItemStack>(itemstacks));
 			itemstacks = new ArrayList<SerializedItemStack>();
@@ -631,8 +635,7 @@ public class FilesManager {
 			try {
 				fis = new FileInputStream(filename);
 				in = new ObjectInputStream(fis);
-				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in
-						.readObject();
+				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in.readObject();
 				in.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -645,15 +648,13 @@ public class FilesManager {
 					ArrayList<SerializedItemStack> al = saved.get(partyName);
 					VirtualChest v;
 					if (!partiesChestType.containsKey(partyName)
-							|| partiesChestType.get(partyName)
-									.matches("normal"))
+							|| partiesChestType.get(partyName).matches("normal"))
 						v = new VirtualChest(partyName);
 					else
 						v = new VirtualLargeChest(partyName);
 					// ItemStack
 					for (SerializedItemStack sis : al) {
-						v.addItemStack(new ItemStack(sis.id, sis.count,
-								sis.damage));
+						v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
 					}
 					partiesAndChests.put(partyName, v.clone());
 				}
@@ -662,6 +663,51 @@ public class FilesManager {
 			return null;
 		} else
 			return null;
+	}
+
+	/**
+	 * Get all the chests of the player
+	 * 
+	 * @param player
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public HashMap<String, VirtualChest> getPlayerChests(String player) {
+		HashMap<String, VirtualChest> result = new HashMap<String, VirtualChest>();
+		HashMap<String, ArrayList<SerializedItemStack>> saved = new HashMap<String, ArrayList<SerializedItemStack>>();
+		File playerChests = getFile("Chests", player+".chest", false);
+		if (playerChests.exists()) {
+			FileInputStream fis = null;
+			ObjectInputStream in = null;
+			TreeMap<String, String> chests = openChestTypeFile(player).concat();
+
+			try {
+				fis = new FileInputStream(playerChests);
+				in = new ObjectInputStream(fis);
+				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in.readObject();
+				in.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} catch (ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+			for (String chestName : saved.keySet()) {
+				VirtualChest v;
+				if (!chests.containsKey(chestName) || chests.get(chestName).matches("normal"))
+					v = new VirtualChest(chestName);
+				else
+					v = new VirtualLargeChest(chestName);
+				for (SerializedItemStack sis : saved.get(chestName)) {
+					v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
+				}
+				result.put(chestName, v.clone());
+			}
+			GiftPostWorker.workerLog.fine("Chests of "+player+" loaded");
+		}
+		else
+			GiftPostWorker.workerLog.warning(player+" don't have chests, but you tried to load it.");
+		return result;
+
 	}
 
 	/**
@@ -695,27 +741,28 @@ public class FilesManager {
 			if (saved != null) {
 				// Player
 				for (String playerName : saved.keySet()) {
-					playerAndChest.put(playerName,
-							new HashMap<String, VirtualChest>());
-					TreeMap<String, String> chestsTypes = playerChestType.get(
-							(String) playerName).concat();
-					HashMap<String, ArrayList<SerializedItemStack>> hMap = saved
-							.get(playerName);
-					// Chest
-					for (String chestName : hMap.keySet()) {
-						ArrayList<SerializedItemStack> al = hMap.get(chestName);
-						VirtualChest v;
-						if (!chestsTypes.containsKey(chestName)
-								|| chestsTypes.get(chestName).matches("normal"))
-							v = new VirtualChest(chestName);
-						else
-							v = new VirtualLargeChest(chestName);
-						// ItemStack
-						for (SerializedItemStack sis : al) {
-							v.addItemStack(new ItemStack(sis.id, sis.count,
-									sis.damage));
+					if (playerChestType.containsKey(playerName)) {
+						playerAndChest.put(playerName, new HashMap<String, VirtualChest>());
+						TreeMap<String, String> chestsTypes = playerChestType.get(playerName)
+								.concat();
+						HashMap<String, ArrayList<SerializedItemStack>> hMap = saved
+								.get(playerName);
+						// Chest
+						for (String chestName : hMap.keySet()) {
+							ArrayList<SerializedItemStack> al = hMap.get(chestName);
+							VirtualChest v;
+							if (!chestsTypes.containsKey(chestName)
+									|| chestsTypes.get(chestName).matches("normal"))
+								v = new VirtualChest(chestName);
+							else
+								v = new VirtualLargeChest(chestName);
+							// ItemStack
+							for (SerializedItemStack sis : al) {
+								v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
+							}
+							playerAndChest.get(playerName).put(chestName, v);
 						}
-						playerAndChest.get(playerName).put(chestName, v);
+
 					}
 
 				}
@@ -732,11 +779,9 @@ public class FilesManager {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public HashMap<String, HashMap<String, VirtualChest>> transfer(
-			String fileName) {
+	public HashMap<String, HashMap<String, VirtualChest>> transfer(String fileName) {
 		String filename = this.path + File.separator + fileName;
-		Configuration config = new Configuration(new File(path + File.separator
-				+ "config.yml"));
+		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
 		config.load();
 		String typeChosen = config.getString("chest-type");
 		HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
@@ -749,8 +794,7 @@ public class FilesManager {
 			try {
 				fis = new FileInputStream(filename);
 				in = new ObjectInputStream(fis);
-				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in
-						.readObject();
+				saved = (HashMap<String, ArrayList<SerializedItemStack>>) in.readObject();
 				in.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
@@ -764,34 +808,27 @@ public class FilesManager {
 
 					VirtualChest v;
 					if (typeChosen.matches("normal"))
-						v = new VirtualChest(names.toArray()[i].toString()
-								.toLowerCase());
+						v = new VirtualChest(names.toArray()[i].toString().toLowerCase());
 					else
-						v = new VirtualLargeChest(names.toArray()[i].toString()
-								.toLowerCase());
+						v = new VirtualLargeChest(names.toArray()[i].toString().toLowerCase());
 
 					for (SerializedItemStack sis : al)
-						v.addItemStack(new ItemStack(sis.id, sis.count,
-								sis.damage));
+						v.addItemStack(new ItemStack(sis.id, sis.count, sis.damage));
 					HashMap<String, VirtualChest> tmp = new HashMap<String, VirtualChest>();
 					tmp = new HashMap<String, VirtualChest>();
 					if (v instanceof VirtualLargeChest) {
-						tmp.put(names.toArray()[i].toString().toLowerCase(),
-								new VirtualLargeChest(v));
-						createChestFile((String) names.toArray()[i],
-								names.toArray()[i].toString().toLowerCase(),
-								"large");
+						tmp.put(names.toArray()[i].toString().toLowerCase(), new VirtualLargeChest(
+								v));
+						createChestFile((String) names.toArray()[i], names.toArray()[i].toString()
+								.toLowerCase(), "large");
 					} else {
-						tmp.put(names.toArray()[i].toString().toLowerCase(),
-								new VirtualChest(v));
-						createChestFile((String) names.toArray()[i],
-								names.toArray()[i].toString().toLowerCase(),
-								"normal");
+						tmp.put(names.toArray()[i].toString().toLowerCase(), new VirtualChest(v));
+						createChestFile((String) names.toArray()[i], names.toArray()[i].toString()
+								.toLowerCase(), "normal");
 					}
-					chests.put((String) names.toArray()[i],
-							new HashMap<String, VirtualChest>(tmp));
-					createDefaultChest((String) names.toArray()[i],
-							names.toArray()[i].toString().toLowerCase());
+					chests.put((String) names.toArray()[i], new HashMap<String, VirtualChest>(tmp));
+					createDefaultChest((String) names.toArray()[i], names.toArray()[i].toString()
+							.toLowerCase());
 					i++;
 				}
 

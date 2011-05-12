@@ -17,6 +17,8 @@ package com.Balor.bukkit.GiftPost;
 //GiftPost
 import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
+import com.Balor.utils.LogFormatter;
+import com.Balor.utils.PlayerChests;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 //Plugins
@@ -24,11 +26,15 @@ import com.gmail.nossr50.mcMMO;
 import com.iConomy.iConomy;
 import com.nijiko.permissions.PermissionHandler;
 //Java
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 //Bukkit
 
@@ -44,17 +50,19 @@ public class GiftPostWorker {
 
 	private HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
 	private HashMap<String, VirtualChest> defaultChests = new HashMap<String, VirtualChest>();
-	private HashMap<String, VirtualChest> sendReceiveChests = new HashMap<String, VirtualChest>();;
+	private HashMap<String, VirtualChest> sendReceiveChests = new HashMap<String, VirtualChest>();
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
 	private FilesManager fManager;
 	public static final Logger log = Logger.getLogger("Minecraft");
+	public static final Logger workerLog = Logger.getLogger("VirtualChest");
 	private static iConomy iConomy = null;
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
 	private HashMap<String, HashMap<String, Boolean>> permissions = new HashMap<String, HashMap<String, Boolean>>();
 	private static GiftPostWorker instance;
+	private TreeMap<String, PlayerChests> allChests = new TreeMap<String, PlayerChests>();
 
 	private GiftPostWorker() {
 	}
@@ -71,6 +79,29 @@ public class GiftPostWorker {
 
 	public void setfManager(String path) {
 		this.fManager = new FilesManager(path);
+		FileHandler fh;
+
+		try {
+
+			// This block configure the logger with handler and formatter
+			File logger = new File(path + File.separator + "log.txt");
+			if (logger.exists())
+				logger.delete();
+			fh = new FileHandler(logger.getPath(), true);
+			workerLog.addHandler(fh);
+			workerLog.setUseParentHandlers(false);
+			workerLog.setLevel(Level.ALL);
+			LogFormatter formatter = new LogFormatter();
+			fh.setFormatter(formatter);
+
+			// the following statement is used to log any messages
+			workerLog.info("Logger created");
+
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public FilesManager getFileManager() {
@@ -88,10 +119,39 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public VirtualChest getChest(String playerName, String chestName) {
+		if (playerName == null)
+		{
+			workerLog.severe("PlayerName == null");
+			return null;
+		}
+		if(chestName == null)
+		{
+			workerLog.severe("chestName == null");
+			return null;
+		}
 		if (chests.containsKey(playerName) && chests.get(playerName).containsKey(chestName))
 			return chests.get(playerName).get(chestName);
-		else
-			return null;
+		else {
+			if (chestExists(playerName, chestName)) {
+				HashMap<String, VirtualChest> loadedChests = fManager.getPlayerChests(playerName);
+				chests.put(playerName, loadedChests);
+				workerLog.info("Chest " + chestName + " owned by " + playerName
+						+ " loaded from file");
+				return loadedChests.get(chestName);
+			} else
+				return null;
+		}
+	}
+
+	/**
+	 * Save the chests of the player and remove it from memory.
+	 * 
+	 * @param player
+	 */
+	public void deloadPlayerChests(String player) {
+		fManager.savePlayerChest(player, chests.get(player));
+		chests.remove(player);
+		workerLog.info("Chests of " + player + " deloaded from memory.");
 	}
 
 	/**
@@ -102,8 +162,11 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public boolean chestExists(Player player, String chestName) {
-		return chests.containsKey(player.getName())
-				&& chests.get(player.getName()).containsKey(chestName);
+		return chestExists(player.getName(), chestName);
+	}
+
+	public boolean chestExists(String player, String chestName) {
+		return (allChests.containsKey(player) && allChests.get(player).hasChest(chestName));
 	}
 
 	/**
@@ -136,7 +199,14 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public VirtualChest getDefaultChest(String playerName) {
-		return defaultChests.get(playerName);
+		if (defaultChests.containsKey(playerName))
+			return defaultChests.get(playerName);
+		else {
+			VirtualChest v = getChest(playerName, fManager.openDefaultChest(playerName));
+			defaultChests.put(playerName, v);
+			return v;
+		}
+
 	}
 
 	/**
@@ -148,8 +218,15 @@ public class GiftPostWorker {
 	public VirtualChest getSendChest(String playerName) {
 		if (sendReceiveChests.containsKey(playerName))
 			return sendReceiveChests.get(playerName);
-		else
-			return getDefaultChest(playerName);
+		else {
+			VirtualChest v = getChest(playerName, fManager.openSendChest(playerName));
+			if (v == null)
+				return getDefaultChest(playerName);
+			else {
+				sendReceiveChests.put(playerName, v);
+				return v;
+			}
+		}
 	}
 
 	/**
@@ -221,6 +298,22 @@ public class GiftPostWorker {
 
 	}
 
+	/**
+	 * 
+	 * @param player
+	 * @return if the player have a chest loaded.
+	 */
+	public boolean haveAChestInMemory(String player) {
+		return chests.containsKey(player);
+	}
+
+	/**
+	 * Delete the chest from memory and save.
+	 * 
+	 * @param player
+	 * @param vChest
+	 * @return
+	 */
 	public boolean removeChest(Player player, VirtualChest vChest) {
 		String pName = player.getName();
 		if (chests.containsKey(pName)) {
@@ -291,8 +384,8 @@ public class GiftPostWorker {
 	 * Save all the chests.
 	 */
 	public synchronized void save() {
-		this.fManager.saveChests(chests, "chests.dat");
-		log.info("[VirtualChest] Chests Saved !");
+		this.fManager.savePerPlayer(chests);
+		workerLog.info("Chests Saved !");
 	}
 
 	/**
@@ -300,27 +393,23 @@ public class GiftPostWorker {
 	 */
 	public synchronized void saveParties() {
 		this.fManager.saveParties(parties, "parties.dat");
-		log.info("[VirtualChest] Parties Saved !");
+		workerLog.info("Parties Saved !");
 	}
 
 	/**
 	 * load all the chests
 	 */
-	public synchronized void load() {
+	public synchronized void oldLoad() {
 		this.config.load();
 		this.fManager.loadChests("chests.dat", chests);
-		TreeMap<String, String> tmp = fManager.getAllPlayerDefaultChest();
-		TreeMap<String, String> tmp2 = fManager.getAllPlayerSendChest();
-		String chestName;
-		if (tmp != null)
-			for (String player : tmp.keySet()) {
-				defaultChests.put(player, getChest(player, tmp.get(player)));
-				if ((chestName = tmp2.get(player)) == null)
-					sendReceiveChests.put(player, defaultChests.get(player));
-				else
-					sendReceiveChests.put(player, getChest(player, chestName));
-			}
+	}
 
+	/**
+	 * load all the chests
+	 */
+	public synchronized void newLoad() {
+		this.config.load();
+		allChests = fManager.getAllPlayerChestType();
 	}
 
 	/**
@@ -508,12 +597,26 @@ public class GiftPostWorker {
 	public Set<String> getAllOwner() {
 		return chests.keySet();
 	}
+
 	/**
 	 * Remove all permissions node for the player from the cache.
+	 * 
 	 * @param player
 	 */
-	public void removePermissionNode(String player)
-	{
+	public void removePermissionNode(String player) {
 		permissions.remove(player);
+	}
+
+	/**
+	 * Convert the save to the new format
+	 */
+	public void convertSave() {
+		oldLoad();
+		fManager.savePerPlayer(chests);
+		chests.clear();
+		sendReceiveChests.clear();
+		defaultChests.clear();
+		allChests = fManager.getAllPlayerChestType();
+		workerLog.info("Saves converted.");
 	}
 }
