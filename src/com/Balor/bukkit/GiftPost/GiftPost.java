@@ -67,6 +67,7 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(Send.class);
 		registerCommand(ChestList.class);
 		registerCommand(EmptyChest.class);
+		registerCommand(Help.class);
 		if (!GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
 				.equals("true"))
 			registerCommand(Upgrade.class);
@@ -221,7 +222,7 @@ public class GiftPost extends JavaPlugin {
 			}
 
 			if (args.length == 0) {
-				sendHelp(sender);
+				sendHelp(sender,1);
 				return true;
 			}
 
@@ -239,7 +240,7 @@ public class GiftPost extends JavaPlugin {
 				}
 			}
 			if (i == 0)
-				sendHelp(sender);
+				sendHelp(sender,1);
 		}
 		return true;
 	}

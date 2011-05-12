@@ -35,31 +35,36 @@ public class Display {
 			sender.sendMessage(gpCom.getHelp());
 	}
 
-	public static void sendHelp(CommandSender sender) {
+	public static void sendHelp(CommandSender sender, int page) {
 		Player player = (Player) sender;
 		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
-		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.everywhere", false))
-			sendHelp(sender, Chest.class);
-		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.open", false)) {
-			sendHelp(sender, Buy.class);
-			sendHelp(sender, SetChest.class);
-			sendHelp(sender, ChestList.class);
-			sendHelp(sender, Upgrade.class);
-			sendHelp(sender, Rename.class);
-			sendHelp(sender, RemoveChest.class);
-			// sendHelp(sender, EmptyChest.class);
-		}
-		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.send", false))
-			sendHelp(sender, Send.class);
-		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.admin.limit", false))
-			sendHelp(sender, SetChestLimit.class);
-		if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.admin.item", false))
-			sendHelp(sender,GiveItem.class);
-		if (GiftPostWorker.getmcMMO() != null
-				&& GiftPostWorker.getInstance().hasPerm(player, "mcmmo.commands.party", false)) {
-			sender.sendMessage(ChatColor.AQUA + "mcMMO commands ! ");
-			sendHelp(sender, OpenPartyChest.class);
-			sendHelp(sender, BuyPartyChest.class);
+		sendHelp(sender, Help.class);
+		if (page == 1) {
+			if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.everywhere", false))
+				sendHelp(sender, Chest.class);
+			if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.open", false)) {
+				sendHelp(sender, Buy.class);
+				sendHelp(sender, SetChest.class);
+				sendHelp(sender, ChestList.class);
+				sendHelp(sender, Upgrade.class);
+				sendHelp(sender, Rename.class);
+				sendHelp(sender, RemoveChest.class);
+				sendHelp(sender, EmptyChest.class);
+			}
+			if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.send", false))
+				sendHelp(sender, Send.class);
+		} else if (page == 2) {
+			if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.admin.limit", false))
+				sendHelp(sender, SetChestLimit.class);
+			if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.admin.item", false))
+				sendHelp(sender, GiveItem.class);
+		} else if (page == 3) {
+			if (GiftPostWorker.getmcMMO() != null
+					&& GiftPostWorker.getInstance().hasPerm(player, "mcmmo.commands.party", false)) {
+				sender.sendMessage(ChatColor.AQUA + "mcMMO commands ! ");
+				sendHelp(sender, OpenPartyChest.class);
+				sendHelp(sender, BuyPartyChest.class);
+			}
 		}
 
 	}
