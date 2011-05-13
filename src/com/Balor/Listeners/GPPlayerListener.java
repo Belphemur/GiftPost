@@ -60,7 +60,7 @@ public class GPPlayerListener extends PlayerListener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player p = event.getPlayer();
 		String pName = p.getName();
-		if (worker.getConfig().getString("allow-offline", "true").matches("true"))
+		if (worker.getConfig().getString("allow-offline", "true").matches("true") && worker.haveAChestInMemory(pName))
 			worker.getFileManager().createWorldFile(p);
 		worker.removePermissionNode(pName);
 		if (worker.haveAChestInMemory(pName))

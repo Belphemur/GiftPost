@@ -28,18 +28,22 @@ public class PlayerChests implements Cloneable {
 	public List<String> types;
 	public List<String> names;
 
-	PlayerChests() {
-		types = null;
-		names = null;
+	public PlayerChests() {
+		types = new ArrayList<String>();
+		names = new ArrayList<String>();
 	}
 
-	PlayerChests(List<String> t, List<String> n) {
+	public PlayerChests(List<String> t, List<String> n) {
 		types = t;
+		if(types == null)
+			types = new ArrayList<String>();
 		names = n;
+		if(names == null)
+			names = new ArrayList<String>();
 	}
 
 	public boolean haveAChest() {
-		return types != null;
+		return !types.isEmpty();
 	}
 
 	public TreeMap<String, String> concat() {

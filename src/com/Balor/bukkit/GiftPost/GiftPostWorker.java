@@ -119,13 +119,11 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public VirtualChest getChest(String playerName, String chestName) {
-		if (playerName == null)
-		{
+		if (playerName == null) {
 			workerLog.severe("PlayerName == null");
 			return null;
 		}
-		if(chestName == null)
-		{
+		if (chestName == null) {
 			workerLog.severe("chestName == null");
 			return null;
 		}
@@ -139,7 +137,10 @@ public class GiftPostWorker {
 						+ " loaded from file");
 				return loadedChests.get(chestName);
 			} else
+			{
+				workerLog.warning("Tried to load "+chestName+" of player "+playerName+" that don't exist");
 				return null;
+			}
 		}
 	}
 
@@ -276,6 +277,27 @@ public class GiftPostWorker {
 	}
 
 	/**
+	 * add the new chest in the list of existing chests.
+	 * 
+	 * @param playerName
+	 * @param type
+	 * @param vChestName
+	 */
+	private void addInAllChests(String playerName, String type, String vChestName) {
+		if (allChests.containsKey(playerName)) {
+			allChests.get(playerName).names.add(vChestName);
+			allChests.get(playerName).types.add(type);
+		} else {
+			PlayerChests pChest= new PlayerChests();
+			pChest.names.add(vChestName);
+			pChest.types.add("type");
+			allChests.put(playerName,pChest);
+		}
+		workerLog.info("Created new " + type + " chest (" + vChestName + ") for " + playerName);
+
+	}
+
+	/**
 	 * Add a new chest
 	 * 
 	 * @param player
@@ -284,6 +306,7 @@ public class GiftPostWorker {
 	 * 
 	 */
 	public void addChest(Player player, VirtualChest vChest) {
+
 		if (chests.containsKey(player.getName()))
 			chests.get(player.getName()).put(vChest.getName(), vChest);
 		else {
@@ -297,6 +320,10 @@ public class GiftPostWorker {
 			fManager.createChestFile(player, vChest.getName(), "normal");
 		if (numberOfChest(player) == 1)
 			setDefaultChest(player.getName(), vChest);
+		if (vChest instanceof VirtualLargeChest)
+			addInAllChests(player.getName(), "large", vChest.getName());
+		else
+			addInAllChests(player.getName(), "normal", vChest.getName());
 
 	}
 
@@ -412,6 +439,10 @@ public class GiftPostWorker {
 	public synchronized void newLoad() {
 		this.config.load();
 		allChests = fManager.getAllPlayerChestType();
+		if (allChests == null) {
+			allChests = new TreeMap<String, PlayerChests>();
+			workerLog.info("No player files found");
+		}
 	}
 
 	/**
