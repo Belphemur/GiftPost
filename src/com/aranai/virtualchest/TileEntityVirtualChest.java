@@ -124,8 +124,8 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	}
 
 	public void removeItemStack(int i) {
-		if (this.getContents()[i] != null && i >= 0 && i <= getSize()) {
-			this.getContents()[i] = null;
+		if (i >= 0 && i <= getSize()) {
+			super.setItem(i, null);
 			emptyCases.add(i);
 		}
 	}

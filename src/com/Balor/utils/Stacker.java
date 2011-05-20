@@ -57,17 +57,18 @@ public class Stacker {
 	/**
 	 * Stacks the contents of a chest.
 	 */
-	public static boolean stackChest(VirtualChest chest)  {
+	public static boolean stackChest(VirtualChest chest) {
 		for (int index = 0; index < chest.getMcContents().length; index++) {
 			ItemStack stack = chest.getItemStack(index);
-			if (stack != null && stack.count != 0 && stack.id != 0) {
+			if (stack != null && stack.count != 0 && stack.id != 0 && stack.count != stack.b()) {
 				int i = 0;
 				for (ItemStack stack2 : chest.getMcContents()) {
-					if (stack2 != null && i != index && stack2.count != 0 && stack2.count < stack2.b()
-							&& stack2.id == stack.id) {
-						stack.count = Math.min(stack2.b(), stack.count + stack2.count);
+					if (stack2 != null && i != index && stack2.count != 0
+							&& stack2.count < stack2.b() && stack2.id == stack.id) {
+						int oldCount = stack.count;
+						stack.count = Math.min(stack2.b(), stack.count + stack2.count);						
 						chest.setItemStack(index, stack);
-						stack2.count = Math.max(0, stack.count + stack2.count - stack2.b());
+						stack2.count = Math.max(0, oldCount + stack2.count - stack2.b());
 						if (stack2.count > 0) {
 							chest.setItemStack(i, stack2);
 							break;

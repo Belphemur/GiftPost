@@ -52,6 +52,9 @@ public class Chest implements GPCommand {
 					Stacker.sortChest(v);
 				if (gpw.getConfig().getString("auto-stack", "true").matches("true"))
 					Stacker.stackChest(v);
+				if (gpw.getConfig().getString("auto-sort", "true").matches("true")
+						&& gpw.getConfig().getString("auto-stack", "true").matches("true"))
+					Stacker.sortChest(v);
 				v.openChest((Player) sender);
 			}
 		} else if (args != null && args.length == 2)
