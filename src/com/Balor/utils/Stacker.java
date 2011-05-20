@@ -64,9 +64,10 @@ public class Stacker {
 				int i = 0;
 				for (ItemStack stack2 : chest.getMcContents()) {
 					if (stack2 != null && i != index && stack2.count != 0
-							&& stack2.count < stack2.b() && stack2.id == stack.id) {
+							&& stack2.count < stack2.b() && stack2.id == stack.id
+							&& stack2.damage == stack.damage) {
 						int oldCount = stack.count;
-						stack.count = Math.min(stack2.b(), stack.count + stack2.count);						
+						stack.count = Math.min(stack2.b(), stack.count + stack2.count);
 						chest.setItemStack(index, stack);
 						stack2.count = Math.max(0, oldCount + stack2.count - stack2.b());
 						if (stack2.count > 0) {
