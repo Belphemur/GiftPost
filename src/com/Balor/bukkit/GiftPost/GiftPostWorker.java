@@ -451,9 +451,7 @@ public class GiftPostWorker {
 			for (Player p : GiftPost.getBukkitServer().getOnlinePlayers()) {
 				String playerName = p.getName();
 				if (allChests.containsKey(playerName)) {
-					HashMap<String, VirtualChest> loadedChests = fManager
-							.getPlayerChests(playerName);
-					chests.put(playerName, loadedChests);
+					chests.put(playerName, fManager.getPlayerChests(playerName));
 					workerLog.info("Chests owned by " + playerName + " loaded from file");
 				}
 			}
