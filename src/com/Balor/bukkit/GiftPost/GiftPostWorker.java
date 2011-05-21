@@ -73,8 +73,13 @@ public class GiftPostWorker {
 		return instance;
 	}
 
+	public static void killInstance() {
+		instance = null;
+	}
+
 	public void setConfig(Configuration config) {
 		this.config = config;
+		this.config.load();
 	}
 
 	public void setfManager(String path) {
@@ -136,9 +141,9 @@ public class GiftPostWorker {
 				workerLog.info("Chest " + chestName + " owned by " + playerName
 						+ " loaded from file");
 				return loadedChests.get(chestName);
-			} else
-			{
-				workerLog.warning("Tried to load "+chestName+" of player "+playerName+" that don't exist");
+			} else {
+				workerLog.warning("Tried to load " + chestName + " of player " + playerName
+						+ " that don't exist");
 				return null;
 			}
 		}
@@ -288,10 +293,10 @@ public class GiftPostWorker {
 			allChests.get(playerName).names.add(vChestName);
 			allChests.get(playerName).types.add(type);
 		} else {
-			PlayerChests pChest= new PlayerChests();
+			PlayerChests pChest = new PlayerChests();
 			pChest.names.add(vChestName);
 			pChest.types.add("type");
-			allChests.put(playerName,pChest);
+			allChests.put(playerName, pChest);
 		}
 		workerLog.info("Created new " + type + " chest (" + vChestName + ") for " + playerName);
 
@@ -442,7 +447,19 @@ public class GiftPostWorker {
 		if (allChests == null) {
 			allChests = new TreeMap<String, PlayerChests>();
 			workerLog.info("No player files found");
+		} else {
+			for (Player p : GiftPost.getBukkitServer().getOnlinePlayers()) {
+				String playerName = p.getName();
+				if (allChests.containsKey(playerName)) {
+					HashMap<String, VirtualChest> loadedChests = fManager
+							.getPlayerChests(playerName);
+					chests.put(playerName, loadedChests);
+					workerLog.info("Chests owned by " + playerName + " loaded from file");
+				}
+			}
+
 		}
+
 	}
 
 	/**
