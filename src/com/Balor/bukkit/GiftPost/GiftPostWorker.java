@@ -371,9 +371,9 @@ public class GiftPostWorker {
 					defaultChests.remove(pName);
 					sendReceiveChests.remove(pName);
 					chests.remove(pName);
-					fManager.createDefaultChest(pName, null);
 					allChests.remove(pName);
 					workerLog.info(pName + " has no more chest.");
+					fManager.removePlayer(pName);
 				}
 				vChest = null;
 				return true;

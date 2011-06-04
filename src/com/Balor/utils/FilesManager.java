@@ -664,7 +664,12 @@ public class FilesManager {
 		} else
 			return null;
 	}
-
+	public void removePlayer(String playerName)
+	{
+		getFile("Players", playerName+".yml").delete();
+		getFile("Chests", playerName+".chest").delete();
+		GiftPostWorker.workerLog.info(playerName+" files deleted.");
+	}
 	/**
 	 * Get all the chests of the player
 	 * 
