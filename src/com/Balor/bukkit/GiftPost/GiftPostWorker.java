@@ -60,7 +60,6 @@ public class GiftPostWorker {
 	private static iConomy iConomy = null;
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
-	private HashMap<String, HashMap<String, Boolean>> permissions = new HashMap<String, HashMap<String, Boolean>>();
 	private static GiftPostWorker instance;
 	private TreeMap<String, PlayerChests> allChests = new TreeMap<String, PlayerChests>();
 
@@ -354,14 +353,27 @@ public class GiftPostWorker {
 			HashMap<String, VirtualChest> playerChests = chests.get(pName);
 			if (playerChests.remove(vChest.getName()) != null) {
 				fManager.deleteChestFile(pName, vChest.getName());
-				String newDefaultChest = fManager.openChestTypeFile(pName).names.get(0);
-				if (defaultChests.containsValue(vChest)) {
-					defaultChests.put(pName, getChest(player.getName(), newDefaultChest));
-					fManager.createDefaultChest(pName, newDefaultChest);
-				}
-				if (sendReceiveChests.containsValue(vChest)) {
-					sendReceiveChests.put(pName, defaultChests.get(pName));
-					fManager.createSendReceiveChest(pName, newDefaultChest);
+				PlayerChests pChests = fManager.openChestTypeFile(pName);
+				if (pChests.names.size() != 0) {
+					String newDefaultChest = pChests.names.get(0);
+					if (defaultChests.containsValue(vChest)) {
+						defaultChests.put(pName, getChest(player.getName(), newDefaultChest));
+						fManager.createDefaultChest(pName, newDefaultChest);
+					}
+					if (sendReceiveChests.containsValue(vChest)) {
+						sendReceiveChests.put(pName, defaultChests.get(pName));
+						fManager.createSendReceiveChest(pName, newDefaultChest);
+						workerLog.info(pName + " removed his chest : " + vChest.getName());
+					}
+				}	
+				else
+				{
+					defaultChests.remove(pName);
+					sendReceiveChests.remove(pName);
+					chests.remove(pName);
+					fManager.createDefaultChest(pName, null);
+					allChests.remove(pName);
+					workerLog.info(pName + " has no more chest.");
 				}
 				vChest = null;
 				return true;
@@ -390,6 +402,8 @@ public class GiftPostWorker {
 				fManager.createDefaultChest(playerName, newName);
 			if (sendReceiveChests.containsValue(v))
 				fManager.createSendReceiveChest(playerName, newName);
+			workerLog
+					.info(playerName + " renamed his chest [" + oldName + "] to {" + newName + "}");
 		}
 	}
 
@@ -510,35 +524,14 @@ public class GiftPostWorker {
 	public boolean hasPerm(Player player, String perm, boolean errorMsg) {
 		if (permission == null)
 			return true;
-		String playerName = player.getName();
-		if (permissions.containsKey(playerName)) {
-			if (permissions.get(playerName).containsKey(perm))
-				return permissions.get(playerName).get(perm);
-
-			if (permission.has(player, perm)) {
-				permissions.get(playerName).put(perm, true);
-				return true;
-			} else {
-				permissions.get(playerName).put(perm, false);
-				if (errorMsg)
-					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
-							+ ChatColor.BLUE + "(" + perm + ")");
-			}
+		if (permission.has(player, perm)) {
+			return true;
 		} else {
-			permissions.put(playerName, new HashMap<String, Boolean>());
-			if (permission.has(player, perm)) {
-				permissions.get(playerName).put(perm, true);
-				return true;
-			} else {
-				permissions.get(playerName).put(perm, false);
-				if (errorMsg)
-					player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
-							+ ChatColor.BLUE + "(" + perm + ")");
-			}
-
+			if (errorMsg)
+				player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
+						+ ChatColor.BLUE + "(" + perm + ")");
+			return false;
 		}
-
-		return false;
 
 	}
 
@@ -644,15 +637,6 @@ public class GiftPostWorker {
 	 */
 	public Set<String> getAllOwner() {
 		return chests.keySet();
-	}
-
-	/**
-	 * Remove all permissions node for the player from the cache.
-	 * 
-	 * @param player
-	 */
-	public void removePermissionNode(String player) {
-		permissions.remove(player);
 	}
 
 	/**
