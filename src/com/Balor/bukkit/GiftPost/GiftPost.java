@@ -163,6 +163,7 @@ public class GiftPost extends JavaPlugin {
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
 		server = getServer();
+		GiftPostWorker.setDisable(false);
 		setupConfigFiles();
 		log.info("[" + this.getDescription().getName() + "]" + " (version "
 				+ this.getDescription().getVersion() + ")");
@@ -173,12 +174,10 @@ public class GiftPost extends JavaPlugin {
 		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
 			gpw.transfer();
 			new File(getDataFolder() + File.separator + "chest.dat").delete();
-		} else if(new File(getDataFolder() + File.separator + "chests.dat").exists())
-		{
+		} else if (new File(getDataFolder() + File.separator + "chests.dat").exists()) {
 			gpw.convertSave();
 			new File(getDataFolder() + File.separator + "chests.dat").delete();
-		}
-		else
+		} else
 			gpw.newLoad();
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
@@ -203,19 +202,11 @@ public class GiftPost extends JavaPlugin {
 		gpw.save();
 		if (GiftPostWorker.getmcMMO() != null)
 			gpw.saveParties();
-		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version"
+		server.getScheduler().cancelTasks(this);
+		GiftPostWorker.setDisable(true);
+		GiftPostWorker.killInstance();
+		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version "
 				+ pdfFile.getVersion() + ")");
-		final GiftPost instance = this;
-		server.getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
-			
-			@Override
-			public void run() {
-				gpw = null;
-				server.getScheduler().cancelTasks(instance);
-				GiftPostWorker.killInstance();		
-				
-			}
-		}, 100);
 
 	}
 
@@ -233,7 +224,7 @@ public class GiftPost extends JavaPlugin {
 			}
 
 			if (args.length == 0) {
-				sendHelp(sender,1);
+				sendHelp(sender, 1);
 				return true;
 			}
 
@@ -251,7 +242,7 @@ public class GiftPost extends JavaPlugin {
 				}
 			}
 			if (i == 0)
-				sendHelp(sender,1);
+				sendHelp(sender, 1);
 		}
 		return true;
 	}

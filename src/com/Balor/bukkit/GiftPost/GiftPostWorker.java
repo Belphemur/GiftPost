@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.FileHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 //Bukkit
@@ -62,6 +63,7 @@ public class GiftPostWorker {
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
 	private static GiftPostWorker instance;
 	private TreeMap<String, PlayerChests> allChests = new TreeMap<String, PlayerChests>();
+	private static boolean disable = false;
 
 	private GiftPostWorker() {
 	}
@@ -73,6 +75,11 @@ public class GiftPostWorker {
 	}
 
 	public static void killInstance() {
+		workerLog.info("Worker instance destroyed");
+		for (Handler h : workerLog.getHandlers()) {
+			h.close();
+			workerLog.removeHandler(h);
+		}
 		instance = null;
 	}
 
@@ -115,7 +122,18 @@ public class GiftPostWorker {
 	public Configuration getConfig() {
 		return config;
 	}
-
+	/**
+	 * @param disable the disable to set
+	 */
+	public static void setDisable(boolean disable2) {
+		disable = disable2;
+	}
+	/**
+	 * @return the disable
+	 */
+	public static boolean isDisable() {
+		return disable;
+	}
 	/**
 	 * Return the chest, create it if not exist
 	 * 
@@ -365,9 +383,7 @@ public class GiftPostWorker {
 						fManager.createSendReceiveChest(pName, newDefaultChest);
 						workerLog.info(pName + " removed his chest : " + vChest.getName());
 					}
-				}	
-				else
-				{
+				} else {
 					defaultChests.remove(pName);
 					sendReceiveChests.remove(pName);
 					chests.remove(pName);

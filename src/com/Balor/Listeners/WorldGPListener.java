@@ -26,9 +26,12 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
  * 
  */
 public class WorldGPListener extends WorldListener {
+	@Override
 	public void onWorldSave(WorldSaveEvent event) {
-		GiftPostWorker.getInstance().save();
-		if (GiftPostWorker.getmcMMO() != null)
-			GiftPostWorker.getInstance().saveParties();
+		if (!GiftPostWorker.isDisable()) {
+			GiftPostWorker.getInstance().save();
+			if (GiftPostWorker.getmcMMO() != null)
+				GiftPostWorker.getInstance().saveParties();
+		}
 	}
 }
