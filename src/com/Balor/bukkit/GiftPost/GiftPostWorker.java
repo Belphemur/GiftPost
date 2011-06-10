@@ -15,6 +15,8 @@
 package com.Balor.bukkit.GiftPost;
 
 //GiftPost
+import static com.Balor.utils.Display.chestKeeper;
+
 import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
 import com.Balor.utils.LogFormatter;
@@ -23,8 +25,8 @@ import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 //Plugins
 import com.gmail.nossr50.mcMMO;
-import com.iConomy.iConomy;
 import com.nijiko.permissions.PermissionHandler;
+import com.nijikokun.register.payment.Method;
 //Java
 import java.io.File;
 import java.io.IOException;
@@ -58,7 +60,7 @@ public class GiftPostWorker {
 	private FilesManager fManager;
 	public static final Logger log = Logger.getLogger("Minecraft");
 	public static final Logger workerLog = Logger.getLogger("VirtualChest");
-	private static iConomy iConomy = null;
+	private static Method payementMethod = null;
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
 	private static GiftPostWorker instance;
@@ -122,18 +124,22 @@ public class GiftPostWorker {
 	public Configuration getConfig() {
 		return config;
 	}
+
 	/**
-	 * @param disable the disable to set
+	 * @param disable
+	 *            the disable to set
 	 */
 	public static void setDisable(boolean disable2) {
 		disable = disable2;
 	}
+
 	/**
 	 * @return the disable
 	 */
 	public static boolean isDisable() {
 		return disable;
 	}
+
 	/**
 	 * Return the chest, create it if not exist
 	 * 
@@ -571,8 +577,8 @@ public class GiftPostWorker {
 	 * 
 	 * @return
 	 */
-	public static iConomy getiConomy() {
-		return iConomy;
+	public static Method getPayement() {
+		return payementMethod;
 	}
 
 	/**
@@ -581,9 +587,9 @@ public class GiftPostWorker {
 	 * @param plugin
 	 * @return
 	 */
-	public static boolean setiConomy(iConomy plugin) {
-		if (iConomy == null) {
-			iConomy = plugin;
+	public static boolean setPayementMethod(Method plugin) {
+		if (payementMethod == null) {
+			payementMethod = plugin;
 		} else {
 			return false;
 		}
@@ -666,5 +672,49 @@ public class GiftPostWorker {
 		defaultChests.clear();
 		allChests = fManager.getAllPlayerChestType();
 		workerLog.info("Saves converted.");
+	}
+
+	/**
+	 * Check if the plugin iConomy is present and if the player have enough
+	 * money. After checked, substract the money.
+	 * 
+	 * @param gpw
+	 * @param player
+	 * @return
+	 */
+	public boolean economyCheck(Player player, String configParam) {
+		if (GiftPostWorker.getPayement() != null
+				&& this.getConfig().getString("iConomy", "false").matches("true")
+				&& !this.hasPerm(player, "giftpost.admin.free", false)) {
+			if (GiftPostWorker.getPayement().hasAccount(player.getName())) {
+				if (!GiftPostWorker.getPayement().getAccount(player.getName())
+						.hasEnough(this.getConfig().getDouble(configParam, 1.0))) {
+					player.sendMessage(chestKeeper()
+							+ ChatColor.RED
+							+ "You don't have "
+							+ GiftPostWorker.getPayement().format(
+									this.getConfig().getDouble(configParam, 10.0))
+							+ " to pay the Chests Keeper !");
+					return false;
+				} else {
+					if (this.getConfig().getDouble(configParam, 1.0) != 0) {
+						GiftPostWorker.getPayement().getAccount(player.getName())
+								.subtract(this.getConfig().getDouble(configParam, 1.0));
+						player.sendMessage(chestKeeper()
+								+ " "
+								+ GiftPostWorker.getPayement().format(
+										this.getConfig().getDouble(configParam, 1.0))
+								+ ChatColor.DARK_GRAY + " used to pay the Chests Keeper.");
+					}
+					return true;
+				}
+
+			} else {
+				player.sendMessage(chestKeeper() + ChatColor.RED
+						+ "You must have an account to pay the Chests Keeper !");
+				return false;
+			}
+		}
+		return true;
 	}
 }

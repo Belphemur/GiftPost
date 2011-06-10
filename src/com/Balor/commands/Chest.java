@@ -19,7 +19,6 @@ import static com.Balor.utils.Display.chestKeeper;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.utils.Stacker;
 import com.aranai.virtualchest.VirtualChest;
-import com.iConomy.iConomy;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -47,7 +46,7 @@ public class Chest implements GPCommand {
 			v = gpw.getDefaultChest(p.getName());
 
 		if (v != null) {
-			if (iConomyCheck(gpw, p)) {
+			if (gpw.economyCheck(p, "iConomy-openchest-price")) {
 				if (gpw.getConfig().getString("auto-sort", "true").matches("true"))
 					Stacker.sortChest(v);
 				if (gpw.getConfig().getString("auto-stack", "true").matches("true"))
@@ -65,47 +64,6 @@ public class Chest implements GPCommand {
 			p.sendMessage(chestKeeper() + ChatColor.RED
 					+ "You don't have a chest. To buy one type " + ChatColor.GOLD
 					+ "/gp buy (large|normal) nameOfTheChest");
-	}
-
-	/**
-	 * Check if the plugin iConomy is present and if the player have enough
-	 * money. After checked, substract the money.
-	 * 
-	 * @param gpw
-	 * @param player
-	 * @return
-	 */
-	private boolean iConomyCheck(GiftPostWorker gpw, Player player) {
-		if (GiftPostWorker.getiConomy() != null
-				&& gpw.getConfig().getString("iConomy", "false").matches("true")
-				&& !gpw.hasPerm(player, "giftpost.admin.free", false)) {
-			if (iConomy.hasAccount(player.getName())) {
-				if (!iConomy.getAccount(player.getName()).getHoldings()
-						.hasEnough(gpw.getConfig().getDouble("iConomy-openchest-price", 1.0))) {
-					player.sendMessage(chestKeeper()
-							+ ChatColor.RED
-							+ "You don't have "
-							+ iConomy.format(gpw.getConfig().getDouble("iConomy-openchest-price",
-									1.0)) + " to pay the Chests Keeper !");
-					return false;
-				} else {
-					iConomy.getAccount(player.getName()).getHoldings()
-							.subtract(gpw.getConfig().getDouble("iConomy-openchest-price", 1.0));
-					if (gpw.getConfig().getDouble("iConomy-openchest-price", 1.0) != 0)
-						player.sendMessage(chestKeeper()
-								+ iConomy.format(gpw.getConfig().getDouble(
-										"iConomy-openchest-price", 1.0)) + ChatColor.DARK_GRAY
-								+ " used to pay the Chest Keeper.");
-					return true;
-				}
-
-			} else {
-				player.sendMessage(chestKeeper() + ChatColor.RED
-						+ "You must have an account to pay the Chests Keeper !");
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**

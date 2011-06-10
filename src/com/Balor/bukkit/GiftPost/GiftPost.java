@@ -21,6 +21,7 @@ import com.Balor.Listeners.WorldGPListener;
 import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
+import com.Balor.utils.Downloader;
 import com.Balor.utils.threads.PartiesGarbageCollector;
 
 import java.io.BufferedWriter;
@@ -162,51 +163,60 @@ public class GiftPost extends JavaPlugin {
 
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
-		server = getServer();
-		GiftPostWorker.setDisable(false);
-		setupConfigFiles();
-		log.info("[" + this.getDescription().getName() + "]" + " (version "
-				+ this.getDescription().getVersion() + ")");
-		gpw = GiftPostWorker.getInstance();
-		gpw.setConfig(getConfiguration());
-		gpw.setfManager(getDataFolder().toString());
-		setupListeners();
-		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
-			gpw.transfer();
-			new File(getDataFolder() + File.separator + "chest.dat").delete();
-		} else if (new File(getDataFolder() + File.separator + "chests.dat").exists()) {
-			gpw.convertSave();
-			new File(getDataFolder() + File.separator + "chests.dat").delete();
-		} else
-			gpw.newLoad();
-		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
-		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+		if (!new File("lib" + File.separator, "Register-1.8.jar").exists()) {
+			Downloader.pluginName = "VirtualChest";
+			Downloader.install("http://gestdown.info/minecraft/Register-1.8.jar",
+					"Register-1.8.jar");
+			getServer().reload();
+		} else {
+			server = getServer();
+			GiftPostWorker.setDisable(false);
+			setupConfigFiles();
+			log.info("[" + this.getDescription().getName() + "]" + " (version "
+					+ this.getDescription().getVersion() + ")");
+			gpw = GiftPostWorker.getInstance();
+			gpw.setConfig(getConfiguration());
+			gpw.setfManager(getDataFolder().toString());
+			setupListeners();
+			if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
+				gpw.transfer();
+				new File(getDataFolder() + File.separator + "chest.dat").delete();
+			} else if (new File(getDataFolder() + File.separator + "chests.dat").exists()) {
+				gpw.convertSave();
+				new File(getDataFolder() + File.separator + "chests.dat").delete();
+			} else
+				gpw.newLoad();
+			log.info("[" + this.getDescription().getName() + "] Chests loaded !");
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 
-			@Override
-			public void run() {
-				GiftPostWorker.getInstance().save();
-			}
-		}, (getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
-				getConfiguration().getInt("auto-save-time", 10) * 1200);
-		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
-			GiftPostWorker.getInstance().loadParties();
-			getServer().getScheduler().scheduleAsyncRepeatingTask(this,
-					new PartiesGarbageCollector(),
-					(getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
+				@Override
+				public void run() {
+					GiftPostWorker.getInstance().save();
+				}
+			}, (getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
 					getConfiguration().getInt("auto-save-time", 10) * 1200);
+			if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
+				GiftPostWorker.getInstance().loadParties();
+				getServer().getScheduler().scheduleAsyncRepeatingTask(this,
+						new PartiesGarbageCollector(),
+						(getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
+						getConfiguration().getInt("auto-save-time", 10) * 1200);
+			}
 		}
 	}
 
 	public void onDisable() {
-		PluginDescriptionFile pdfFile = this.getDescription();
-		gpw.save();
-		if (GiftPostWorker.getmcMMO() != null)
-			gpw.saveParties();
-		server.getScheduler().cancelTasks(this);
-		GiftPostWorker.setDisable(true);
-		GiftPostWorker.killInstance();
-		log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version "
-				+ pdfFile.getVersion() + ")");
+		if (com.Balor.utils.Downloader.pluginName == null) {
+			PluginDescriptionFile pdfFile = this.getDescription();
+			gpw.save();
+			if (GiftPostWorker.getmcMMO() != null)
+				gpw.saveParties();
+			server.getScheduler().cancelTasks(this);
+			GiftPostWorker.setDisable(true);
+			GiftPostWorker.killInstance();
+			log.info("[" + pdfFile.getName() + "]" + " Plugin Disabled. (version "
+					+ pdfFile.getVersion() + ")");
+		}
 
 	}
 
