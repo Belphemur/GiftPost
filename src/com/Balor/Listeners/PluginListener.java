@@ -32,15 +32,6 @@ import org.bukkit.plugin.Plugin;
  * 
  */
 public class PluginListener extends ServerListener {
-	private Methods Methods;
-
-	/**
-	 * 
-	 */
-	public PluginListener() {
-		this.Methods = new Methods();
-	}
-
 	@Override
 	public void onPluginEnable(PluginEnableEvent event) {
 		if (GiftPostWorker.getPermission() == null) {
@@ -54,15 +45,16 @@ public class PluginListener extends ServerListener {
 			}
 		}
 		if (GiftPostWorker.getPayement() == null) {
+			Methods methods = new Methods();
 			// Check to see if we need a payment method
-			if (!this.Methods.hasMethod()) {
-				if (this.Methods.setMethod(event.getPlugin())) {
+			if (!methods.hasMethod()) {
+				if (methods.setMethod(event.getPlugin())) {
 					// You might want to make this a public variable inside your
 					// MAIN class public Method Method = null;
 					// then reference it through this.plugin.Method so that way
 					// you can use it in the rest of your plugin ;)
-					GiftPostWorker.setPayementMethod(this.Methods.getMethod());
-					System.out.println("[Tomb] Payment method found ("
+					GiftPostWorker.setPayementMethod(methods.getMethod());
+					System.out.println("[VirtualChest] Payment method found ("
 							+ GiftPostWorker.getPayement().getName() + " version: "
 							+ GiftPostWorker.getPayement().getVersion() + ")");
 				}
