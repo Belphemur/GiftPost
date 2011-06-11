@@ -70,7 +70,8 @@ public class Buy implements GPCommand {
 			sender.sendMessage(chestKeeper() + ChatColor.RED
 					+ "You have have already a chest named : " + ChatColor.AQUA + chestName);
 		else if (type.matches("normal") || type.matches("large")) {
-			if (gpw.numberOfChest(player) + 1 <= gpw.getFileManager().openChestLimitFile(player)) {
+			int limit = getLimit(player);
+			if (gpw.numberOfChest(player) + 1 <= limit) {
 				if (gpw.economyCheck(player, "iConomy-" + type + "Chest-price")) {
 					if (type.matches("normal"))
 						gpw.addChest(player, new VirtualChest(chestName));
@@ -82,13 +83,14 @@ public class Buy implements GPCommand {
 				}
 			} else
 				sender.sendMessage(chestKeeper() + ChatColor.RED
-						+ "You have reach your limit of chest." + ChatColor.DARK_RED + "("
-						+ gpw.getFileManager().openChestLimitFile(player) + ")");
+						+ "You have reach your limit of chest." + ChatColor.DARK_RED + "(" + limit
+						+ ")");
 		} else
 			sender.sendMessage(chestKeeper() + ChatColor.RED
 					+ "There is only 2 type of Chests : large and normal");
 
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -115,6 +117,25 @@ public class Buy implements GPCommand {
 			return ChatColor.GOLD + "/gp b" + ChatColor.WHITE + ": to buy a normal chest \n";
 		return ChatColor.GOLD + "/gp b (large OR normal) ChestName" + ChatColor.WHITE
 				+ ": to buy a large or normal chest \n";
+	}
+
+	@SuppressWarnings("deprecation")
+	private int getLimit(Player player) {
+		Integer limit;
+		limit = GiftPostWorker.getInstance().getFileManager().openChestLimitFile(player);
+		if (limit == -1 && GiftPostWorker.getPermission() != null) {
+			try {
+				limit = GiftPostWorker.getPermission().getInfoInteger(player.getWorld().getName(),
+						player.getName(), "giftpost.maxchests", false);
+			} catch (Exception e) {
+				GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
+				limit = GiftPostWorker.getPermission().getPermissionInteger(player.getWorld().getName(),
+						player.getName(), "giftpost.maxchests");
+			}
+		}
+		if (limit == null || limit == -1)
+			limit = GiftPostWorker.getInstance().getConfig().getInt("max-number-chest", 10);
+		return limit;
 	}
 
 }

@@ -132,7 +132,7 @@ public class FilesManager {
 		} catch (IOException ex) {
 			GiftPostWorker.workerLog.severe(ex.toString());
 		}
-		GiftPostWorker.workerLog.fine("Chests of "+pName+" Saved.");
+		GiftPostWorker.workerLog.fine("Chests of " + pName + " Saved.");
 	}
 
 	/**
@@ -350,8 +350,7 @@ public class FilesManager {
 	public int openChestLimitFile(Player p) {
 		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
 		config.load();
-		return this.getYml("Players", p.getName() + ".yml").getInt("ChestLimit",
-				config.getInt("max-number-chest", 10));
+		return this.getYml("Players", p.getName() + ".yml").getInt("ChestLimit", -1);
 	}
 
 	/**
@@ -664,12 +663,13 @@ public class FilesManager {
 		} else
 			return null;
 	}
-	public void removePlayer(String playerName)
-	{
-		getFile("Players", playerName+".yml").delete();
-		getFile("Chests", playerName+".chest").delete();
-		GiftPostWorker.workerLog.info(playerName+" files deleted.");
+
+	public void removePlayer(String playerName) {
+		getFile("Players", playerName + ".yml").delete();
+		getFile("Chests", playerName + ".chest").delete();
+		GiftPostWorker.workerLog.info(playerName + " files deleted.");
 	}
+
 	/**
 	 * Get all the chests of the player
 	 * 
@@ -680,7 +680,7 @@ public class FilesManager {
 	public HashMap<String, VirtualChest> getPlayerChests(String player) {
 		HashMap<String, VirtualChest> result = new HashMap<String, VirtualChest>();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = new HashMap<String, ArrayList<SerializedItemStack>>();
-		File playerChests = getFile("Chests", player+".chest", false);
+		File playerChests = getFile("Chests", player + ".chest", false);
 		if (playerChests.exists()) {
 			FileInputStream fis = null;
 			ObjectInputStream in = null;
@@ -707,10 +707,10 @@ public class FilesManager {
 				}
 				result.put(chestName, v.clone());
 			}
-			GiftPostWorker.workerLog.fine("Chests of "+player+" loaded");
-		}
-		else
-			GiftPostWorker.workerLog.warning(player+" don't have chests, but you tried to load it.");
+			GiftPostWorker.workerLog.fine("Chests of " + player + " loaded");
+		} else
+			GiftPostWorker.workerLog.warning(player
+					+ " don't have chests, but you tried to load it.");
 		return result;
 
 	}
