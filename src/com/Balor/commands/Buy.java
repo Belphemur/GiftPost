@@ -127,7 +127,7 @@ public class Buy implements GPCommand {
 			try {
 				limit = GiftPostWorker.getPermission().getInfoInteger(player.getWorld().getName(),
 						player.getName(), "giftpost.maxchests", false);
-			} catch (Exception e) {
+			} catch (NoSuchMethodError e) {
 				GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
 				limit = GiftPostWorker.getPermission().getPermissionInteger(player.getWorld().getName(),
 						player.getName(), "giftpost.maxchests");
