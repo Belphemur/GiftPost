@@ -41,21 +41,20 @@ public class Buy implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if (args.length < 2
-				&& !GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
-						.equals("true")) {
-			sender.sendMessage(getHelp());
-			return;
-		}
 		String type;
+		Player player = (Player) sender;
 		if (GiftPostWorker.getInstance().getConfig().getString("only-normal", "false")
 				.equals("true"))
 			type = "normal";
-		else
-			type = args[1].toLowerCase();
-		Player player = (Player) sender;
+		else {
+			if (args != null && args.length >= 2)
+				type = args[1].toLowerCase();
+			else
+				type = gpw.getDefaultType(player);
+		}
+
 		String chestName;
-		if (args.length == 3)
+		if (args != null && args.length == 3)
 			chestName = args[2].toLowerCase();
 		else {
 			chestName = (type + (gpw.numberOfChest(player) + 1)).toLowerCase();
@@ -77,7 +76,7 @@ public class Buy implements GPCommand {
 						gpw.addChest(player, new VirtualChest(chestName));
 					if (type.matches("large"))
 						gpw.addChest(player, new VirtualLargeChest(chestName));
-					player.sendMessage(chestKeeper() + " Chest succefuly created. "
+					player.sendMessage(chestKeeper() + type + " Chest successfully bought. "
 							+ ChatColor.GOLD + "(command /gp c " + chestName
 							+ " OR use a chest with left click to open it)");
 				}
@@ -99,7 +98,9 @@ public class Buy implements GPCommand {
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return ((gpw.hasFlag(args, "b") || gpw.hasFlag(args, "buy")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+				&& gpw.hasPerm((Player) sender, getPermName())
+				&& GiftPostWorker.getInstance().getConfig().getString("only-sign", "false")
+						.equals("false");
 	}
 
 	/*
@@ -129,8 +130,8 @@ public class Buy implements GPCommand {
 						player.getName(), "giftpost.maxchests", false);
 			} catch (NoSuchMethodError e) {
 				GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
-				limit = GiftPostWorker.getPermission().getPermissionInteger(player.getWorld().getName(),
-						player.getName(), "giftpost.maxchests");
+				limit = GiftPostWorker.getPermission().getPermissionInteger(
+						player.getWorld().getName(), player.getName(), "giftpost.maxchests");
 			}
 		}
 		if (limit == null || limit == -1)

@@ -131,6 +131,10 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("only-normal: 'false'");
 				out.newLine();
+				out.write("only-sign: 'false'");
+				out.newLine();
+				out.write("chest-default: large");
+				out.newLine();
 
 				// Close the output stream
 				out.close();

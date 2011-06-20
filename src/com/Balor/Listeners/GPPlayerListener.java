@@ -28,6 +28,7 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.Balor.commands.Buy;
 import com.Balor.commands.Chest;
 
 /**
@@ -60,7 +61,8 @@ public class GPPlayerListener extends PlayerListener {
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player p = event.getPlayer();
 		String pName = p.getName();
-		if (worker.getConfig().getString("allow-offline", "true").matches("true") && worker.haveAChestInMemory(pName))
+		if (worker.getConfig().getString("allow-offline", "true").matches("true")
+				&& worker.haveAChestInMemory(pName))
 			worker.getFileManager().createWorldFile(p);
 		if (worker.haveAChestInMemory(pName))
 			worker.unloadPlayerChests(pName);
@@ -76,6 +78,10 @@ public class GPPlayerListener extends PlayerListener {
 						&& sign.getLine(0).indexOf("]") != -1
 						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
 					new Chest().execute(worker, event.getPlayer(), null);
+				} else if (sign.getLine(0).indexOf("[Buy Chest]") == 0
+						&& sign.getLine(0).indexOf("]") != -1
+						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
+					new Buy().execute(worker, event.getPlayer(), null);
 				}
 			}
 		}
@@ -85,11 +91,11 @@ public class GPPlayerListener extends PlayerListener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		onSign(event);
 		if (worker.getConfig().getString("use-wand", "true").matches("true")
+				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere")
 				&& (event.getPlayer().getItemInHand().getType().getId() == worker.getConfig()
 						.getInt("wand-item-id", Material.CHEST.getId()))
 				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(
-						Action.LEFT_CLICK_BLOCK))
-				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere")) {
+						Action.LEFT_CLICK_BLOCK))) {
 			new Chest().execute(worker, event.getPlayer(), null);
 		}
 	}

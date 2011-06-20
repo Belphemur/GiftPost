@@ -76,7 +76,9 @@ public class Chest implements GPCommand {
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return ((gpw.hasFlag(args, "c") || gpw.hasFlag(args, "chest")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+				&& gpw.hasPerm((Player) sender, getPermName())
+				&& GiftPostWorker.getInstance().getConfig().getString("only-sign", "false")
+						.equals("false");
 	}
 
 	/**

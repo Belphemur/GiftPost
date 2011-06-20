@@ -39,14 +39,20 @@ public class Display {
 		Player player = (Player) sender;
 		sender.sendMessage(ChatColor.AQUA + "Virtual Chest (Gift Post) \n");
 		sendHelp(sender, Help.class);
+		boolean onlySign = GiftPostWorker.getInstance().getConfig().getString("only-sign", "false")
+				.equals("true");
 		if (page == 1) {
-			if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.everywhere", false))
+			if (!onlySign
+					&& GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.everywhere",
+							false))
 				sendHelp(sender, Chest.class);
 			if (GiftPostWorker.getInstance().hasPerm(player, "giftpost.chest.open", false)) {
-				sendHelp(sender, Buy.class);
+				if (!onlySign)
+					sendHelp(sender, Buy.class);
 				sendHelp(sender, SetChest.class);
 				sendHelp(sender, ChestList.class);
-				sendHelp(sender, Upgrade.class);
+				if (!onlySign)
+					sendHelp(sender, Upgrade.class);
 				sendHelp(sender, Rename.class);
 				sendHelp(sender, RemoveChest.class);
 				sendHelp(sender, EmptyChest.class);

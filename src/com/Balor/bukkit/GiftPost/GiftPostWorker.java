@@ -717,4 +717,22 @@ public class GiftPostWorker {
 		}
 		return true;
 	}
+	@SuppressWarnings("deprecation")
+	public String getDefaultType(Player player) {
+		String limit;
+		limit = null;
+		if (GiftPostWorker.getPermission() != null) {
+			try {
+				limit = GiftPostWorker.getPermission().getInfoString(player.getWorld().getName(),
+						player.getName(), "giftpost.chestType", false);
+			} catch (NoSuchMethodError e) {
+				GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
+				limit = GiftPostWorker.getPermission().getPermissionString(
+						player.getWorld().getName(), player.getName(), "giftpost.chestType");
+			}
+		}
+		if (limit == null || limit.isEmpty())
+			limit = GiftPostWorker.getInstance().getConfig().getString("chest-default", "normal");
+		return limit;
+	}
 }

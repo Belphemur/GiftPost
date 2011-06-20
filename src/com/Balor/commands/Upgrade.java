@@ -58,12 +58,12 @@ public class Upgrade implements GPCommand {
 								+ "A problem happend when you tried to upgrade your chest .");
 				}
 			} else
-				sender.sendMessage(chestKeeper() + ChatColor.RED + "You can't upgrade a Large chest !");
+				sender.sendMessage(chestKeeper() + ChatColor.RED
+						+ "You can't upgrade a Large chest !");
 		} else
 			sender.sendMessage(chestKeeper() + ChatColor.RED + "You don't have a chest to upgrade.");
 
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -73,7 +73,9 @@ public class Upgrade implements GPCommand {
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		return ((gpw.hasFlag(args, "u") || gpw.hasFlag(args, "upgrade")))
-				&& gpw.hasPerm((Player) sender, getPermName());
+				&& gpw.hasPerm((Player) sender, getPermName())
+				&& GiftPostWorker.getInstance().getConfig().getString("only-sign", "false")
+						.equals("false");
 	}
 
 	/*
@@ -84,10 +86,10 @@ public class Upgrade implements GPCommand {
 	public String getPermName() {
 		return "giftpost.chest.upgrade";
 	}
-	public String getHelp()
-	{
+
+	public String getHelp() {
 		return ChatColor.GOLD + "/gp u (ChestName OR nothing)" + ChatColor.WHITE
-		+ ": if you have a normal chest, upgrade to a large chest.";
+				+ ": if you have a normal chest, upgrade to a large chest.";
 	}
 
 }
