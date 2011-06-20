@@ -23,7 +23,7 @@ import com.Balor.bukkit.GiftPost.GiftPost;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.gmail.nossr50.mcMMO;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import com.nijikokun.register.payment.Methods;
+import be.Balor.register.payment.Methods;
 
 import org.bukkit.plugin.Plugin;
 
