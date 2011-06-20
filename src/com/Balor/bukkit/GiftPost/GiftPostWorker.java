@@ -223,6 +223,13 @@ public class GiftPostWorker {
 		return chests.get(p.getName());
 	}
 
+	public ArrayList<String> chestList(String playerName) {
+		if (allChests.containsKey(playerName)) {
+			return (ArrayList<String>) allChests.get(playerName).names;
+		} else
+			return null;
+	}
+
 	/**
 	 * Return the default chest.
 	 * 
@@ -717,6 +724,38 @@ public class GiftPostWorker {
 		}
 		return true;
 	}
+
+	public boolean economyUpgradeCheck(Player player) {
+		if (GiftPostWorker.getPayement() != null
+				&& this.getConfig().getString("iConomy", "false").matches("true")
+				&& !this.hasPerm(player, "giftpost.admin.free", false)) {
+			double amount = this.getConfig().getDouble("iConomy-largeChest-price", 500.0)
+					- this.getConfig().getDouble("iConomy-normalChest-price", 250.0);
+			if (GiftPostWorker.getPayement().hasAccount(player.getName())) {
+				if (!GiftPostWorker.getPayement().getAccount(player.getName()).hasEnough(amount)) {
+					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have "
+							+ GiftPostWorker.getPayement().format(amount)
+							+ " to pay the Chests Keeper !");
+					return false;
+				} else {
+					if (amount != 0) {
+						GiftPostWorker.getPayement().getAccount(player.getName()).subtract(amount);
+						player.sendMessage(chestKeeper() + " "
+								+ GiftPostWorker.getPayement().format(amount) + ChatColor.DARK_GRAY
+								+ " used to pay the Chests Keeper.");
+					}
+					return true;
+				}
+
+			} else {
+				player.sendMessage(chestKeeper() + ChatColor.RED
+						+ "You must have an account to pay the Chests Keeper !");
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@SuppressWarnings("deprecation")
 	public String getDefaultType(Player player) {
 		String limit;

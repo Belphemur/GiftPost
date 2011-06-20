@@ -18,15 +18,13 @@ package com.Balor.commands;
 
 import static com.Balor.utils.Display.chestKeeper;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
-import com.aranai.virtualchest.VirtualChest;
-
 /**
  * @author Antoine
  * 
@@ -42,14 +40,14 @@ public class ChestList implements GPCommand {
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
-		HashMap<String, VirtualChest> chestList = gpw.listOfChest(player);
+		ArrayList<String> chestList = gpw.chestList(player.getName());
 		if (chestList == null)
 			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
 					+ ChatColor.RED + "You don't have any chest.");
 		else {
 			String msg = chestKeeper() + ChatColor.GREEN + "List of all your chest ("
 					+ chestList.size() + "): " + ChatColor.DARK_RED;
-			for (String chestName : chestList.keySet())
+			for (String chestName : chestList)
 				msg += chestName + ", ";
 			msg = msg.substring(0, msg.length() - 2);
 			sender.sendMessage(msg);
