@@ -362,6 +362,18 @@ public class GiftPostWorker {
 
 	}
 
+	public boolean upgradeChest(Player player, VirtualChest vChest) {
+		if (chests.containsKey(player.getName())) {
+			chests.get(player.getName()).put(vChest.getName(), vChest);
+			fManager.upgradeChest(player, vChest.getName());
+			allChests.get(player.getName()).types.set(
+					allChests.get(player.getName()).names.indexOf(vChest.getName()), "large");
+			return true;
+		}
+		return false;
+
+	}
+
 	/**
 	 * 
 	 * @param player

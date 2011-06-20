@@ -49,10 +49,7 @@ public class Upgrade implements GPCommand {
 		if (v != null) {
 			if ((v instanceof VirtualChest) && !(v instanceof VirtualLargeChest)) {
 				if (gpw.economyUpgradeCheck(player)) {
-					if (gpw.getFileManager().upgradeChest(player, v.getName())) {
-						gpw.addChest(player, new VirtualLargeChest(v));
-						gpw.removeChest(player, v);
-
+					if (gpw.upgradeChest(player, v)) {
 						sender.sendMessage(chestKeeper() + v.getName() + " is now a Large Chest.");
 					} else
 						sender.sendMessage(chestKeeper()
