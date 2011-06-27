@@ -16,7 +16,8 @@
  ************************************************************************/
 package com.Balor.utils;
 
-import net.minecraft.server.ItemStack;
+
+import org.bukkit.inventory.ItemStack;
 
 import com.aranai.virtualchest.VirtualChest;
 
@@ -31,13 +32,13 @@ public class Stacker {
 		ItemStack swapStack;
 		int size = chest.getMcContents().length;
 		for (int index = 0; index < size; index++) {
-			ItemStack stack = chest.getItemStack(index);
+			ItemStack stack = chest.getItem(index);
 			swapStack = stack;
 			swapStackI = index;
 			for (int i = index + 1; i < size; i++) {
-				ItemStack stack2 = chest.getItemStack(i);
-				if ((stack2 != null && stack2.count != 0 && stack2.id != 0)
-						&& (swapStack == null || stack2.id < swapStack.id)) {
+				ItemStack stack2 = chest.getItem(i);
+				if ((stack2 != null && stack2.getAmount() != 0 && stack2.getTypeId() != 0)
+						&& (swapStack == null || stack2.getTypeId() < swapStack.getTypeId())) {
 					swapStackI = i;
 					swapStack = stack2;
 				}
@@ -59,19 +60,19 @@ public class Stacker {
 	 */
 	public static boolean stackChest(VirtualChest chest) {
 		for (int index = 0; index < chest.getMcContents().length; index++) {
-			ItemStack stack = chest.getItemStack(index);
-			if (stack != null && stack.count != 0 && stack.id != 0 && stack.count != stack.b()) {
+			ItemStack stack = chest.getItem(index);
+			if (stack != null && stack.getAmount() != 0 && stack.getTypeId() != 0 && stack.getAmount() != stack.getMaxStackSize()) {
 				int i = 0;
-				for (ItemStack stack2 : chest.getMcContents()) {
-					if (stack2 != null && i != index && stack2.count != 0
-							&& stack2.count < stack2.b() && stack2.id == stack.id
-							&& stack2.damage == stack.damage) {
-						int oldCount = stack.count;
-						stack.count = Math.min(stack2.b(), stack.count + stack2.count);
-						chest.setItemStack(index, stack);
-						stack2.count = Math.max(0, oldCount + stack2.count - stack2.b());
-						if (stack2.count > 0) {
-							chest.setItemStack(i, stack2);
+				for (ItemStack stack2 : chest.getContents()) {
+					if (stack2 != null && i != index && stack2.getAmount() != 0
+							&& stack2.getAmount() < stack2.getMaxStackSize() && stack2.getTypeId() == stack.getTypeId()
+							&& stack2.getDurability() == stack.getDurability()) {
+						int oldCount = stack.getAmount();
+						stack.setAmount( Math.min(stack2.getMaxStackSize(), stack.getAmount() + stack2.getAmount()));
+						chest.setItem(index, stack);
+						stack2.setAmount(Math.max(0, oldCount + stack2.getAmount() - stack2.getMaxStackSize()));
+						if (stack2.getAmount() > 0) {
+							chest.setItem(i, stack2);
 							break;
 						} else
 							chest.removeItemStack(i);

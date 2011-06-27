@@ -112,8 +112,8 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	}
 
 	@Override
-	public ItemStack a(int i, int j) {
-		ItemStack toReturn = super.a(i, j);
+	public ItemStack splitStack(int i, int j) {
+		ItemStack toReturn = super.splitStack(i, j);
 		if (toReturn != null) {
 			ItemStack afterSuper[] = this.getContents();
 			if (afterSuper[i] == null)
@@ -121,6 +121,17 @@ public class TileEntityVirtualChest extends TileEntityChest {
 		}
 
 		return toReturn;
+	}
+	/**
+	 * 
+	 * @param i
+	 * @param j
+	 * @return
+	 * @deprecated
+	 */
+	public ItemStack a(int i,int j)
+	{
+		return splitStack(i, j);
 	}
 
 	public void removeItemStack(int i) {
