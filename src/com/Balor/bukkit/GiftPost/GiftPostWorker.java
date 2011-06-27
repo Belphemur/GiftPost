@@ -364,10 +364,16 @@ public class GiftPostWorker {
 
 	public boolean upgradeChest(Player player, VirtualChest vChest) {
 		if (chests.containsKey(player.getName())) {
-			chests.get(player.getName()).put(vChest.getName(), new VirtualLargeChest(vChest));
+			VirtualLargeChest newChest = new VirtualLargeChest(vChest);
+			chests.get(player.getName()).put(vChest.getName(), newChest);
 			fManager.upgradeChest(player, vChest.getName());
 			allChests.get(player.getName()).types.set(
 					allChests.get(player.getName()).names.indexOf(vChest.getName()), "large");
+			if (defaultChests.containsValue(vChest))
+				defaultChests.put(player.getName(), newChest);
+
+			if (sendReceiveChests.containsValue(vChest))
+				sendReceiveChests.put(player.getName(), newChest);
 			return true;
 		}
 		return false;
@@ -406,8 +412,8 @@ public class GiftPostWorker {
 					if (sendReceiveChests.containsValue(vChest)) {
 						sendReceiveChests.put(pName, defaultChests.get(pName));
 						fManager.createSendReceiveChest(pName, newDefaultChest);
-						workerLog.info(pName + " removed his chest : " + vChest.getName());
 					}
+					workerLog.info(pName + " removed his chest : " + vChest.getName());
 				} else {
 					defaultChests.remove(pName);
 					sendReceiveChests.remove(pName);
