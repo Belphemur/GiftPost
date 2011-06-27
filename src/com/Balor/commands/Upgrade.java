@@ -42,7 +42,7 @@ public class Upgrade implements GPCommand {
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
 		VirtualChest v;
-		if (args.length == 2)
+		if (args !=null && args.length == 2)
 			v = gpw.getChest(player.getName(), args[1].toLowerCase());
 		else
 			v = gpw.getDefaultChest(player.getName());
@@ -53,7 +53,7 @@ public class Upgrade implements GPCommand {
 						sender.sendMessage(chestKeeper() + v.getName() + " is now a Large Chest.");
 					} else
 						sender.sendMessage(chestKeeper()
-								+ "A problem happend when you tried to upgrade your chest .");
+								+ "A problem happen when you tried to upgrade your chest .");
 				}
 			} else
 				sender.sendMessage(chestKeeper() + ChatColor.RED

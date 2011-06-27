@@ -59,6 +59,16 @@ public class SignListener extends BlockListener {
 					e.setLine(3, ChatColor.DARK_RED + "chest !");
 				}
 			}
+		} else if (line0.indexOf("[Up Chest]") == 0 && line0.indexOf("]") != -1) {
+			if (!worker.hasPerm(e.getPlayer(), "giftpost.admin.sign"))
+				e.setLine(0, "\u00A74[No Perm]");
+			else {
+				if (e.getLine(1).isEmpty()) {
+					e.setLine(1, ChatColor.DARK_RED + "Click me to");
+					e.setLine(2, ChatColor.DARK_RED + "upgrade a");
+					e.setLine(3, ChatColor.DARK_RED + "chest !");
+				}
+			}
 		}
 	}
 

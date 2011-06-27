@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.Balor.commands.Buy;
 import com.Balor.commands.Chest;
+import com.Balor.commands.Upgrade;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -82,6 +83,11 @@ public class GPPlayerListener extends PlayerListener {
 						&& sign.getLine(0).indexOf("]") != -1
 						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
 					new Buy().execute(worker, event.getPlayer(), null);
+
+				} else if (sign.getLine(0).indexOf("[Up Chest]") == 0
+						&& sign.getLine(0).indexOf("]") != -1
+						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
+					new Upgrade().execute(worker, event.getPlayer(), null);
 				}
 			}
 		}
