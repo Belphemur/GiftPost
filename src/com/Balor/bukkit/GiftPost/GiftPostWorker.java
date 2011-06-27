@@ -207,8 +207,8 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public int numberOfChest(Player p) {
-		if (chests.containsKey(p.getName()))
-			return chests.get(p.getName()).size();
+		if (allChests.containsKey(p.getName()))
+			return allChests.get(p.getName()).names.size();
 		else
 			return 0;
 	}
