@@ -14,6 +14,7 @@
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.Balor.bukkit.GiftPost;
 
+import com.Balor.Listeners.DeathEntityListener;
 import com.Balor.Listeners.GPPlayerListener;
 import com.Balor.Listeners.PluginListener;
 import com.Balor.Listeners.SignListener;
@@ -135,6 +136,8 @@ public class GiftPost extends JavaPlugin {
 				out.newLine();
 				out.write("chest-default: normal");
 				out.newLine();
+				out.write("drop-on-death: 'false'");
+				out.newLine();
 
 				// Close the output stream
 				out.close();
@@ -150,6 +153,7 @@ public class GiftPost extends JavaPlugin {
 		GPPlayerListener pListener = new GPPlayerListener();
 		SignListener sListener = new SignListener();
 		WorldGPListener wListener = new WorldGPListener();
+		DeathEntityListener deathListener = new DeathEntityListener();
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
@@ -159,6 +163,7 @@ public class GiftPost extends JavaPlugin {
 		pm.registerEvent(Event.Type.SIGN_CHANGE, sListener, Event.Priority.Highest, this);
 		pm.registerEvent(Event.Type.BLOCK_BREAK, sListener, Event.Priority.Highest, this);
 		pm.registerEvent(Event.Type.WORLD_SAVE, wListener, Event.Priority.Normal, this);
+		pm.registerEvent(Event.Type.ENTITY_DEATH, deathListener, Event.Priority.Normal, this);
 	}
 
 	public static Server getBukkitServer() {
