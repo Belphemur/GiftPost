@@ -76,8 +76,9 @@ public class SignListener extends BlockListener {
 	public void onBlockBreak(BlockBreakEvent event) {
 		if (event.getBlock().getState() instanceof Sign) {
 			Sign sign = (Sign) event.getBlock().getState();
-			if ((sign.getLine(0).indexOf("[Chest Keeper]") == 0 || sign.getLine(0).indexOf(
-					"[Buy Chest]") == 0)
+			if ((sign.getLine(0).indexOf("[Chest Keeper]") == 0
+					|| sign.getLine(0).indexOf("[Buy Chest]") == 0 || sign.getLine(0).indexOf(
+					"[Up Chest]") == 0)
 					&& sign.getLine(0).indexOf("]") != -1
 					&& !worker.hasPerm(event.getPlayer(), "giftpost.admin.sign"))
 				event.setCancelled(true);
