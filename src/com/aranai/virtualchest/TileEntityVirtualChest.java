@@ -122,6 +122,7 @@ public class TileEntityVirtualChest extends TileEntityChest {
 
 		return toReturn;
 	}
+
 	/**
 	 * 
 	 * @param i
@@ -129,9 +130,27 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	 * @return
 	 * @deprecated
 	 */
-	public ItemStack a(int i,int j)
-	{
-		return splitStack(i, j);
+	public ItemStack a(int i, int j) {
+		ItemStack itemstack;
+		if (this.getContents()[i] != null) {
+
+			if (this.getContents()[i].count <= j) {
+				itemstack = this.getContents()[i];
+				this.getContents()[i] = null;
+				this.update();
+				return itemstack;
+			} else {
+				itemstack = this.getContents()[i].a(j);
+				if (this.getContents()[i].count == 0) {
+					this.getContents()[i] = null;					
+				}
+				this.update();
+			}
+			emptyCases.add(i);
+		} else {
+			itemstack = null;
+		}
+		return itemstack;
 	}
 
 	public void removeItemStack(int i) {
