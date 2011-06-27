@@ -402,7 +402,10 @@ public class GiftPostWorker {
 			HashMap<String, VirtualChest> playerChests = chests.get(pName);
 			if (playerChests.remove(vChest.getName()) != null) {
 				fManager.deleteChestFile(pName, vChest.getName());
-				PlayerChests pChests = fManager.openChestTypeFile(pName);
+				PlayerChests pChests = allChests.get(pName);
+				int index = pChests.names.indexOf(vChest.getName());
+				pChests.names.remove(index);
+				pChests.types.remove(index);
 				if (pChests.names.size() != 0) {
 					String newDefaultChest = pChests.names.get(0);
 					if (defaultChests.containsValue(vChest)) {
