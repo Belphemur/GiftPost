@@ -181,6 +181,11 @@ public class GiftPostWorker {
 		fManager.savePlayerChest(player, chests.get(player));
 		defaultChests.remove(player);
 		sendReceiveChests.remove(player);
+		HashMap<String, VirtualChest> playerChests = chests.get(player);
+		for(String name : playerChests.keySet())
+			playerChests.get(name).emptyChest();
+		playerChests.clear();
+		playerChests = null;
 		chests.remove(player);
 		workerLog.info("Chests of " + player + " unloaded from memory.");
 	}
