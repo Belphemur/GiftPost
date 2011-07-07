@@ -182,7 +182,7 @@ public class GiftPostWorker {
 		defaultChests.remove(player);
 		sendReceiveChests.remove(player);
 		HashMap<String, VirtualChest> playerChests = chests.get(player);
-		for(String name : playerChests.keySet())
+		for (String name : playerChests.keySet())
 			playerChests.get(name).emptyChest();
 		playerChests.clear();
 		playerChests = null;
@@ -453,6 +453,13 @@ public class GiftPostWorker {
 			chests.get(playerName).remove(oldName);
 			chests.get(playerName).put(newName, v);
 			fManager.renameChestFile(playerName, oldName, newName);
+			PlayerChests pChest =  allChests.get(playerName);
+			int index = pChest.names.indexOf(oldName);
+			pChest.names.remove(index);
+			String type = pChest.types.get(index);
+			pChest.types.remove(index);
+			pChest.names.add(newName);
+			pChest.types.add(type);			
 			if (defaultChests.containsValue(v))
 				fManager.createDefaultChest(playerName, newName);
 			if (sendReceiveChests.containsValue(v))

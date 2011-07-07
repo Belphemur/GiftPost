@@ -70,7 +70,7 @@ public class Buy implements GPCommand {
 					+ "You have have already a chest named : " + ChatColor.AQUA + chestName);
 		else if (type.matches("normal") || type.matches("large")) {
 			int limit = getLimit(player);
-			if (gpw.numberOfChest(player) + 1 <= limit) {
+			if (gpw.numberOfChest(player) + 1 <= limit || limit == 0) {
 				if (gpw.economyCheck(player, "iConomy-" + type + "Chest-price")) {
 					if (type.matches("normal"))
 						gpw.addChest(player, new VirtualChest(chestName));
