@@ -544,7 +544,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public ConcurrentMap<String, PlayerChests> getAllPlayerChestType() {
-		ConcurrentMap<String, PlayerChests> result = new MapMaker().weakValues().makeMap();
+		ConcurrentMap<String, PlayerChests> result = new MapMaker().makeMap();
 		File dir = new File(this.path + File.separator + "Players");
 		if (dir.exists()) {
 			for (String s : dir.list()) {
@@ -694,7 +694,7 @@ public class FilesManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public ConcurrentMap<String, VirtualChest> getPlayerChests(String player) {
-		ConcurrentMap<String, VirtualChest> result =  new MapMaker().weakValues().makeMap();
+		ConcurrentMap<String, VirtualChest> result =  new MapMaker().makeMap();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = new HashMap<String, ArrayList<SerializedItemStack>>();
 		File playerChests = getFile("Chests", player + ".chest", false);
 		if (playerChests.exists()) {
@@ -763,7 +763,7 @@ public class FilesManager {
 				// Player
 				for (String playerName : saved.keySet()) {
 					if (playerChestType.containsKey(playerName)) {
-						ConcurrentMap<String, VirtualChest> tmp = new MapMaker().weakValues().makeMap();
+						ConcurrentMap<String, VirtualChest> tmp = new MapMaker().makeMap();
 						playerAndChest.put(playerName, tmp);
 						TreeMap<String, String> chestsTypes = playerChestType.get(playerName)
 								.concat();
@@ -806,7 +806,7 @@ public class FilesManager {
 		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
 		config.load();
 		String typeChosen = config.getString("chest-type");
-		ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker().weakValues().makeMap();
+		ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker().makeMap();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
 
 		if (new File(filename).exists()) {
@@ -848,7 +848,7 @@ public class FilesManager {
 						createChestFile((String) names.toArray()[i], names.toArray()[i].toString()
 								.toLowerCase(), "normal");
 					}
-					ConcurrentMap<String, VirtualChest> tmp2 = new MapMaker().weakValues().makeMap();
+					ConcurrentMap<String, VirtualChest> tmp2 = new MapMaker().makeMap();
 					tmp2.putAll(tmp);
 					chests.put((String) names.toArray()[i], tmp2);
 					createDefaultChest((String) names.toArray()[i], names.toArray()[i].toString()

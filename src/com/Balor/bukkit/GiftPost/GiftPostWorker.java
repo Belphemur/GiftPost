@@ -54,11 +54,11 @@ import org.bukkit.util.config.Configuration;
 public class GiftPostWorker {
 
 	private ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker()
-			.weakValues().concurrencyLevel(8).makeMap();
-	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().weakValues()
 			.concurrencyLevel(8).makeMap();
-	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker().weakValues()
-			.concurrencyLevel(8).makeMap();
+	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().concurrencyLevel(8)
+			.softValues().makeMap();
+	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker()
+			.concurrencyLevel(8).softValues().makeMap();
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
@@ -69,8 +69,8 @@ public class GiftPostWorker {
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
 	private static GiftPostWorker instance;
-	private ConcurrentMap<String, PlayerChests> allChests = new MapMaker().weakValues()
-			.concurrencyLevel(8).makeMap();
+	private ConcurrentMap<String, PlayerChests> allChests = new MapMaker().concurrencyLevel(8)
+			.makeMap();
 	private static boolean disable = false;
 
 	private GiftPostWorker() {
@@ -358,7 +358,7 @@ public class GiftPostWorker {
 		if (chests.containsKey(player.getName()))
 			chests.get(player.getName()).put(vChest.getName(), vChest);
 		else {
-			ConcurrentMap<String, VirtualChest> tmp = new MapMaker().weakValues().makeMap();
+			ConcurrentMap<String, VirtualChest> tmp = new MapMaker().makeMap();
 			tmp.put(vChest.getName(), vChest);
 			chests.put(player.getName(), tmp);
 		}
@@ -437,7 +437,7 @@ public class GiftPostWorker {
 					allChests.remove(pName);
 					workerLog.info(pName + " has no more chest.");
 					fManager.removePlayer(pName);
-				}				
+				}
 				vChest = null;
 				return true;
 			}
@@ -529,7 +529,7 @@ public class GiftPostWorker {
 		this.config.load();
 		allChests = fManager.getAllPlayerChestType();
 		if (allChests == null) {
-			allChests = new MapMaker().weakValues().concurrencyLevel(8).makeMap();
+			allChests = new MapMaker().concurrencyLevel(8).makeMap();
 			workerLog.info("No player files found");
 		} else {
 			for (Player p : GiftPost.getBukkitServer().getOnlinePlayers()) {
