@@ -450,6 +450,18 @@ public class FilesManager {
 		}
 		emptyOfflineFile(p);
 	}
+	/**
+	 * Check if the player have received some item when he was offline
+	 * @param p
+	 * @return
+	 */
+	public boolean hasOfflineItems(Player p)
+	{
+		Configuration conf = this.getYml("Players", p.getName() + ".yml");
+		List<String> playerNames = new ArrayList<String>();
+		playerNames = conf.getStringList("Players", null);
+		return playerNames != null;
+	}
 
 	/**
 	 * Save all the chest.

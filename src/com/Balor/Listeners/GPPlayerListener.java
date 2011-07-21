@@ -50,7 +50,7 @@ public class GPPlayerListener extends PlayerListener {
 			event.getPlayer().sendMessage(
 					"Virtual Chest is installed : /gp help to see all commands");
 		if (worker.numberOfChest(event.getPlayer()) > 0
-				&& !worker.getDefaultChest(event.getPlayer().getName()).isEmpty()) {
+				&& worker.getFileManager().hasOfflineItems(event.getPlayer())) {
 			worker.getFileManager().openOfflineFile(event.getPlayer());
 			if (worker.getConfig().getString("message-of-the-day", "true").matches("true"))
 				event.getPlayer().sendMessage(
