@@ -155,14 +155,15 @@ public class GiftPostWorker {
 			workerLog.severe("chestName == null");
 			return null;
 		}
+		workerLog.info("Opening chest :"+chestName+" of player "+playerName);
 		if (chests.containsKey(playerName) && chests.get(playerName).containsKey(chestName))
 			return chests.get(playerName).get(chestName);
 		else {
 			if (chestExists(playerName, chestName)) {
 				HashMap<String, VirtualChest> loadedChests = fManager.getPlayerChests(playerName);
 				chests.put(playerName, loadedChests);
-				workerLog.info("Chest " + chestName + " owned by " + playerName
-						+ " loaded from file");
+				workerLog.info("Chests owned by " + playerName
+						+ " loaded from file (" + loadedChests.size() + ")");
 				return loadedChests.get(chestName);
 			} else {
 				workerLog.warning("Tried to load " + chestName + " of player " + playerName
@@ -405,7 +406,8 @@ public class GiftPostWorker {
 		String pName = player.getName();
 		if (chests.containsKey(pName)) {
 			HashMap<String, VirtualChest> playerChests = chests.get(pName);
-			if (playerChests.remove(vChest.getName()) != null) {
+			playerChests.remove(vChest.getName());
+			if (playerChests.size() > 0) {
 				fManager.deleteChestFile(pName, vChest.getName());
 				PlayerChests pChests = allChests.get(pName);
 				int index = pChests.names.indexOf(vChest.getName());
@@ -420,8 +422,7 @@ public class GiftPostWorker {
 					if (sendReceiveChests.containsValue(vChest)) {
 						sendReceiveChests.put(pName, defaultChests.get(pName));
 						fManager.createSendReceiveChest(pName, newDefaultChest);
-					}
-					workerLog.info(pName + " removed his chest : " + vChest.getName());
+					}					
 				} else {
 					defaultChests.remove(pName);
 					sendReceiveChests.remove(pName);
@@ -430,6 +431,7 @@ public class GiftPostWorker {
 					workerLog.info(pName + " has no more chest.");
 					fManager.removePlayer(pName);
 				}
+				workerLog.info(pName + " removed his chest : " + vChest.getName());
 				vChest = null;
 				return true;
 			}
@@ -453,13 +455,13 @@ public class GiftPostWorker {
 			chests.get(playerName).remove(oldName);
 			chests.get(playerName).put(newName, v);
 			fManager.renameChestFile(playerName, oldName, newName);
-			PlayerChests pChest =  allChests.get(playerName);
+			PlayerChests pChest = allChests.get(playerName);
 			int index = pChest.names.indexOf(oldName);
 			pChest.names.remove(index);
 			String type = pChest.types.get(index);
 			pChest.types.remove(index);
 			pChest.names.add(newName);
-			pChest.types.add(type);			
+			pChest.types.add(type);
 			if (defaultChests.containsValue(v))
 				fManager.createDefaultChest(playerName, newName);
 			if (sendReceiveChests.containsValue(v))

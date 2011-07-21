@@ -536,8 +536,10 @@ public class FilesManager {
 			for (String s : dir.list()) {
 				s = s.subSequence(0, s.length() - 4).toString();
 				PlayerChests typesNames = openChestTypeFile(s);
-				if (!typesNames.isEmpty())
+				if (!typesNames.isEmpty()) {
 					result.put(s, typesNames.clone());
+					GiftPostWorker.workerLog.info("Chest of " + s + " : " + typesNames);
+				}
 			}
 			return result;
 		}

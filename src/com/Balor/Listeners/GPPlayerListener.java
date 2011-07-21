@@ -45,10 +45,11 @@ public class GPPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
+		GiftPostWorker.workerLog.info(event.getPlayer().getName()+" connected");
 		if (worker.getConfig().getString("message-of-the-day", "true").matches("true"))
 			event.getPlayer().sendMessage(
 					"Virtual Chest is installed : /gp help to see all commands");
-		if (worker.getDefaultChest(event.getPlayer().getName()) != null
+		if (worker.numberOfChest(event.getPlayer()) > 0
 				&& !worker.getDefaultChest(event.getPlayer().getName()).isEmpty()) {
 			worker.getFileManager().openOfflineFile(event.getPlayer());
 			if (worker.getConfig().getString("message-of-the-day", "true").matches("true"))

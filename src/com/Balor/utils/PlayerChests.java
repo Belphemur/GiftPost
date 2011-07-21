@@ -78,4 +78,11 @@ public class PlayerChests implements Cloneable {
 			throw new AssertionError();
 		}
 	}
+	public String toString()
+	{
+		String result = "";
+		for(int i = 0; i <this.names.size(); i++)
+			result+=this.names.get(i)+":"+this.types.get(i)+";";
+		return result;
+	}
 }
