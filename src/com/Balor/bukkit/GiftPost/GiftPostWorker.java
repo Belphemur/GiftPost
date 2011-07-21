@@ -419,6 +419,7 @@ public class GiftPostWorker {
 				int index = pChests.names.indexOf(vChest.getName());
 				pChests.names.remove(index);
 				pChests.types.remove(index);
+				workerLog.info(pName + " removed his chest : " + vChest.getName());
 				if (pChests.names.size() != 0) {
 					String newDefaultChest = pChests.names.get(0);
 					if (defaultChests.containsValue(vChest)) {
@@ -436,8 +437,7 @@ public class GiftPostWorker {
 					allChests.remove(pName);
 					workerLog.info(pName + " has no more chest.");
 					fManager.removePlayer(pName);
-				}
-				workerLog.info(pName + " removed his chest : " + vChest.getName());
+				}				
 				vChest = null;
 				return true;
 			}
