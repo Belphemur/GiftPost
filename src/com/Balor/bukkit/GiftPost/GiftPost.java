@@ -24,11 +24,13 @@ import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
 import com.Balor.utils.Downloader;
 import com.Balor.utils.threads.PartiesGarbageCollector;
+import com.google.common.collect.MapMaker;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -173,45 +175,61 @@ public class GiftPost extends JavaPlugin {
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
 		if (!new File("lib" + File.separator, "Register-1.8.1.jar").exists()) {
-			Downloader.pluginName = "Tomb";
+			Downloader.pluginName = "VirtualChest";
 			Downloader.install("http://gestdown.info/minecraft/Register-1.8.1.jar",
 					"Register-1.8.1.jar");
 			getServer().reload();
-		} else {
-			server = getServer();
-			GiftPostWorker.setDisable(false);
-			setupConfigFiles();
-			log.info("[" + this.getDescription().getName() + "]" + " (version "
-					+ this.getDescription().getVersion() + ")");
-			gpw = GiftPostWorker.getInstance();
-			gpw.setConfig(getConfiguration());
-			gpw.setfManager(getDataFolder().toString());
-			setupListeners();
-			if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
-				gpw.transfer();
-				new File(getDataFolder() + File.separator + "chest.dat").delete();
-			} else if (new File(getDataFolder() + File.separator + "chests.dat").exists()) {
-				gpw.convertSave();
-				new File(getDataFolder() + File.separator + "chests.dat").delete();
-			} else
-				gpw.newLoad();
-			log.info("[" + this.getDescription().getName() + "] Chests loaded !");
-			getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
-
-				@Override
-				public void run() {
-					GiftPostWorker.getInstance().save();
-				}
-			}, (getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
-					getConfiguration().getInt("auto-save-time", 10) * 1200);
-			if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
-				GiftPostWorker.getInstance().loadParties();
-				getServer().getScheduler().scheduleAsyncRepeatingTask(this,
-						new PartiesGarbageCollector(),
-						(getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
-						getConfiguration().getInt("auto-save-time", 10) * 1200);
-			}
+			return;
 		}
+		try {
+			@SuppressWarnings("unused")
+			ConcurrentMap< Object, Object> test = new MapMaker().makeMap();
+			test = null;
+			System.gc();
+		} catch (NoClassDefFoundError e) 		
+		 {
+			Downloader.pluginName = "VirtualChest";
+			Downloader.install("http://gestdown.info/minecraft/guava-r09-gwt.jar",
+					"guava-r09-gwt.jar");
+			Downloader.install("http://gestdown.info/minecraft/guava-r09.jar",
+			"guava-r09.jar");
+			getServer().reload();
+			return;
+		}
+		server = getServer();
+		GiftPostWorker.setDisable(false);
+		setupConfigFiles();
+		log.info("[" + this.getDescription().getName() + "]" + " (version "
+				+ this.getDescription().getVersion() + ")");
+		gpw = GiftPostWorker.getInstance();
+		gpw.setConfig(getConfiguration());
+		gpw.setfManager(getDataFolder().toString());
+		setupListeners();
+		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
+			gpw.transfer();
+			new File(getDataFolder() + File.separator + "chest.dat").delete();
+		} else if (new File(getDataFolder() + File.separator + "chests.dat").exists()) {
+			gpw.convertSave();
+			new File(getDataFolder() + File.separator + "chests.dat").delete();
+		} else
+			gpw.newLoad();
+		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
+		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
+
+			@Override
+			public void run() {
+				GiftPostWorker.getInstance().save();
+			}
+		}, (getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
+				getConfiguration().getInt("auto-save-time", 10) * 1200);
+		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
+			GiftPostWorker.getInstance().loadParties();
+			getServer().getScheduler().scheduleAsyncRepeatingTask(this,
+					new PartiesGarbageCollector(),
+					(getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
+					getConfiguration().getInt("auto-save-time", 10) * 1200);
+		}
+
 	}
 
 	public void onDisable() {
