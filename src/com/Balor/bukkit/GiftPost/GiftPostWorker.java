@@ -53,9 +53,12 @@ import org.bukkit.util.config.Configuration;
  */
 public class GiftPostWorker {
 
-	private ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker().softValues().concurrencyLevel(8).makeMap();
-	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().softValues().concurrencyLevel(8).makeMap();
-	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker().softValues().concurrencyLevel(8).makeMap();
+	private ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker()
+			.weakValues().concurrencyLevel(8).makeMap();
+	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().weakValues()
+			.concurrencyLevel(8).makeMap();
+	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker().weakValues()
+			.concurrencyLevel(8).makeMap();
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
@@ -66,7 +69,8 @@ public class GiftPostWorker {
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
 	private static GiftPostWorker instance;
-	private ConcurrentMap<String, PlayerChests> allChests =new MapMaker().softValues().concurrencyLevel(8).makeMap();
+	private ConcurrentMap<String, PlayerChests> allChests = new MapMaker().weakValues()
+			.concurrencyLevel(8).makeMap();
 	private static boolean disable = false;
 
 	private GiftPostWorker() {
@@ -157,15 +161,16 @@ public class GiftPostWorker {
 			workerLog.severe("chestName == null");
 			return null;
 		}
-		workerLog.info("Opening chest :"+chestName+" of player "+playerName);
+		workerLog.info("Opening chest :" + chestName + " of player " + playerName);
 		if (chests.containsKey(playerName) && chests.get(playerName).containsKey(chestName))
 			return chests.get(playerName).get(chestName);
 		else {
 			if (chestExists(playerName, chestName)) {
-				ConcurrentMap<String, VirtualChest> loadedChests = fManager.getPlayerChests(playerName);
+				ConcurrentMap<String, VirtualChest> loadedChests = fManager
+						.getPlayerChests(playerName);
 				chests.put(playerName, loadedChests);
-				workerLog.info("Chests owned by " + playerName
-						+ " loaded from file (" + loadedChests.size() + ")");
+				workerLog.info("Chests owned by " + playerName + " loaded from file ("
+						+ loadedChests.size() + ")");
 				return loadedChests.get(chestName);
 			} else {
 				workerLog.warning("Tried to load " + chestName + " of player " + playerName
@@ -353,7 +358,7 @@ public class GiftPostWorker {
 		if (chests.containsKey(player.getName()))
 			chests.get(player.getName()).put(vChest.getName(), vChest);
 		else {
-			ConcurrentMap<String, VirtualChest> tmp = new MapMaker().softValues().makeMap();
+			ConcurrentMap<String, VirtualChest> tmp = new MapMaker().weakValues().makeMap();
 			tmp.put(vChest.getName(), vChest);
 			chests.put(player.getName(), tmp);
 		}
@@ -408,8 +413,7 @@ public class GiftPostWorker {
 		String pName = player.getName();
 		if (chests.containsKey(pName)) {
 			ConcurrentMap<String, VirtualChest> playerChests = chests.get(pName);
-			playerChests.remove(vChest.getName());
-			if (playerChests.size() > 0) {
+			if (playerChests.remove(vChest.getName()) != null) {
 				fManager.deleteChestFile(pName, vChest.getName());
 				PlayerChests pChests = allChests.get(pName);
 				int index = pChests.names.indexOf(vChest.getName());
@@ -424,7 +428,7 @@ public class GiftPostWorker {
 					if (sendReceiveChests.containsValue(vChest)) {
 						sendReceiveChests.put(pName, defaultChests.get(pName));
 						fManager.createSendReceiveChest(pName, newDefaultChest);
-					}					
+					}
 				} else {
 					defaultChests.remove(pName);
 					sendReceiveChests.remove(pName);
@@ -525,7 +529,7 @@ public class GiftPostWorker {
 		this.config.load();
 		allChests = fManager.getAllPlayerChestType();
 		if (allChests == null) {
-			allChests = new MapMaker().softValues().concurrencyLevel(8).makeMap();
+			allChests = new MapMaker().weakValues().concurrencyLevel(8).makeMap();
 			workerLog.info("No player files found");
 		} else {
 			for (Player p : GiftPost.getBukkitServer().getOnlinePlayers()) {
@@ -558,7 +562,8 @@ public class GiftPostWorker {
 	 * @deprecated
 	 */
 	public synchronized void transfer() {
-		ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> loaded = this.fManager.transfer("chest.dat");
+		ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> loaded = this.fManager
+				.transfer("chest.dat");
 		if (loaded != null) {
 			chests = loaded;
 			TreeMap<String, String> tmp = fManager.getAllPlayerDefaultChest();
