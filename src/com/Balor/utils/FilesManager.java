@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -36,6 +37,7 @@ import org.bukkit.util.config.Configuration;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
+import com.google.common.collect.MapMaker;
 
 import net.minecraft.server.ItemStack;
 
@@ -106,7 +108,7 @@ public class FilesManager {
 	 * @param pName
 	 * @param chests
 	 */
-	public void savePlayerChest(String pName, HashMap<String, VirtualChest> chests) {
+	public void savePlayerChest(String pName, ConcurrentMap<String, VirtualChest> chests) {
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		ArrayList<SerializedItemStack> itemstacks = new ArrayList<SerializedItemStack>();
@@ -140,9 +142,9 @@ public class FilesManager {
 	 * 
 	 * @param chest
 	 */
-	public void savePerPlayer(HashMap<String, HashMap<String, VirtualChest>> chest) {
+	public void savePerPlayer(ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chest) {
 		for (String pNames : chest.keySet()) {
-			HashMap<String, VirtualChest> hMap = chest.get(pNames);
+			ConcurrentMap<String, VirtualChest> hMap = chest.get(pNames);
 			savePlayerChest(pNames, hMap);
 		}
 	}
@@ -529,8 +531,8 @@ public class FilesManager {
 	 * 
 	 * @return
 	 */
-	public TreeMap<String, PlayerChests> getAllPlayerChestType() {
-		TreeMap<String, PlayerChests> result = new TreeMap<String, PlayerChests>();
+	public ConcurrentMap<String, PlayerChests> getAllPlayerChestType() {
+		ConcurrentMap<String, PlayerChests> result = new MapMaker().softValues().makeMap();
 		File dir = new File(this.path + File.separator + "Players");
 		if (dir.exists()) {
 			for (String s : dir.list()) {
@@ -679,8 +681,8 @@ public class FilesManager {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public HashMap<String, VirtualChest> getPlayerChests(String player) {
-		HashMap<String, VirtualChest> result = new HashMap<String, VirtualChest>();
+	public ConcurrentMap<String, VirtualChest> getPlayerChests(String player) {
+		ConcurrentMap<String, VirtualChest> result =  new MapMaker().softValues().makeMap();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = new HashMap<String, ArrayList<SerializedItemStack>>();
 		File playerChests = getFile("Chests", player + ".chest", false);
 		if (playerChests.exists()) {
@@ -725,10 +727,10 @@ public class FilesManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public void loadChests(String fileName,
-			HashMap<String, HashMap<String, VirtualChest>> playerAndChest) {
+			ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> playerAndChest) {
 		String filename = this.path + File.separator + fileName;
 		HashMap<String, HashMap<String, ArrayList<SerializedItemStack>>> saved = null;
-		TreeMap<String, PlayerChests> playerChestType = getAllPlayerChestType();
+		ConcurrentMap<String, PlayerChests> playerChestType = getAllPlayerChestType();
 
 		if (new File(filename).exists()) {
 			FileInputStream fis = null;
@@ -749,7 +751,8 @@ public class FilesManager {
 				// Player
 				for (String playerName : saved.keySet()) {
 					if (playerChestType.containsKey(playerName)) {
-						playerAndChest.put(playerName, new HashMap<String, VirtualChest>());
+						ConcurrentMap<String, VirtualChest> tmp = new MapMaker().softValues().makeMap();
+						playerAndChest.put(playerName, tmp);
 						TreeMap<String, String> chestsTypes = playerChestType.get(playerName)
 								.concat();
 						HashMap<String, ArrayList<SerializedItemStack>> hMap = saved
@@ -786,12 +789,12 @@ public class FilesManager {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public HashMap<String, HashMap<String, VirtualChest>> transfer(String fileName) {
+	public ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> transfer(String fileName) {
 		String filename = this.path + File.separator + fileName;
 		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
 		config.load();
 		String typeChosen = config.getString("chest-type");
-		HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
+		ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker().softValues().makeMap();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
 
 		if (new File(filename).exists()) {
@@ -833,7 +836,9 @@ public class FilesManager {
 						createChestFile((String) names.toArray()[i], names.toArray()[i].toString()
 								.toLowerCase(), "normal");
 					}
-					chests.put((String) names.toArray()[i], new HashMap<String, VirtualChest>(tmp));
+					ConcurrentMap<String, VirtualChest> tmp2 = new MapMaker().softValues().makeMap();
+					tmp2.putAll(tmp);
+					chests.put((String) names.toArray()[i], tmp2);
 					createDefaultChest((String) names.toArray()[i], names.toArray()[i].toString()
 							.toLowerCase());
 					i++;

@@ -16,7 +16,7 @@
  ************************************************************************/
 package com.Balor.Listeners;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -41,7 +41,7 @@ public class DeathEntityListener extends EntityListener {
 				&& GiftPostWorker.getInstance().getConfig().getString("drop-on-death", "false")
 						.matches("true")) {
 			Location deathLoc = p.getLocation();
-			HashMap<String, VirtualChest> listOfChest = GiftPostWorker.getInstance().listOfChest(p);
+			ConcurrentMap<String, VirtualChest> listOfChest = GiftPostWorker.getInstance().listOfChest(p);
 			for (String chestName : listOfChest.keySet()) {
 				VirtualChest v = listOfChest.get(chestName);
 				for (ItemStack item : v.getContents())
