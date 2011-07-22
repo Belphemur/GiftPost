@@ -275,6 +275,8 @@ public class GiftPost extends JavaPlugin {
 					cmd.execute(gpw, sender, args);
 				} catch (Exception e) {
 					log.info("A GiftPost command threw an exception!");
+					log.info("Go here : http://forums.bukkit.org/threads/gen-mech-virtualchest-4-3-4-have-a-chest-with-you-everywhere-all-economy-permissions-1000.11695/");
+					log.info("and post the content of this log + the content of plugins/VirtualChest/log.txt please, Thanks.");
 					e.printStackTrace();
 				}
 			}

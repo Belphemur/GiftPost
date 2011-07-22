@@ -396,11 +396,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public String openDefaultChest(String player) {
-		String def = null;
-		PlayerChests pC = openChestTypeFile(player);
-		if (!pC.isEmpty())
-			def = pC.names.get(0);
-		return this.getYml("Players", player + ".yml").getString("DefaultChest", def);
+		return this.getYml("Players", player + ".yml").getString("DefaultChest", null);
 	}
 
 	/**

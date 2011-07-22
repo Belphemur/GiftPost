@@ -253,11 +253,15 @@ public class GiftPostWorker {
 		if (defaultChests.containsKey(playerName))
 			return defaultChests.get(playerName);
 		else {
-			VirtualChest v = getChest(playerName, fManager.openDefaultChest(playerName));
+			String defaultChest = fManager.openDefaultChest(playerName);
+			if (defaultChest == null && allChests.containsKey(playerName))
+				defaultChest = allChests.get(playerName).names.get(0);
+			VirtualChest v = getChest(playerName, defaultChest);
 			if (v != null)
-				defaultChests.put(playerName, v);
+				setDefaultChest(playerName, v);
 			else
-				workerLog.severe("Opening default chest of "+playerName+" returned NULL");
+				workerLog.severe("Opening default chest of " + playerName
+						+ " returned NULL for chest : " + defaultChest);
 			return v;
 		}
 
@@ -374,7 +378,7 @@ public class GiftPostWorker {
 		else
 			addInAllChests(player.getName(), "normal", vChest.getName());
 		if (numberOfChest(player) == 1)
-			setDefaultChest(player.getName(), vChest);		
+			setDefaultChest(player.getName(), vChest);
 
 	}
 
