@@ -56,9 +56,9 @@ public class GiftPostWorker {
 	private ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker()
 			.concurrencyLevel(8).makeMap();
 	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().concurrencyLevel(8)
-			.weakValues().makeMap();
+			.softValues().makeMap();
 	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker()
-			.concurrencyLevel(8).weakValues().makeMap();
+			.concurrencyLevel(8).softValues().makeMap();
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
