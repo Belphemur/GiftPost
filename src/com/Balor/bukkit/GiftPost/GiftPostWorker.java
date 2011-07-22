@@ -56,9 +56,9 @@ public class GiftPostWorker {
 	private ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker()
 			.concurrencyLevel(8).makeMap();
 	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().concurrencyLevel(8)
-			.softValues().makeMap();
+			.weakValues().makeMap();
 	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker()
-			.concurrencyLevel(8).softValues().makeMap();
+			.concurrencyLevel(8).weakValues().makeMap();
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
@@ -254,7 +254,10 @@ public class GiftPostWorker {
 			return defaultChests.get(playerName);
 		else {
 			VirtualChest v = getChest(playerName, fManager.openDefaultChest(playerName));
-			defaultChests.put(playerName, v);
+			if (v != null)
+				defaultChests.put(playerName, v);
+			else
+				workerLog.severe("Opening default chest of "+playerName+" returned NULL");
 			return v;
 		}
 
@@ -366,12 +369,12 @@ public class GiftPostWorker {
 			fManager.createChestFile(player, vChest.getName(), "large");
 		else
 			fManager.createChestFile(player, vChest.getName(), "normal");
-		if (numberOfChest(player) == 1)
-			setDefaultChest(player.getName(), vChest);
 		if (vChest instanceof VirtualLargeChest)
 			addInAllChests(player.getName(), "large", vChest.getName());
 		else
 			addInAllChests(player.getName(), "normal", vChest.getName());
+		if (numberOfChest(player) == 1)
+			setDefaultChest(player.getName(), vChest);		
 
 	}
 

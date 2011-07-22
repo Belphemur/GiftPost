@@ -45,7 +45,7 @@ public class GPPlayerListener extends PlayerListener {
 
 	@Override
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		GiftPostWorker.workerLog.info(event.getPlayer().getName()+" connected");
+		GiftPostWorker.workerLog.info(event.getPlayer().getName() + " connected");
 		if (worker.getConfig().getString("message-of-the-day", "true").matches("true"))
 			event.getPlayer().sendMessage(
 					"Virtual Chest is installed : /gp help to see all commands");
@@ -98,7 +98,7 @@ public class GPPlayerListener extends PlayerListener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		onSign(event);
 		if (worker.getConfig().getString("use-wand", "true").matches("true")
-				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere")
+				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere", false)
 				&& (event.getPlayer().getItemInHand().getType().getId() == worker.getConfig()
 						.getInt("wand-item-id", Material.CHEST.getId()))
 				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(
