@@ -99,6 +99,8 @@ public class GPPlayerListener extends PlayerListener {
 		onSign(event);
 		if (worker.getConfig().getString("use-wand", "true").matches("true")
 				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere", false)
+				&& event.getPlayer().getItemInHand() != null
+				&& event.getPlayer().getItemInHand().getType() != null
 				&& (event.getPlayer().getItemInHand().getType().getId() == worker.getConfig()
 						.getInt("wand-item-id", Material.CHEST.getId()))
 				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(
