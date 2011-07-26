@@ -40,9 +40,17 @@ public class Chest implements GPCommand {
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player p = (Player) sender;
 		VirtualChest v = null;
-		if (args != null && args.length == 2)
-			v = gpw.getChest(p.getName(), args[1].toLowerCase());
-		else
+		if (args != null && args.length == 2) {
+			String pName = p.getName();
+			String chestName = args[1].toLowerCase();
+			if (args[1].contains(":") && gpw.hasPerm((Player) sender, "giftpost.admin.open")) {
+				String info[] = args[1].split(":");
+				pName = info[0];
+				chestName = info[1];
+			}
+
+			v = gpw.getChest(pName, chestName);
+		} else
 			v = gpw.getDefaultChest(p.getName());
 
 		if (v != null) {

@@ -40,7 +40,10 @@ public class ChestList implements GPCommand {
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
 		Player player = (Player) sender;
-		ArrayList<String> chestList = gpw.chestList(player.getName());
+		String playerName = player.getName();
+		if(args.length > 1 && gpw.hasPerm((Player) sender, "giftpost.admin.open"))
+			playerName = args[1];
+		ArrayList<String> chestList = gpw.chestList(playerName);
 		if (chestList == null)
 			sender.sendMessage("[" + ChatColor.GOLD + "Chest Keeper" + ChatColor.WHITE + "] "
 					+ ChatColor.RED + "You don't have any chest.");
