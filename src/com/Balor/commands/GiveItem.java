@@ -19,12 +19,12 @@ package com.Balor.commands;
 import static com.Balor.utils.Display.chestKeeper;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.Balor.utils.MaterialContainer;
 import com.aranai.virtualchest.VirtualChest;
 
 /**
@@ -48,8 +48,8 @@ public class GiveItem implements GPCommand {
 		Player p = (Player) sender;
 		VirtualChest v;
 		if ((v = gpw.getSendChest(p.getName())) != null) {
-			Material m = checkMaterial(args[1], p);
-			if (m == null)
+			MaterialContainer mc = checkMaterial(args[1], p);
+			if (mc.isNull())
 				return;
 
 			int nb;
@@ -62,9 +62,9 @@ public class GiveItem implements GPCommand {
 					p.sendMessage(chestKeeper() + ChatColor.RED + args[2] + " is not a number.");
 					return;
 				}
-			v.addItem(new ItemStack(m, nb));
+			v.addItem(new ItemStack(mc.material, nb,mc.dmg));
 			p.sendMessage(chestKeeper() + ChatColor.WHITE + "Successfuly added " + ChatColor.GOLD
-					+ nb + " " + m.name() + ChatColor.WHITE + " to your send chest ("
+					+ nb + " " + mc.display() + ChatColor.WHITE + " to your send chest ("
 					+ ChatColor.GREEN + v.getName() + ChatColor.WHITE + ")");
 		} else
 			p.sendMessage(chestKeeper() + ChatColor.RED
@@ -109,18 +109,16 @@ public class GiveItem implements GPCommand {
 	 * @param mat
 	 * @return Material
 	 */
-	private Material checkMaterial(String mat, Player player) {
-		Material m = null;
-		try {
-			int id = Integer.parseInt(mat);
-			m = Material.getMaterial(id);
-		} catch (NumberFormatException e) {
-			m = Material.matchMaterial(mat);
+	private MaterialContainer checkMaterial(String mat, Player player) {
+		MaterialContainer mc = new MaterialContainer();
+		String[] info = new String[2];
+		if (mat.contains(":"))
+			info = mat.split(":");
+		else {
+			info[0] = mat;
+			info[1] = "0";
 		}
-		if (m == null)
-			player.sendMessage(chestKeeper() + ChatColor.RED + "Unknown material: "
-					+ ChatColor.WHITE + mat);
-		return m;
+		return mc;
 
 	}
 
