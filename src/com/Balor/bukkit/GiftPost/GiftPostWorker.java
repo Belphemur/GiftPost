@@ -53,8 +53,7 @@ import org.bukkit.util.config.Configuration;
  */
 public class GiftPostWorker {
 
-	private ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> chests = new MapMaker()
-			.concurrencyLevel(8).makeMap();
+	private HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String,VirtualChest>>();
 	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().concurrencyLevel(8)
 			.makeMap();
 	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker()
@@ -166,7 +165,7 @@ public class GiftPostWorker {
 			return chests.get(playerName).get(chestName);
 		else {
 			if (chestExists(playerName, chestName)) {
-				ConcurrentMap<String, VirtualChest> loadedChests = fManager
+				HashMap<String, VirtualChest> loadedChests = fManager
 						.getPlayerChests(playerName);
 				chests.put(playerName, loadedChests);
 				workerLog.info("Chests owned by " + playerName + " loaded from file ("
@@ -189,7 +188,7 @@ public class GiftPostWorker {
 		fManager.savePlayerChest(player, chests.get(player));
 		defaultChests.remove(player);
 		sendReceiveChests.remove(player);
-		ConcurrentMap<String, VirtualChest> playerChests = chests.get(player);
+		HashMap<String, VirtualChest> playerChests = chests.get(player);
 		for (String name : playerChests.keySet())
 			playerChests.get(name).emptyChest();
 		playerChests.clear();
@@ -232,7 +231,7 @@ public class GiftPostWorker {
 	 * @param p
 	 * @return
 	 */
-	public ConcurrentMap<String, VirtualChest> listOfChest(Player p) {
+	public HashMap<String, VirtualChest> listOfChest(Player p) {
 		return chests.get(p.getName());
 	}
 
@@ -365,7 +364,7 @@ public class GiftPostWorker {
 		if (chests.containsKey(player.getName()))
 			chests.get(player.getName()).put(vChest.getName(), vChest);
 		else {
-			ConcurrentMap<String, VirtualChest> tmp = new MapMaker().makeMap();
+			HashMap<String, VirtualChest> tmp = new HashMap<String, VirtualChest>();
 			tmp.put(vChest.getName(), vChest);
 			chests.put(player.getName(), tmp);
 		}
@@ -419,7 +418,7 @@ public class GiftPostWorker {
 	public boolean removeChest(Player player, VirtualChest vChest) {
 		String pName = player.getName();
 		if (chests.containsKey(pName)) {
-			ConcurrentMap<String, VirtualChest> playerChests = chests.get(pName);
+			HashMap<String, VirtualChest> playerChests = chests.get(pName);
 			if (playerChests.remove(vChest.getName()) != null) {
 				fManager.deleteChestFile(pName, vChest.getName());
 				PlayerChests pChests = allChests.get(pName);
@@ -569,7 +568,7 @@ public class GiftPostWorker {
 	 * @deprecated
 	 */
 	public synchronized void transfer() {
-		ConcurrentMap<String, ConcurrentMap<String, VirtualChest>> loaded = this.fManager
+		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fManager
 				.transfer("chest.dat");
 		if (loaded != null) {
 			chests = loaded;
