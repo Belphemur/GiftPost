@@ -129,9 +129,14 @@ public class Buy implements GPCommand {
 				limit = GiftPostWorker.getPermission().getInfoInteger(player.getWorld().getName(),
 						player.getName(), "giftpost.maxchests", false);
 			} catch (NoSuchMethodError e) {
-				GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
-				limit = GiftPostWorker.getPermission().getPermissionInteger(
-						player.getWorld().getName(), player.getName(), "giftpost.maxchests");
+				try {					
+					limit = GiftPostWorker.getPermission().getPermissionInteger(
+							player.getWorld().getName(), player.getName(), "giftpost.maxchests");
+					GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
+				} catch (Throwable e2) {
+					limit = null;
+					GiftPostWorker.workerLog.severe("Using a Permissions Bridge");
+				}
 			}
 		}
 		if (limit == null || limit == -1)
