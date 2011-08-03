@@ -85,7 +85,7 @@ public class EmptyChest implements GPCommand {
 	}
 
 	public String getHelp() {
-		return ChatColor.GOLD + "/gp e <chest>" + ChatColor.WHITE + ": emty the <chest>.";
+		return ChatColor.GOLD + "/gp e <chest>" + ChatColor.WHITE + ": empty the <chest>.";
 	}
 
 }
