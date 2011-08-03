@@ -53,11 +53,9 @@ import org.bukkit.util.config.Configuration;
  */
 public class GiftPostWorker {
 
-	private HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String,VirtualChest>>();
-	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().concurrencyLevel(8)
-			.makeMap();
-	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker()
-			.concurrencyLevel(8).makeMap();
+	private HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
+	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().makeMap();
+	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker().makeMap();
 	private static PermissionHandler permission = null;
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
@@ -165,8 +163,7 @@ public class GiftPostWorker {
 			return chests.get(playerName).get(chestName);
 		else {
 			if (chestExists(playerName, chestName)) {
-				HashMap<String, VirtualChest> loadedChests = fManager
-						.getPlayerChests(playerName);
+				HashMap<String, VirtualChest> loadedChests = fManager.getPlayerChests(playerName);
 				chests.put(playerName, loadedChests);
 				workerLog.info("Chests owned by " + playerName + " loaded from file ("
 						+ loadedChests.size() + ")");
@@ -299,7 +296,7 @@ public class GiftPostWorker {
 	}
 
 	public boolean setDefaultChest(String playerName, VirtualChest v) {
-		if (chests.get(playerName).containsValue(v)) {
+		if (v != null && chests.get(playerName).containsValue(v)) {
 			defaultChests.put(playerName, v);
 			fManager.createDefaultChest(playerName, v.getName());
 			return true;
@@ -568,8 +565,7 @@ public class GiftPostWorker {
 	 * @deprecated
 	 */
 	public synchronized void transfer() {
-		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fManager
-				.transfer("chest.dat");
+		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fManager.transfer("chest.dat");
 		if (loaded != null) {
 			chests = loaded;
 			TreeMap<String, String> tmp = fManager.getAllPlayerDefaultChest();
