@@ -409,7 +409,20 @@ public class FilesManager {
 	 * @return
 	 */
 	public PlayerChests openChestTypeFile(String name) {
+		if (getFile("Chests", name + ".chestYml", false).exists()) {
+			Configuration conf = this.getYml("Chests", name + ".chestYml");
+
+			List<String> names = new ArrayList<String>();
+			List<String> types = new ArrayList<String>();
+			for (String nameString : conf.getKeys()) {
+				names.add(nameString);
+				types.add(conf.getString(nameString + ".type"));
+			}
+			GiftPostWorker.workerLog.info("Loaded chest of " + name + " using NEW saveFile");
+			return new PlayerChests(types, names);
+		}
 		Configuration conf = this.getYml("Players", name + ".yml");
+		GiftPostWorker.workerLog.info("Loaded chest of " + name + " using OLD saveFile");
 		return new PlayerChests(conf.getStringList("ChestsTypes", new ArrayList<String>()),
 				conf.getStringList("ChestsNames", new ArrayList<String>()));
 	}
