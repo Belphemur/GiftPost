@@ -49,8 +49,11 @@ public class GiveItem implements GPCommand {
 		VirtualChest v;
 		if ((v = gpw.getSendChest(p.getName())) != null) {
 			MaterialContainer mc = checkMaterial(args[1], p);
-			if (mc.isNull())
+			if (mc.isNull()) {
+				p.sendMessage(chestKeeper() + ChatColor.RED + "This material don't exist : "
+						+ ChatColor.WHITE + args[1]);
 				return;
+			}
 
 			int nb;
 			if (args.length == 2)
@@ -62,7 +65,7 @@ public class GiveItem implements GPCommand {
 					p.sendMessage(chestKeeper() + ChatColor.RED + args[2] + " is not a number.");
 					return;
 				}
-			v.addItem(new ItemStack(mc.material, nb,mc.dmg));
+			v.addItem(new ItemStack(mc.material, nb, mc.dmg));
 			p.sendMessage(chestKeeper() + ChatColor.WHITE + "Successfuly added " + ChatColor.GOLD
 					+ nb + " " + mc.display() + ChatColor.WHITE + " to your send chest ("
 					+ ChatColor.GREEN + v.getName() + ChatColor.WHITE + ")");
@@ -110,7 +113,7 @@ public class GiveItem implements GPCommand {
 	 * @return Material
 	 */
 	private MaterialContainer checkMaterial(String mat, Player player) {
-		MaterialContainer mc = new MaterialContainer();
+
 		String[] info = new String[2];
 		if (mat.contains(":"))
 			info = mat.split(":");
@@ -118,6 +121,7 @@ public class GiveItem implements GPCommand {
 			info[0] = mat;
 			info[1] = "0";
 		}
+		MaterialContainer mc = new MaterialContainer(info[0], info[1]);
 		return mc;
 
 	}
