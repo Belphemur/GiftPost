@@ -46,13 +46,16 @@ public class EmptyChest implements GPCommand {
 		Player p = (Player) sender;
 		VirtualChest v;
 		if ((v = gpw.getChest(p.getName(), args[1])) != null)
+		{
 			v.emptyChest();
+			sender.sendMessage(chestKeeper() + ChatColor.GREEN + "Chest emptied succefuly");
+		}
 		else
 			p.sendMessage(chestKeeper() + ChatColor.RED
 					+ "You don't have this chest. To buy one type " + ChatColor.GOLD
 					+ "/gp buy (large|normal) " + args[1].toLowerCase());
 
-		sender.sendMessage(chestKeeper() + ChatColor.GREEN + "Chest emptied succefuly");
+		
 
 	}
 
