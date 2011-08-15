@@ -39,6 +39,10 @@ public class EmptyChest implements GPCommand {
 	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
+		if (args.length <= 1) {
+			sender.sendMessage(getHelp());
+			return;
+		}
 		Player p = (Player) sender;
 		VirtualChest v;
 		if ((v = gpw.getChest(p.getName(), args[1])) != null)
@@ -59,8 +63,7 @@ public class EmptyChest implements GPCommand {
 	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return args.length > 1
-				&& (gpw.hasFlag(args, "e") || gpw.hasFlag(args, "empty"))
+		return (gpw.hasFlag(args, "e") || gpw.hasFlag(args, "empty"))
 				&& (gpw.hasPerm((Player) sender, getPermName()) || gpw.hasPerm((Player) sender,
 						"giftpost.admin.empty"));
 	}
