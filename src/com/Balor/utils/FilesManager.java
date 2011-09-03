@@ -568,10 +568,12 @@ public class FilesManager {
 	 */
 	public ConcurrentMap<String, PlayerChests> getAllPlayerChestType() {
 		ConcurrentMap<String, PlayerChests> result = new MapMaker().concurrencyLevel(5).makeMap();
-		File dir = new File(this.path + File.separator + "Players");
+		File dir = new File(this.path + File.separator + "Chests");
 		if (dir.exists()) {
-			for (String s : dir.list()) {
-				s = s.subSequence(0, s.length() - 4).toString();
+			File[] chests = ChestFileFilter.listRecursively(dir);
+			for (File chest : chests) {
+				String s = chest.getName();
+				s = s.subSequence(0, s.indexOf('.')).toString();
 				PlayerChests typesNames = openChestTypeFile(s);
 				if (!typesNames.isEmpty()) {
 					result.put(s, typesNames.clone());
