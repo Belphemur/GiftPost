@@ -256,20 +256,10 @@ public class FilesManager {
 	}
 
 	private void createChestFile(String pName, String chestName, String type) {
-		Configuration conf = this.getYml("Players", pName + ".yml");
-		List<String> chests = conf.getStringList("ChestsNames", null);
-		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
-		if (chests == null)
-			chests = new ArrayList<String>();
-		if (chestsTypes == null)
-			chestsTypes = new ArrayList<String>();
-		if (chests.contains(chestName))
-			return;
-		chests.add(chestName);
-		chestsTypes.add(type);
-		conf.setProperty("ChestsNames", chests);
-		conf.setProperty("ChestsTypes", chestsTypes);
-		conf.save();
+		Configuration chest = new Configuration(getFile("Chests", pName + ".chestYml"));
+		chest.load();
+		chest.setProperty(chestName + ".type", type);
+		chest.save();
 	}
 
 	/**
@@ -280,19 +270,29 @@ public class FilesManager {
 	 * @param newName
 	 */
 	public void renameChestFile(String pName, String oldName, String newName) {
-		Configuration conf = this.getYml("Players", pName + ".yml");
-		List<String> chests = conf.getStringList("ChestsNames", null);
-		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
-		if (chests.contains(oldName)) {
-			int i = chests.indexOf(oldName);
-			chests.remove(i);
-			String type = chestsTypes.get(i);
-			chestsTypes.remove(i);
-			chests.add(newName);
-			chestsTypes.add(type);
-			conf.setProperty("ChestsNames", chests);
-			conf.setProperty("ChestsTypes", chestsTypes);
-			conf.save();
+		File newChestSave;
+		if ((newChestSave = getFile("Chests", pName + ".chestYml", false)).exists()) {
+			Configuration chest = new Configuration(newChestSave);
+			chest.load();
+			chest.setProperty(newName, chest.getProperty(oldName));
+			chest.removeProperty(oldName);
+			chest.save();
+		} else {
+
+			Configuration conf = this.getYml("Players", pName + ".yml");
+			List<String> chests = conf.getStringList("ChestsNames", null);
+			List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
+			if (chests.contains(oldName)) {
+				int i = chests.indexOf(oldName);
+				chests.remove(i);
+				String type = chestsTypes.get(i);
+				chestsTypes.remove(i);
+				chests.add(newName);
+				chestsTypes.add(type);
+				conf.setProperty("ChestsNames", chests);
+				conf.setProperty("ChestsTypes", chestsTypes);
+				conf.save();
+			}
 		}
 	}
 
@@ -303,16 +303,24 @@ public class FilesManager {
 	 * @param chestName
 	 */
 	public void deleteChestFile(String pName, String chestName) {
-		Configuration conf = this.getYml("Players", pName + ".yml");
-		List<String> chests = conf.getStringList("ChestsNames", null);
-		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
-		if (chests.contains(chestName)) {
-			int i = chests.indexOf(chestName);
-			chests.remove(i);
-			chestsTypes.remove(i);
-			conf.setProperty("ChestsNames", chests);
-			conf.setProperty("ChestsTypes", chestsTypes);
-			conf.save();
+		File newChestSave;
+		if ((newChestSave = getFile("Chests", pName + ".chestYml", false)).exists()) {
+			Configuration chest = new Configuration(newChestSave);
+			chest.load();
+			chest.removeProperty(chestName);
+			chest.save();
+		} else {
+			Configuration conf = this.getYml("Players", pName + ".yml");
+			List<String> chests = conf.getStringList("ChestsNames", null);
+			List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
+			if (chests.contains(chestName)) {
+				int i = chests.indexOf(chestName);
+				chests.remove(i);
+				chestsTypes.remove(i);
+				conf.setProperty("ChestsNames", chests);
+				conf.setProperty("ChestsTypes", chestsTypes);
+				conf.save();
+			}
 		}
 	}
 
@@ -324,14 +332,26 @@ public class FilesManager {
 	 * @return
 	 */
 	public boolean upgradeChest(Player p, String chestName) {
-		Configuration conf = this.getYml("Players", p.getName() + ".yml");
-		List<String> chests = conf.getStringList("ChestsNames", null);
-		List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
-		if (chests.contains(chestName)) {
-			chestsTypes.set(chests.indexOf(chestName), "large");
-			conf.setProperty("ChestsTypes", chestsTypes);
-			conf.save();
+
+		File newChestSave;
+		if ((newChestSave = getFile("Chests", p.getName() + ".chestYml", false)).exists()) {
+			Configuration chest = new Configuration(newChestSave);
+			chest.load();
+			if (chest.getProperty(chestName) == null)
+				return false;
+			chest.setProperty(chestName + ".type", "large");
+			chest.save();
 			return true;
+		} else {
+			Configuration conf = this.getYml("Players", p.getName() + ".yml");
+			List<String> chests = conf.getStringList("ChestsNames", null);
+			List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
+			if (chests.contains(chestName)) {
+				chestsTypes.set(chests.indexOf(chestName), "large");
+				conf.setProperty("ChestsTypes", chestsTypes);
+				conf.save();
+				return true;
+			}
 		}
 		return false;
 	}
