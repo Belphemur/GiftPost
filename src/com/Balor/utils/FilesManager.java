@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -570,7 +571,9 @@ public class FilesManager {
 		ConcurrentMap<String, PlayerChests> result = new MapMaker().concurrencyLevel(5).makeMap();
 		File dir = new File(this.path + File.separator + "Chests");
 		if (dir.exists()) {
-			File[] chests = ChestFileFilter.listRecursively(dir);
+			List<File> chests = new ArrayList<File>();
+			chests.addAll(Arrays.asList(ChestFileFilter.listRecursively(dir)));
+			chests.addAll(Arrays.asList(OldChestFileFilter.listRecursively(dir)));
 			for (File chest : chests) {
 				String s = chest.getName();
 				s = s.subSequence(0, s.indexOf('.')).toString();

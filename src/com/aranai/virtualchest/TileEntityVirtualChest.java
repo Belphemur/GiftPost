@@ -101,8 +101,10 @@ public class TileEntityVirtualChest extends TileEntityChest {
 
 	@Override
 	public void setItem(int i, ItemStack itemstack) {
-		emptyCases.remove(i);
-		super.setItem(i, itemstack);
+		if (i >= 0 && i < getSize()) {
+			emptyCases.remove(i);
+			super.setItem(i, itemstack);
+		}
 	}
 
 	public void emptyChest() {
@@ -155,10 +157,7 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	}
 
 	public void removeItemStack(int i) {
-		if (i >= 0 && i <= getSize()) {
-			super.setItem(i, null);
-			emptyCases.add(i);
-		}
+		this.setItem(i, null);
 	}
 
 	@Override
@@ -166,7 +165,6 @@ public class TileEntityVirtualChest extends TileEntityChest {
 		return name;
 	}
 
-	@Override
 	public boolean a_(EntityHuman entityhuman) {
 		/*
 		 * For this proof of concept, we ALWAYS validate the chest. This
@@ -178,5 +176,31 @@ public class TileEntityVirtualChest extends TileEntityChest {
 		 * file instead, however.
 		 */
 		return true;
+	}
+
+	@Override
+	public boolean a(EntityHuman entityhuman) {
+		/*
+		 * For this proof of concept, we ALWAYS validate the chest. This
+		 * behavior has not been thoroughly tested, and may cause unexpected
+		 * results depending on the state of the player.
+		 * 
+		 * Depending on your purposes, you might want to change this. It would
+		 * likely be preferable to enforce your business logic outside of this
+		 * file instead, however.
+		 */
+		return true;
+	}
+
+	@Override
+	public void e() {
+		++this.h;
+		// this.world.playNote(this.x, this.y, this.z, 1, this.h);
+	}
+
+	@Override
+	public void t_() {
+		--this.h;
+		// this.world.playNote(this.x, this.y, this.z, 1, this.h);
 	}
 }
