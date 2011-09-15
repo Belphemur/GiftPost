@@ -102,7 +102,10 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	@Override
 	public void setItem(int i, ItemStack itemstack) {
 		if (i >= 0 && i < getSize()) {
-			emptyCases.remove(i);
+			if (itemstack != null)
+				emptyCases.remove(i);
+			else
+				emptyCases.add(i);
 			super.setItem(i, itemstack);
 		}
 	}
