@@ -55,7 +55,7 @@ public class Downloader {
 		}
 	}
 
-	protected static synchronized void download(String location, String filename)
+	protected static synchronized int download(String location, String filename)
 			throws IOException {
 		URLConnection connection = new URL(location).openConnection();
 		connection.setUseCaches(false);
@@ -87,6 +87,7 @@ public class Downloader {
 
 		in.close();
 		out.close();
+		return currentCount;
 	}
 
 	public long getLastModified() {

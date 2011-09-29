@@ -3,6 +3,7 @@ main: com.Balor.bukkit.GiftPost.GiftPost
 version: 4.5
 author: Balor
 license: GPLv3
+depend: [Register]
 description: >
             This plugin allow you to send item to a friend using a virtual chest.
 commands:

@@ -25,6 +25,7 @@ import com.Balor.commands.mcMMO.OpenPartyChest;
 import com.Balor.utils.Downloader;
 import com.Balor.utils.threads.PartiesGarbageCollector;
 import com.google.common.collect.MapMaker;
+import com.nijikokun.register.payment.Methods;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -174,25 +175,24 @@ public class GiftPost extends JavaPlugin {
 
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
-		if (!new File("lib" + File.separator, "Register-1.8.1.jar").exists()) {
+		try {
+			Methods.getMethod();
+		} catch (NoClassDefFoundError e) {
 			Downloader.pluginName = "VirtualChest";
-			Downloader.install("http://gestdown.info/minecraft/Register-1.8.1.jar",
-					"Register-1.8.1.jar");
+			Downloader.install("http://gestdown.info/minecraft/Register.jar", "Register.jar");
 			getServer().reload();
 			return;
 		}
 		try {
 			@SuppressWarnings("unused")
-			ConcurrentMap< Object, Object> test = new MapMaker().makeMap();
+			ConcurrentMap<Object, Object> test = new MapMaker().makeMap();
 			test = null;
 			System.gc();
-		} catch (NoClassDefFoundError e) 		
-		 {
+		} catch (NoClassDefFoundError e) {
 			Downloader.pluginName = "VirtualChest";
 			Downloader.install("http://gestdown.info/minecraft/guava-r09-gwt.jar",
 					"guava-r09-gwt.jar");
-			Downloader.install("http://gestdown.info/minecraft/guava-r09.jar",
-			"guava-r09.jar");
+			Downloader.install("http://gestdown.info/minecraft/guava-r09.jar", "guava-r09.jar");
 			getServer().reload();
 			return;
 		}

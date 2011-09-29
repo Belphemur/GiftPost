@@ -26,7 +26,7 @@ import com.aranai.virtualchest.VirtualLargeChest;
 import com.gmail.nossr50.mcMMO;
 import com.google.common.collect.MapMaker;
 import com.nijiko.permissions.PermissionHandler;
-import be.Balor.register.payment.Method;
+import com.nijikokun.register.payment.Method;
 //Java
 import java.io.File;
 import java.io.IOException;

@@ -23,7 +23,7 @@ import com.Balor.bukkit.GiftPost.GiftPost;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.gmail.nossr50.mcMMO;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import be.Balor.register.payment.Methods;
+import com.nijikokun.register.payment.Methods;
 
 import org.bukkit.plugin.Plugin;
 
@@ -45,19 +45,10 @@ public class PluginListener extends ServerListener {
 			}
 		}
 		if (GiftPostWorker.getPayement() == null) {
-			Methods methods = new Methods();
-			// Check to see if we need a payment method
-			if (!methods.hasMethod()) {
-				if (methods.setMethod(event.getPlugin())) {
-					// You might want to make this a public variable inside your
-					// MAIN class public Method Method = null;
-					// then reference it through this.plugin.Method so that way
-					// you can use it in the rest of your plugin ;)
-					GiftPostWorker.setPayementMethod(methods.getMethod());
-					System.out.println("[VirtualChest] Payment method found ("
-							+ GiftPostWorker.getPayement().getName() + " version: "
-							+ GiftPostWorker.getPayement().getVersion() + ")");
-				}
+			Plugin registerPlugin = GiftPost.getBukkitServer().getPluginManager().getPlugin("Register");
+			if (registerPlugin != null) {
+				GiftPostWorker.setPayementMethod(Methods.getMethod());
+				System.out.println("[VirtualChest] Successfully linked with Register (Economy plugins).");
 			}
 		}
 		if (GiftPostWorker.getmcMMO() == null) {
