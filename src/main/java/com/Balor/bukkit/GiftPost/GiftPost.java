@@ -63,7 +63,8 @@ public class GiftPost extends JavaPlugin {
 		try {
 			GPCommand command = (GPCommand) clazz.newInstance();
 			GiftPostWorker.getInstance().getCommands().add(command);
-			permLinker.addPermChild(command.getPermName());
+			if (command.getPermName() != null)
+				permLinker.addPermChild(command.getPermName());
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -82,7 +83,7 @@ public class GiftPost extends JavaPlugin {
 		permLinker.addPermChild("giftpost.admin.item");
 		permLinker.addPermChild("giftpost.admin.sendallusers");
 		permLinker.addPermChild("giftpost.admin.open");
-		
+
 		registerCommand(Chest.class);
 		registerCommand(Buy.class);
 		registerCommand(Send.class);
@@ -195,7 +196,8 @@ public class GiftPost extends JavaPlugin {
 			Methods.getMethod();
 		} catch (NoClassDefFoundError e) {
 			Downloader.pluginName = "VirtualChest";
-			Downloader.install("http://www.gestdown.info/minecraft/Register.jar", "plugins/Register.jar");
+			Downloader.install("http://www.gestdown.info/minecraft/Register.jar",
+					"plugins/Register.jar");
 			getServer().reload();
 			return;
 		}
