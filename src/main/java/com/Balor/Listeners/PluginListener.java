@@ -19,6 +19,8 @@ package com.Balor.Listeners;
 import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.event.server.ServerListener;
 
+import VirtualChest.Manager.Permissions.PermissionManager;
+
 import com.Balor.bukkit.GiftPost.GiftPost;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.gmail.nossr50.mcMMO;
@@ -27,6 +29,8 @@ import com.nijikokun.register.payment.Methods;
 
 import org.bukkit.plugin.Plugin;
 
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 /**
  * @author Balor (aka Antoine Aflalo)
  * 
@@ -34,14 +38,23 @@ import org.bukkit.plugin.Plugin;
 public class PluginListener extends ServerListener {
 	@Override
 	public void onPluginEnable(PluginEnableEvent event) {
-		if (GiftPostWorker.getPermission() == null) {
+		if (event.getPlugin().getDescription().getName().equals("PermissionsEx"))
+			PermissionManager.setPEX(PermissionsEx.getPermissionManager());
+
+		if (!PermissionManager.isPermissionsExSet()) {
+			Plugin Permissions = GiftPost.getBukkitServer().getPluginManager()
+					.getPlugin("PermissionsEx");
+			if (Permissions != null) {
+				if (Permissions.isEnabled())
+					PermissionManager.setPEX(PermissionsEx.getPermissionManager());
+			}
+		}
+		if (!PermissionManager.isYetiPermissionsSet()) {
 			Plugin Permissions = GiftPost.getBukkitServer().getPluginManager()
 					.getPlugin("Permissions");
 			if (Permissions != null) {
-				if (Permissions.isEnabled()) {
-					GiftPostWorker.setPermission(((Permissions) Permissions).getHandler());
-					System.out.println("[VirtualChest] Successfully linked with Permissions.");
-				}
+				if (Permissions.isEnabled())
+					PermissionManager.setYetiPermissions(((Permissions) Permissions).getHandler());
 			}
 		}
 		if (GiftPostWorker.getPayement() == null) {

@@ -22,6 +22,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import VirtualChest.Manager.Permissions.PermissionManager;
+
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
@@ -120,25 +122,13 @@ public class Buy implements GPCommand {
 				+ ": to buy a large or normal chest \n";
 	}
 
-	@SuppressWarnings("deprecation")
 	private int getLimit(Player player) {
-		Integer limit;
-		limit = GiftPostWorker.getInstance().getFileManager().openChestLimitFile(player);
-		if (limit == -1 && GiftPostWorker.getPermission() != null) {
-			try {
-				limit = GiftPostWorker.getPermission().getInfoInteger(player.getWorld().getName(),
-						player.getName(), "giftpost.maxchests", false);
-			} catch (NoSuchMethodError e) {
-				try {					
-					limit = GiftPostWorker.getPermission().getPermissionInteger(
-							player.getWorld().getName(), player.getName(), "giftpost.maxchests");
-					GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
-				} catch (Throwable e2) {
-					limit = null;
-					GiftPostWorker.workerLog.severe("Using a Permissions Bridge");
-				}
-			}
+		Integer limit = null;
+		try {
+			limit = Integer.parseInt(PermissionManager.getPermissionLimit(player, "maxchests"));
+		} catch (NumberFormatException e) {			
 		}
+		
 		if (limit == null || limit == -1)
 			limit = GiftPostWorker.getInstance().getConfig().getInt("max-number-chest", 10);
 		return limit;

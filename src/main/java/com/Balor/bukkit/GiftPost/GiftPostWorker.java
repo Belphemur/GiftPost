@@ -17,17 +17,6 @@ package com.Balor.bukkit.GiftPost;
 //GiftPost
 import static com.Balor.utils.Display.chestKeeper;
 
-import com.Balor.commands.GPCommand;
-import com.Balor.utils.FilesManager;
-import com.Balor.utils.LogFormatter;
-import com.Balor.utils.PlayerChests;
-import com.aranai.virtualchest.VirtualChest;
-import com.aranai.virtualchest.VirtualLargeChest;
-import com.gmail.nossr50.mcMMO;
-import com.google.common.collect.MapMaker;
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.register.payment.Method;
-//Java
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,11 +29,22 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-//Bukkit
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
+
+import VirtualChest.Manager.Permissions.PermissionManager;
+
+import com.Balor.commands.GPCommand;
+import com.Balor.utils.FilesManager;
+import com.Balor.utils.LogFormatter;
+import com.Balor.utils.PlayerChests;
+import com.aranai.virtualchest.VirtualChest;
+import com.aranai.virtualchest.VirtualLargeChest;
+import com.gmail.nossr50.mcMMO;
+import com.google.common.collect.MapMaker;
+import com.nijikokun.register.payment.Method;
 
 /**
  * 
@@ -55,7 +55,6 @@ public class GiftPostWorker {
 	private HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
 	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().makeMap();
 	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker().makeMap();
-	private static PermissionHandler permission = null;
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
 	private Configuration config;
 	private FilesManager fManager;
@@ -595,17 +594,7 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public boolean hasPerm(Player player, String perm, boolean errorMsg) {
-		if (permission == null)
-			return true;
-		if (permission.has(player, perm)) {
-			return true;
-		} else {
-			if (errorMsg)
-				player.sendMessage(ChatColor.RED + "You don't have the Permissions to do that "
-						+ ChatColor.BLUE + "(" + perm + ")");
-			return false;
-		}
-
+		return PermissionManager.hasPerm(player, perm, errorMsg);
 	}
 
 	/**
@@ -646,31 +635,6 @@ public class GiftPostWorker {
 		}
 		return true;
 	}
-
-	/**
-	 * Permission plugin
-	 * 
-	 * @return
-	 */
-	public static PermissionHandler getPermission() {
-		return permission;
-	}
-
-	/**
-	 * Set iConomy Plugin
-	 * 
-	 * @param plugin
-	 * @return
-	 */
-	public static boolean setPermission(PermissionHandler plugin) {
-		if (permission == null) {
-			permission = plugin;
-		} else {
-			return false;
-		}
-		return true;
-	}
-
 	/**
 	 * mcMMO plugin
 	 * 
@@ -800,20 +764,9 @@ public class GiftPostWorker {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	public String getDefaultType(Player player) {
 		String limit;
-		limit = null;
-		if (GiftPostWorker.getPermission() != null) {
-			try {
-				limit = GiftPostWorker.getPermission().getInfoString(player.getWorld().getName(),
-						player.getName(), "giftpost.chestType", false);
-			} catch (NoSuchMethodError e) {
-				GiftPostWorker.workerLog.severe("Permissions Plugin is not uptodate.");
-				limit = GiftPostWorker.getPermission().getPermissionString(
-						player.getWorld().getName(), player.getName(), "giftpost.chestType");
-			}
-		}
+		limit = PermissionManager.getPermissionLimit(player, "chestType");	
 		if (limit == null || limit.isEmpty())
 			limit = GiftPostWorker.getInstance().getConfig().getString("chest-default", "normal");
 		return limit;

@@ -110,6 +110,18 @@
 			<artifactId>mcMMO</artifactId>
 			<version>1.1.17</version>
 		</dependency>
+		<dependency>
+			<groupId>ru.tehkode</groupId>
+			<artifactId>PermissionsEx</artifactId>
+			<version>1.14</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.D3GN.MiracleM4n</groupId>
+			<artifactId>mChat</artifactId>
+			<version>v1.7.10_5</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

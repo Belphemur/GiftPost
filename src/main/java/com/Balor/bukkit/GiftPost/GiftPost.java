@@ -14,6 +14,9 @@
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.Balor.bukkit.GiftPost;
 
+import VirtualChest.Manager.Permissions.PermParent;
+import VirtualChest.Manager.Permissions.PermissionLinker;
+
 import com.Balor.Listeners.DeathEntityListener;
 import com.Balor.Listeners.GPPlayerListener;
 import com.Balor.Listeners.PluginListener;
@@ -54,11 +57,13 @@ public class GiftPost extends JavaPlugin {
 	public static final Logger log = Logger.getLogger("Minecraft");
 	private GiftPostWorker gpw;
 	private static Server server = null;
+	private PermissionLinker permLinker = PermissionLinker.getPermissionLinker("GiftPost");
 
 	private void registerCommand(Class<?> clazz) {
 		try {
 			GPCommand command = (GPCommand) clazz.newInstance();
 			GiftPostWorker.getInstance().getCommands().add(command);
+			permLinker.addPermChild(command.getPermName());
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -67,6 +72,17 @@ public class GiftPost extends JavaPlugin {
 	}
 
 	private void registerCommands() {
+		permLinker.addPermParent(new PermParent("giftpost.admin.*"));
+		permLinker.addPermParent(new PermParent("giftpost.chest.*"));
+		permLinker.setMajorPerm(new PermParent("giftpost.*"));
+		permLinker.addPermChild("giftpost.admin.empty");
+		permLinker.addPermChild("giftpost.admin.limit");
+		permLinker.addPermChild("giftpost.admin.sign");
+		permLinker.addPermChild("giftpost.admin.free");
+		permLinker.addPermChild("giftpost.admin.item");
+		permLinker.addPermChild("giftpost.admin.sendallusers");
+		permLinker.addPermChild("giftpost.admin.open");
+		
 		registerCommand(Chest.class);
 		registerCommand(Buy.class);
 		registerCommand(Send.class);
