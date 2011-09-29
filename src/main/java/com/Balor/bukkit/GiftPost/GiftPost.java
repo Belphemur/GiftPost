@@ -179,7 +179,7 @@ public class GiftPost extends JavaPlugin {
 			Methods.getMethod();
 		} catch (NoClassDefFoundError e) {
 			Downloader.pluginName = "VirtualChest";
-			Downloader.install("http://gestdown.info/minecraft/Register.jar", "Register.jar");
+			Downloader.install("http://www.gestdown.info/minecraft/Register.jar", "plugins/Register.jar");
 			getServer().reload();
 			return;
 		}
@@ -191,8 +191,8 @@ public class GiftPost extends JavaPlugin {
 		} catch (NoClassDefFoundError e) {
 			Downloader.pluginName = "VirtualChest";
 			Downloader.install("http://gestdown.info/minecraft/guava-r09-gwt.jar",
-					"guava-r09-gwt.jar");
-			Downloader.install("http://gestdown.info/minecraft/guava-r09.jar", "guava-r09.jar");
+					"/lib/guava-r09-gwt.jar");
+			Downloader.install("http://gestdown.info/minecraft/guava-r09.jar", "lib/guava-r09.jar");
 			getServer().reload();
 			return;
 		}

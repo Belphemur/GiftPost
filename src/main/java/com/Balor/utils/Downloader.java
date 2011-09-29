@@ -62,15 +62,14 @@ public class Downloader {
 		lastModified = connection.getLastModified();
 		@SuppressWarnings("unused")
 		int filesize = connection.getContentLength();
-		String destination = "lib" + File.separator + filename;
-		File parentDirectory = new File(destination).getParentFile();
+		File parentDirectory = new File(filename).getParentFile();
 
 		if (parentDirectory != null) {
 			parentDirectory.mkdirs();
 		}
 
 		InputStream in = connection.getInputStream();
-		OutputStream out = new FileOutputStream(destination);
+		OutputStream out = new FileOutputStream(filename);
 
 		byte[] buffer = new byte[65536];
 		int currentCount = 0;
