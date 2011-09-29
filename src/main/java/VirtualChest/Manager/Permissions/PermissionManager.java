@@ -1,18 +1,18 @@
 /************************************************************************
- * This file is part of AdminCmd.									
+ * This file is part of VirtualChest.									
  *																		
- * AdminCmd is free software: you can redistribute it and/or modify
+ * VirtualChest is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by	
  * the Free Software Foundation, either version 3 of the License, or		
  * (at your option) any later version.									
  *																		
- * AdminCmd is distributed in the hope that it will be useful,	
+ * VirtualChest is distributed in the hope that it will be useful,	
  * but WITHOUT ANY WARRANTY; without even the implied warranty of		
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the			
  * GNU General Public License for more details.							
  *																		
  * You should have received a copy of the GNU General Public License
- * along with AdminCmd.  If not, see <http://www.gnu.org/licenses/>.
+ * along with VirtualChest.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
 package VirtualChest.Manager.Permissions;
 
@@ -179,13 +179,13 @@ public class PermissionManager {
 				permissionsEx = true;
 				permissionHandler = new PermissionsEx(pEX);
 				if (!yetiPermissions)
-					System.out.println("[AdminCmd] Successfully linked with PermissionsEX");
+					System.out.println("[VirtualChest] Successfully linked with PermissionsEX");
 				else
 					System.out
-							.println("[AdminCmd] Use PermissionsEX instead of Yeti's Permissions.");
+							.println("[VirtualChest] Use PermissionsEX instead of Yeti's Permissions.");
 			} else if (!warningSend) {
 				System.out
-						.println("[AdminCmd] Plugin Forced to use Offical Bukkit Permission System");
+						.println("[VirtualChest] Plugin Forced to use Offical Bukkit Permission System");
 				warningSend = true;
 			}
 			return true;
@@ -205,10 +205,10 @@ public class PermissionManager {
 					.getBoolean("forceOfficialBukkitPerm", false)) {
 				yetiPermissions = true;
 				permissionHandler = new YetiPermissions(plugin);
-				System.out.println("[AdminCmd] Successfully linked with Yeti's Permissions.");
+				System.out.println("[VirtualChest] Successfully linked with Yeti's Permissions.");
 			} else if (!warningSend) {
 				System.out
-						.println("[AdminCmd] Plugin Forced to use Offical Bukkit Permission System");
+						.println("[VirtualChest] Plugin Forced to use Offical Bukkit Permission System");
 				warningSend = true;
 			}
 		} else {
