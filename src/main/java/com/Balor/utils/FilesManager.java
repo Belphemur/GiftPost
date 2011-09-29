@@ -122,7 +122,7 @@ public class FilesManager {
 				pChests.setProperty(chestName + ".type", "normal");
 			}
 			List<String> toBeSave = new ArrayList<String>();
-			for (ItemStack is : v.getMcContents())
+			for (org.bukkit.inventory.ItemStack is : v.getContents())
 				if (is != null)
 					toBeSave.add(new ItemStackSave(is).toString());
 			pChests.setProperty(chestName + ".items", toBeSave);
@@ -508,9 +508,9 @@ public class FilesManager {
 					createChestFile(pNames, chestName, "large");
 				else
 					createChestFile(pNames, chestName, "normal");
-				for (ItemStack is : v.getMcContents()) {
+				for (org.bukkit.inventory.ItemStack is : v.getContents()) {
 					if (is != null)
-						itemstacks.add(new SerializedItemStack(is.id, is.count, is.damage));
+						itemstacks.add(new SerializedItemStack(is.getTypeId(), is.getAmount(), is.getDurability()));
 				}
 				tmp.put(chestName, new ArrayList<SerializedItemStack>(itemstacks));
 				itemstacks = new ArrayList<SerializedItemStack>();
@@ -641,9 +641,9 @@ public class FilesManager {
 
 		for (String partyName : chest.keySet()) {
 			VirtualChest v = chest.get(partyName);
-			for (ItemStack is : v.getMcContents()) {
+			for (org.bukkit.inventory.ItemStack is : v.getContents()) {
 				if (is != null)
-					itemstacks.add(new SerializedItemStack(is.id, is.count, is.damage));
+					itemstacks.add(new SerializedItemStack(is.getTypeId(), is.getAmount(), is.getDurability()));
 			}
 			saved.put(partyName, new ArrayList<SerializedItemStack>(itemstacks));
 			itemstacks = new ArrayList<SerializedItemStack>();
@@ -738,7 +738,7 @@ public class FilesManager {
 					v = new VirtualLargeChest(chestName);
 				for (String toParse : chestSave.getStringList(chestName + ".items",
 						new ArrayList<String>())) {
-					v.addItemStack(new ItemStackSave(toParse).getItemStack());
+					v.addItem(new ItemStackSave(toParse).getItemStack());
 				}
 				result.put(chestName, v.clone());
 			}
@@ -853,6 +853,7 @@ public class FilesManager {
 	 * @param fileName
 	 * @return
 	 */
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public HashMap<String, HashMap<String, VirtualChest>> transfer(String fileName) {
 		String filename = this.path + File.separator + fileName;

@@ -216,7 +216,6 @@ public class GiftPost extends JavaPlugin {
 		log.info("[" + this.getDescription().getName() + "] Chests loaded !");
 		getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 
-			@Override
 			public void run() {
 				GiftPostWorker.getInstance().save();
 			}

@@ -23,7 +23,6 @@ import com.Balor.utils.LogFormatter;
 import com.Balor.utils.PlayerChests;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
-//Plugins
 import com.gmail.nossr50.mcMMO;
 import com.google.common.collect.MapMaker;
 import com.nijiko.permissions.PermissionHandler;
@@ -564,6 +563,7 @@ public class GiftPostWorker {
 	 * 
 	 * @deprecated
 	 */
+	@Deprecated
 	public synchronized void transfer() {
 		HashMap<String, HashMap<String, VirtualChest>> loaded = this.fManager.transfer("chest.dat");
 		if (loaded != null) {

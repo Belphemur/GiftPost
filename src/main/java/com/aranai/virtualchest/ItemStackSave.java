@@ -16,7 +16,8 @@
  ************************************************************************/
 package com.aranai.virtualchest;
 
-import net.minecraft.server.ItemStack;
+import org.bukkit.inventory.ItemStack;
+
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -25,22 +26,22 @@ import net.minecraft.server.ItemStack;
 public class ItemStackSave {
 	public int count;
 	public int id;
-	public int damage;
-	/**
-	 * 
-	 */
-	public ItemStackSave(ItemStack is) {
-		this.count = is.count;
-		this.id = is.id;
-		this.damage = is.damage;
-	}
+	public short damage;
 	public ItemStackSave(String toParse)
 	{
 		String infos[] = new String[3];
 		infos = toParse.split(";"); 
 		this.id = Integer.parseInt(infos[0]);
 		this.count = Integer.parseInt(infos[1]);
-		this.damage = Integer.parseInt(infos[2]);
+		this.damage = Short.parseShort(infos[2]);
+	}
+	/**
+	 * @param is
+	 */
+	public ItemStackSave(ItemStack is) {
+		this.id = is.getTypeId();
+		this.count = is.getAmount();
+		this.damage = is.getDurability();
 	}
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -80,7 +80,7 @@ public class VirtualChest implements Cloneable {
 		} else {
 			for (ItemStack is : iss)
 				if (is != null)
-					addItemStack(new ItemStack(is.id, is.count, is.damage));
+					addItemStack(is);
 		}
 	}
 
@@ -382,6 +382,7 @@ public class VirtualChest implements Cloneable {
 		this.chest.setName(name);
 	}
 
+	@Override
 	public VirtualChest clone() {
 		try {
 			VirtualChest result = (VirtualChest) super.clone();

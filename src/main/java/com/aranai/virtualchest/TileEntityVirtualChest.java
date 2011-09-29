@@ -135,6 +135,7 @@ public class TileEntityVirtualChest extends TileEntityChest {
 	 * @return
 	 * @deprecated
 	 */
+	@Deprecated
 	public ItemStack a(int i, int j) {
 		if (this.getContents()[i] != null) {
 			ItemStack itemstack;

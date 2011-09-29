@@ -55,6 +55,7 @@ public class PartiesGarbageCollector extends Thread {
 		}
 	}
 
+	@Override
 	public void run() {
 		garbageCollectorAndSave();
 

@@ -78,6 +78,7 @@ public class VirtualLargeChest extends VirtualChest {
 	 * @param index
 	 * @return
 	 */
+	@Override
 	public org.bukkit.inventory.ItemStack getItem(int index) {
 		return new CraftItemStack(lc.getItem(index));
 	}
@@ -161,6 +162,7 @@ public class VirtualLargeChest extends VirtualChest {
 	 * 
 	 * @return
 	 */
+	@Override
 	public int leftCases() {
 		return chest.emptyCasesLeft() + subChest2.emptyCasesLeft();
 	}

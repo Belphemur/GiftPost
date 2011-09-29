@@ -5,11 +5,10 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class OldChestFileFilter implements FilenameFilter {
+public class ChestFileFilter implements FilenameFilter {
 
-	@Override
 	public boolean accept(File file, String name) {
-		return name.endsWith(".chest");
+		return name.endsWith(".chestYml");
 	}
 
 	public static File[] listRecursively(File folder) {
@@ -26,10 +25,10 @@ public class OldChestFileFilter implements FilenameFilter {
 		return new File[0];
 	}
 
-	private static ArrayList<File> _listRecursively(File folder, int depth) {
+	protected static ArrayList<File> _listRecursively(File folder, int depth) {
 		ArrayList<File> files = new ArrayList<File>();
 		if (folder != null && folder.isDirectory()) {
-			files.addAll(Arrays.asList(folder.listFiles(new OldChestFileFilter())));
+			files.addAll(Arrays.asList(folder.listFiles(new ChestFileFilter())));
 			if (depth > 0) {// now scan folders
 				File folders[] = folder.listFiles(new DirFilter());
 				if (folders != null) {
@@ -44,7 +43,6 @@ public class OldChestFileFilter implements FilenameFilter {
 
 	public static class DirFilter implements FilenameFilter {
 
-		@Override
 		public boolean accept(File file, String name) {
 			return file.isDirectory();
 		}

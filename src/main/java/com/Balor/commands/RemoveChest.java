@@ -16,61 +16,77 @@
  ************************************************************************/
 package com.Balor.commands;
 
+import static com.Balor.utils.Display.chestKeeper;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
+import com.aranai.virtualchest.VirtualChest;
 
-import static com.Balor.utils.Display.chestKeeper;
-import static com.Balor.utils.Display.sendHelp;
 /**
  * @author Balor (aka Antoine Aflalo)
- *
+ * 
  */
-public class Help implements GPCommand {
+public class RemoveChest implements GPCommand {
 
-	/* (non-Javadoc)
-	 * @see com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.Balor.commands.GPCommand#execute(com.Balor.bukkit.GiftPost.GiftPostWorker
+	 * , org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public void execute(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		if (args.length < 2) {
-			sender.sendMessage(getHelp());
-			return;
+		Player p = (Player) sender;
+		if (args.length > 1) {
+			VirtualChest v;
+			if ((v = gpw.getChest(p.getName(), args[1])) != null) {
+				if (gpw.removeChest(p, v))
+					p.sendMessage(chestKeeper() + "Chest destroyed with success");
+				else
+					p.sendMessage(chestKeeper()
+							+ "There were a problem when I tried to destroy the chest");
+			} else
+				p.sendMessage(chestKeeper() + ChatColor.RED
+						+ "You don't have this chest. To buy one type " + ChatColor.GOLD
+						+ "/gp buy (large|normal) " + args[1].toLowerCase());
+
+		} else {
+			p.sendMessage(getHelp());
 		}
-		Integer page;
-		try {
-			page = Integer.parseInt(args[1]);
-		} catch (NumberFormatException e) {
-			sender.sendMessage(chestKeeper() + ChatColor.RED + args[2] + " is not a number.");
-			return;
-		}
-		sendHelp(sender, page);
+
 	}
 
-	/* (non-Javadoc)
-	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.Balor.commands.GPCommand#validate(com.Balor.bukkit.GiftPost.
+	 * GiftPostWorker, org.bukkit.command.CommandSender, java.lang.String[])
 	 */
-	@Override
 	public boolean validate(GiftPostWorker gpw, CommandSender sender, String[] args) {
-		return (gpw.hasFlag(args, "?") || gpw.hasFlag(args, "help") || gpw.hasFlag(args, "h"));
+		return ((gpw.hasFlag(args, "rm") || gpw.hasFlag(args, "remove")))
+				&& gpw.hasPerm((Player) sender, getPermName());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.Balor.commands.GPCommand#getPermName()
 	 */
-	@Override
 	public String getPermName() {
-		return null;
+		return "giftpost.chest.open";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.Balor.commands.GPCommand#getHelp()
 	 */
-	@Override
 	public String getHelp() {
-		return ChatColor.GOLD + "/gp ? (1,2 or 3)" + ChatColor.WHITE
-		+ ": to see the help's pages (1, 2 or 3).\n";
+		return ChatColor.GOLD + "/gp rm (ChestName)" + ChatColor.WHITE
+				+ ": to remove the chest.\n";
 	}
 
 }

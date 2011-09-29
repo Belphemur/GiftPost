@@ -68,6 +68,7 @@ public class PlayerChests implements Cloneable {
 		return names.isEmpty();
 	}
 
+	@Override
 	public PlayerChests clone() {
 		try {
 			PlayerChests result = (PlayerChests) super.clone();
@@ -78,6 +79,7 @@ public class PlayerChests implements Cloneable {
 			throw new AssertionError();
 		}
 	}
+	@Override
 	public String toString()
 	{
 		String result = "";
