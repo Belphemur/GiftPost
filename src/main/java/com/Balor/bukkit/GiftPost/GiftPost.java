@@ -76,6 +76,7 @@ public class GiftPost extends JavaPlugin {
 		permLinker.addPermParent(new PermParent("giftpost.admin.*"));
 		permLinker.addPermParent(new PermParent("giftpost.chest.*"));
 		permLinker.setMajorPerm(new PermParent("giftpost.*"));
+		permLinker.addPermChild("giftpost.chest.everywhere");
 		permLinker.addPermChild("giftpost.admin.empty");
 		permLinker.addPermChild("giftpost.admin.limit");
 		permLinker.addPermChild("giftpost.admin.sign");
