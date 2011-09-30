@@ -84,7 +84,6 @@ public class GiftPost extends JavaPlugin {
 		permLinker.addPermChild("giftpost.admin.item");
 		permLinker.addPermChild("giftpost.admin.sendallusers");
 		permLinker.addPermChild("giftpost.admin.open");
-		permLinker.registerAllPermParent();
 
 		registerCommand(Chest.class);
 		registerCommand(Buy.class);
@@ -102,6 +101,7 @@ public class GiftPost extends JavaPlugin {
 		registerCommand(OpenPartyChest.class);
 		registerCommand(BuyPartyChest.class);
 		registerCommand(GiveItem.class);
+		permLinker.registerAllPermParent();
 
 	}
 
