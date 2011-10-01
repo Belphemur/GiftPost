@@ -202,6 +202,11 @@ public class GiftPost extends JavaPlugin {
 					"plugins/Register.jar");
 			getServer().reload();
 			return;
+		} catch (IncompatibleClassChangeError e) {
+			Downloader.pluginName = "VirtualChest";
+			Downloader.install("http://www.gestdown.info/minecraft/Register.jar",
+					"plugins/Register.jar");
+			getServer().reload();
 		}
 		try {
 			@SuppressWarnings("unused")
