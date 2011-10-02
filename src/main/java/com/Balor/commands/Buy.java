@@ -123,12 +123,13 @@ public class Buy implements GPCommand {
 	}
 
 	private int getLimit(Player player) {
-		Integer limit = null;
-		try {
-			limit = Integer.parseInt(PermissionManager.getPermissionLimit(player, "maxchests"));
-		} catch (NumberFormatException e) {			
-		}
-		
+		Integer limit = GiftPostWorker.getInstance().getFileManager().openChestLimitFile(player);
+		if (limit == -1)
+			try {
+				limit = Integer.parseInt(PermissionManager.getPermissionLimit(player, "maxchests"));
+			} catch (NumberFormatException e) {
+			}
+
 		if (limit == null || limit == -1)
 			limit = GiftPostWorker.getInstance().getConfig().getInt("max-number-chest", 10);
 		return limit;
