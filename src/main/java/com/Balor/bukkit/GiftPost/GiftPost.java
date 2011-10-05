@@ -28,7 +28,6 @@ import com.Balor.commands.mcMMO.OpenPartyChest;
 import com.Balor.utils.Downloader;
 import com.Balor.utils.threads.PartiesGarbageCollector;
 import com.google.common.collect.MapMaker;
-import com.nijikokun.register.payment.Methods;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -194,20 +193,6 @@ public class GiftPost extends JavaPlugin {
 
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
-		try {
-			Methods.getMethod();
-		} catch (NoClassDefFoundError e) {
-			Downloader.pluginName = "VirtualChest";
-			Downloader.install("http://www.gestdown.info/minecraft/Register.jar",
-					"plugins/Register.jar");
-			getServer().reload();
-			return;
-		} catch (IncompatibleClassChangeError e) {
-			Downloader.pluginName = "VirtualChest";
-			Downloader.install("http://www.gestdown.info/minecraft/Register.jar",
-					"plugins/Register.jar");
-			getServer().reload();
-		}
 		try {
 			@SuppressWarnings("unused")
 			ConcurrentMap<Object, Object> test = new MapMaker().makeMap();
