@@ -45,6 +45,7 @@ import com.aranai.virtualchest.VirtualLargeChest;
 import com.gmail.nossr50.mcMMO;
 import com.google.common.collect.MapMaker;
 import com.nijikokun.register.payment.Method;
+import com.nijikokun.register.payment.Methods;
 
 /**
  * 
@@ -89,6 +90,16 @@ public class GiftPostWorker {
 	public void setConfig(Configuration config) {
 		this.config = config;
 		this.config.load();
+		if(config.getString("iConomy").equals("true"))
+		{
+			try {
+				Methods.getMethod();
+			} catch (NoClassDefFoundError e) {
+				this.config.setProperty("iConomy", "false");
+				this.config.save();
+				log.severe("[VirtualChest] To work with Economy system you need to have the REGISTER API. It can be downloaded on the first post in the plugin's thread.");
+			}
+		}
 	}
 
 	public void setfManager(String path) {
