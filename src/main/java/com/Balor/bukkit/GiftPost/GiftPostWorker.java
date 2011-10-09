@@ -90,14 +90,13 @@ public class GiftPostWorker {
 	public void setConfig(Configuration config) {
 		this.config = config;
 		this.config.load();
-		if(config.getString("iConomy").equals("true"))
-		{
+		if (config.getString("iConomy").equals("true")) {
 			try {
 				Methods.getMethod();
 			} catch (NoClassDefFoundError e) {
 				this.config.setProperty("iConomy", "false");
 				this.config.save();
-				log.severe("[VirtualChest] To work with Economy system you need to have the REGISTER API. It can be downloaded on the first post in the plugin's thread.");
+				log.severe("[VirtualChest] To work with Economy system you need to have the REGISTER API. It can be downloaded on the first post in the plugin's thread. Value set to false in the config file.");
 			}
 		}
 	}
@@ -646,6 +645,7 @@ public class GiftPostWorker {
 		}
 		return true;
 	}
+
 	/**
 	 * mcMMO plugin
 	 * 
@@ -777,7 +777,7 @@ public class GiftPostWorker {
 
 	public String getDefaultType(Player player) {
 		String limit;
-		limit = PermissionManager.getPermissionLimit(player, "chestType");	
+		limit = PermissionManager.getPermissionLimit(player, "chestType");
 		if (limit == null || limit.isEmpty())
 			limit = GiftPostWorker.getInstance().getConfig().getString("chest-default", "normal");
 		return limit;
