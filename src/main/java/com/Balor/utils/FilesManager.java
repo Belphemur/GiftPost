@@ -96,8 +96,10 @@ public class FilesManager {
 	}
 
 	private File getFile(String directory, String fileName, boolean create) {
-		File file = new File(path + directory != null ? File.separator + directory + File.separator
-				: File.separator + fileName);
+		File file = new File(
+				path
+						+ (directory != null ? File.separator + directory + File.separator
+								: File.separator) + fileName);
 		try {
 			Files.createParentDirs(file);
 		} catch (IOException e) {
@@ -924,7 +926,8 @@ public class FilesManager {
 	@SuppressWarnings("unchecked")
 	public HashMap<String, HashMap<String, VirtualChest>> transfer(String fileName) {
 		String filename = this.path + File.separator + fileName;
-		ExtendedConfiguration config = ExtendedConfiguration.loadConfiguration(new File(path + File.separator + "config.yml"));
+		ExtendedConfiguration config = ExtendedConfiguration.loadConfiguration(new File(path
+				+ File.separator + "config.yml"));
 		String typeChosen = config.getString("chest-type");
 		HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = null;
