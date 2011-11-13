@@ -30,18 +30,19 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentMap;
 
+import net.minecraft.server.ItemStack;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
 
+import com.Balor.Tools.Configuration.File.ExtendedConfiguration;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.aranai.virtualchest.ItemStackSave;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 import com.google.common.collect.MapMaker;
-
-import net.minecraft.server.ItemStack;
+import com.google.common.io.Files;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -50,6 +51,9 @@ import net.minecraft.server.ItemStack;
 public class FilesManager {
 
 	protected String path;
+	private ExtendedConfiguration cacheConfiguration;
+	private String lastDir = "";
+	private String lastFilename = "";
 
 	/**
 	 * Constructor
@@ -67,13 +71,17 @@ public class FilesManager {
 	 * Open the file and return the Configuration object
 	 * 
 	 * @param directory
-	 * @param fileName
+	 * @param filename
 	 * @return the configuration file
 	 */
-	private Configuration getYml(String directory, String fileName) {
-		Configuration config = new Configuration(getFile(directory, fileName));
-		config.load();
-		return config;
+	private ExtendedConfiguration getYml(String directory, String filename) {
+		if (cacheConfiguration != null && lastDir.equals(directory == null ? "" : directory)
+				&& lastFilename.equals(filename))
+			return cacheConfiguration;
+		if (directory == null)
+			lastDir = "";
+		lastFilename = filename;
+		return ExtendedConfiguration.loadConfiguration(getFile(directory, filename));
 	}
 
 	/**
@@ -88,11 +96,13 @@ public class FilesManager {
 	}
 
 	private File getFile(String directory, String fileName, boolean create) {
-		if (!new File(this.path + File.separator + directory).exists()) {
-			new File(this.path + File.separator + directory).mkdir();
+		File file = new File(path + directory != null ? File.separator + directory + File.separator
+				: File.separator + fileName);
+		try {
+			Files.createParentDirs(file);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		File file = new File(path + File.separator + directory + File.separator + fileName);
-
 		if (!file.exists() && create) {
 
 			try {
@@ -111,23 +121,27 @@ public class FilesManager {
 	 * @param chests
 	 */
 	public void savePlayerChest(String pName, HashMap<String, VirtualChest> chests) {
-		Configuration pChests = getYml("Chests", pName + ".chestYml");
+		ExtendedConfiguration pChests = getYml("Chests", pName + ".chestYml");
 		for (String chestName : chests.keySet()) {
 			VirtualChest v = chests.get(chestName);
 			if (v instanceof VirtualLargeChest) {
 				createChestFile(pName, chestName, "large");
-				pChests.setProperty(chestName + ".type", "large");
+				pChests.set(chestName + ".type", "large");
 			} else {
 				createChestFile(pName, chestName, "normal");
-				pChests.setProperty(chestName + ".type", "normal");
+				pChests.set(chestName + ".type", "normal");
 			}
 			List<String> toBeSave = new ArrayList<String>();
 			for (org.bukkit.inventory.ItemStack is : v.getContents())
 				if (is != null)
 					toBeSave.add(new ItemStackSave(is).toString());
-			pChests.setProperty(chestName + ".items", toBeSave);
+			pChests.set(chestName + ".items", toBeSave);
 		}
-		pChests.save();
+		try {
+			pChests.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		GiftPostWorker.workerLog.fine("Chests of " + pName + " Saved.");
 	}
@@ -151,7 +165,7 @@ public class FilesManager {
 	 * @param from
 	 */
 	public void createOfflineFile(String to, ItemStack[] items, String from) {
-		Configuration conf = this.getYml("Players", to + ".yml");
+		ExtendedConfiguration conf = this.getYml("Players", to + ".yml");
 		List<String> itemsNames = new ArrayList<String>();
 		List<Integer> itemsAmount = new ArrayList<Integer>();
 		List<String> playerNames = new ArrayList<String>();
@@ -162,17 +176,17 @@ public class FilesManager {
 				itemsAmount.add(is.count);
 			}
 
-		if (conf.getProperty("From." + from) == null) {
+		if (conf.get("From." + from) == null) {
 			playerNames.add(from);
-			if (conf.getProperty("Players") == null)
-				conf.setProperty("Players", playerNames);
+			if (conf.get("Players") == null)
+				conf.set("Players", playerNames);
 			else {
 				playerNames.addAll(conf.getStringList("Players", null));
-				conf.setProperty("Players", playerNames);
+				conf.set("Players", playerNames);
 			}
-			conf.setProperty("From." + from, from);
-			conf.setProperty("From." + from + ".Items", itemsNames);
-			conf.setProperty("From." + from + ".Amount", itemsAmount);
+			conf.set("From." + from, from);
+			conf.set("From." + from + ".Items", itemsNames);
+			conf.set("From." + from + ".Amount", itemsAmount);
 
 		} else {
 			List<String> list = new ArrayList<String>();
@@ -181,10 +195,14 @@ public class FilesManager {
 			list2 = conf.getIntList("From." + from + ".Amount", list2);
 			itemsNames.addAll(list);
 			itemsAmount.addAll(list2);
-			conf.setProperty("From." + from + ".Items", itemsNames);
-			conf.setProperty("From." + from + ".Amount", itemsAmount);
+			conf.set("From." + from + ".Items", itemsNames);
+			conf.set("From." + from + ".Amount", itemsAmount);
 		}
-		conf.save();
+		try {
+			conf.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 	}
 
@@ -194,10 +212,15 @@ public class FilesManager {
 	 * @param player
 	 */
 	public void emptyOfflineFile(Player player) {
-		Configuration conf = this.getYml("Players", player.getName() + ".yml");
-		conf.setProperty("Players", null);
-		conf.setProperty("From", null);
-		conf.save();
+		ExtendedConfiguration conf = this.getYml("Players", player.getName() + ".yml");
+		conf.set("Players", null);
+		conf.set("From", null);
+		try {
+			conf.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -231,9 +254,14 @@ public class FilesManager {
 	 * @param p
 	 */
 	public void createWorldFile(Player p) {
-		Configuration conf = getYml("Players", p.getName() + ".yml");
-		conf.setProperty("World", p.getWorld().getName());
-		conf.save();
+		ExtendedConfiguration conf = getYml("Players", p.getName() + ".yml");
+		conf.set("World", p.getWorld().getName());
+		try {
+			conf.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -257,10 +285,14 @@ public class FilesManager {
 	}
 
 	private void createChestFile(String pName, String chestName, String type) {
-		Configuration chest = new Configuration(getFile("Chests", pName + ".chestYml"));
-		chest.load();
-		chest.setProperty(chestName + ".type", type);
-		chest.save();
+		ExtendedConfiguration chest = getYml("Chests", pName + ".chestYml");
+		chest.set(chestName + ".type", type);
+		try {
+			chest.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
@@ -273,14 +305,17 @@ public class FilesManager {
 	public void renameChestFile(String pName, String oldName, String newName) {
 		File newChestSave;
 		if ((newChestSave = getFile("Chests", pName + ".chestYml", false)).exists()) {
-			Configuration chest = new Configuration(newChestSave);
-			chest.load();
-			chest.setProperty(newName, chest.getProperty(oldName));
-			chest.removeProperty(oldName);
-			chest.save();
+			ExtendedConfiguration chest = ExtendedConfiguration.loadConfiguration(newChestSave);
+			chest.set(newName, chest.get(oldName));
+			chest.remove(oldName);
+			try {
+				chest.save();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 
-			Configuration conf = this.getYml("Players", pName + ".yml");
+			ExtendedConfiguration conf = this.getYml("Players", pName + ".yml");
 			List<String> chests = conf.getStringList("ChestsNames", null);
 			List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
 			if (chests.contains(oldName)) {
@@ -290,9 +325,13 @@ public class FilesManager {
 				chestsTypes.remove(i);
 				chests.add(newName);
 				chestsTypes.add(type);
-				conf.setProperty("ChestsNames", chests);
-				conf.setProperty("ChestsTypes", chestsTypes);
-				conf.save();
+				conf.set("ChestsNames", chests);
+				conf.set("ChestsTypes", chestsTypes);
+				try {
+					conf.save();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -306,21 +345,28 @@ public class FilesManager {
 	public void deleteChestFile(String pName, String chestName) {
 		File newChestSave;
 		if ((newChestSave = getFile("Chests", pName + ".chestYml", false)).exists()) {
-			Configuration chest = new Configuration(newChestSave);
-			chest.load();
-			chest.removeProperty(chestName);
-			chest.save();
+			ExtendedConfiguration chest = ExtendedConfiguration.loadConfiguration(newChestSave);
+			chest.remove(chestName);
+			try {
+				chest.save();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
-			Configuration conf = this.getYml("Players", pName + ".yml");
+			ExtendedConfiguration conf = this.getYml("Players", pName + ".yml");
 			List<String> chests = conf.getStringList("ChestsNames", null);
 			List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
 			if (chests.contains(chestName)) {
 				int i = chests.indexOf(chestName);
 				chests.remove(i);
 				chestsTypes.remove(i);
-				conf.setProperty("ChestsNames", chests);
-				conf.setProperty("ChestsTypes", chestsTypes);
-				conf.save();
+				conf.set("ChestsNames", chests);
+				conf.set("ChestsTypes", chestsTypes);
+				try {
+					conf.save();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
@@ -336,21 +382,28 @@ public class FilesManager {
 
 		File newChestSave;
 		if ((newChestSave = getFile("Chests", p.getName() + ".chestYml", false)).exists()) {
-			Configuration chest = new Configuration(newChestSave);
-			chest.load();
-			if (chest.getProperty(chestName) == null)
+			ExtendedConfiguration chest = ExtendedConfiguration.loadConfiguration(newChestSave);
+			if (chest.get(chestName) == null)
 				return false;
-			chest.setProperty(chestName + ".type", "large");
-			chest.save();
+			chest.set(chestName + ".type", "large");
+			try {
+				chest.save();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return true;
 		} else {
-			Configuration conf = this.getYml("Players", p.getName() + ".yml");
+			ExtendedConfiguration conf = this.getYml("Players", p.getName() + ".yml");
 			List<String> chests = conf.getStringList("ChestsNames", null);
 			List<String> chestsTypes = conf.getStringList("ChestsTypes", null);
 			if (chests.contains(chestName)) {
 				chestsTypes.set(chests.indexOf(chestName), "large");
-				conf.setProperty("ChestsTypes", chestsTypes);
-				conf.save();
+				conf.set("ChestsTypes", chestsTypes);
+				try {
+					conf.save();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				return true;
 			}
 		}
@@ -358,14 +411,16 @@ public class FilesManager {
 	}
 
 	public void createChestLimitFile(String player, int limit) {
-		Configuration conf = this.getYml("Players", player + ".yml");
-		conf.setProperty("ChestLimit", limit);
-		conf.save();
+		ExtendedConfiguration conf = this.getYml("Players", player + ".yml");
+		conf.set("ChestLimit", limit);
+		try {
+			conf.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public int openChestLimitFile(Player p) {
-		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
-		config.load();
 		return this.getYml("Players", p.getName() + ".yml").getInt("ChestLimit", -1);
 	}
 
@@ -377,10 +432,14 @@ public class FilesManager {
 	 * @return
 	 */
 	public boolean createDefaultChest(String player, String chest) {
-		Configuration conf = this.getYml("Players", player + ".yml");
+		ExtendedConfiguration conf = this.getYml("Players", player + ".yml");
 		if (openChestTypeFile(player).concat().containsKey(chest)) {
-			conf.setProperty("DefaultChest", chest);
-			conf.save();
+			conf.set("DefaultChest", chest);
+			try {
+				conf.save();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return true;
 		}
 		return false;
@@ -394,10 +453,14 @@ public class FilesManager {
 	 * @return
 	 */
 	public boolean createSendReceiveChest(String player, String chest) {
-		Configuration conf = this.getYml("Players", player + ".yml");
+		ExtendedConfiguration conf = this.getYml("Players", player + ".yml");
 		if (openChestTypeFile(player).concat().containsKey(chest)) {
-			conf.setProperty("SendChest", chest);
-			conf.save();
+			conf.set("SendChest", chest);
+			try {
+				conf.save();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return true;
 		}
 		return false;
@@ -431,18 +494,18 @@ public class FilesManager {
 	 */
 	public PlayerChests openChestTypeFile(String name) {
 		if (getFile("Chests", name + ".chestYml", false).exists()) {
-			Configuration conf = this.getYml("Chests", name + ".chestYml");
+			ExtendedConfiguration conf = this.getYml("Chests", name + ".chestYml");
 
 			List<String> names = new ArrayList<String>();
 			List<String> types = new ArrayList<String>();
-			for (String nameString : conf.getKeys()) {
+			for (String nameString : conf.getKeys(false)) {
 				names.add(nameString);
 				types.add(conf.getString(nameString + ".type"));
 			}
 			GiftPostWorker.workerLog.info("Loaded chest of " + name + " using NEW saveFile");
 			return new PlayerChests(types, names);
 		}
-		Configuration conf = this.getYml("Players", name + ".yml");
+		ExtendedConfiguration conf = this.getYml("Players", name + ".yml");
 		GiftPostWorker.workerLog.info("Loaded chest of " + name + " using OLD saveFile");
 		return new PlayerChests(conf.getStringList("ChestsTypes", new ArrayList<String>()),
 				conf.getStringList("ChestsNames", new ArrayList<String>()));
@@ -455,7 +518,7 @@ public class FilesManager {
 	 * @param p
 	 */
 	public void openOfflineFile(Player p) {
-		Configuration conf = this.getYml("Players", p.getName() + ".yml");
+		ExtendedConfiguration conf = this.getYml("Players", p.getName() + ".yml");
 		List<String> playerNames = new ArrayList<String>();
 		List<String> itemsNames = new ArrayList<String>();
 		List<Integer> itemsAmount = new ArrayList<Integer>();
@@ -481,7 +544,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public boolean hasOfflineItems(Player p) {
-		Configuration conf = this.getYml("Players", p.getName() + ".yml");
+		ExtendedConfiguration conf = this.getYml("Players", p.getName() + ".yml");
 		List<String> playerNames = new ArrayList<String>();
 		playerNames = conf.getStringList("Players", null);
 		return playerNames != null;
@@ -510,7 +573,8 @@ public class FilesManager {
 					createChestFile(pNames, chestName, "normal");
 				for (org.bukkit.inventory.ItemStack is : v.getContents()) {
 					if (is != null)
-						itemstacks.add(new SerializedItemStack(is.getTypeId(), is.getAmount(), is.getDurability()));
+						itemstacks.add(new SerializedItemStack(is.getTypeId(), is.getAmount(), is
+								.getDurability()));
 				}
 				tmp.put(chestName, new ArrayList<SerializedItemStack>(itemstacks));
 				itemstacks = new ArrayList<SerializedItemStack>();
@@ -534,7 +598,7 @@ public class FilesManager {
 	 * @return
 	 */
 	public HashMap<String, String> openAllParties() {
-		Configuration conf = getYml("Parties", "parties.yml");
+		ExtendedConfiguration conf = getYml("Parties", "parties.yml");
 		HashMap<String, String> result = new HashMap<String, String>();
 		List<String> names = conf.getStringList("Names", null);
 		List<String> types = conf.getStringList("ChestTypes", null);
@@ -556,10 +620,14 @@ public class FilesManager {
 	 * @param types
 	 */
 	public void createPartyFile(List<String> names, List<String> types) {
-		Configuration conf = getYml("Parties", "parties.yml");
-		conf.setProperty("Names", names);
-		conf.setProperty("ChestTypes", types);
-		conf.save();
+		ExtendedConfiguration conf = getYml("Parties", "parties.yml");
+		conf.set("Names", names);
+		conf.set("ChestTypes", types);
+		try {
+			conf.save();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -643,7 +711,8 @@ public class FilesManager {
 			VirtualChest v = chest.get(partyName);
 			for (org.bukkit.inventory.ItemStack is : v.getContents()) {
 				if (is != null)
-					itemstacks.add(new SerializedItemStack(is.getTypeId(), is.getAmount(), is.getDurability()));
+					itemstacks.add(new SerializedItemStack(is.getTypeId(), is.getAmount(), is
+							.getDurability()));
 			}
 			saved.put(partyName, new ArrayList<SerializedItemStack>(itemstacks));
 			itemstacks = new ArrayList<SerializedItemStack>();
@@ -724,12 +793,10 @@ public class FilesManager {
 	public HashMap<String, VirtualChest> getPlayerChests(String player) {
 		HashMap<String, VirtualChest> result = new HashMap<String, VirtualChest>();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = new HashMap<String, ArrayList<SerializedItemStack>>();
-		File newChestSave;
-		if ((newChestSave = getFile("Chests", player + ".chestYml", false)).exists()) {
-			Configuration chestSave = new Configuration(newChestSave);
-			chestSave.load();
+		if (getFile("Chests", player + ".chestYml", false).exists()) {
+			ExtendedConfiguration chestSave = getYml("Chests", player + ".chestYml");
 			String chestType = null;
-			for (String chestName : chestSave.getKeys()) {
+			for (String chestName : chestSave.getKeys(false)) {
 				chestType = chestSave.getString(chestName + ".type", "large");
 				VirtualChest v;
 				if (chestType.equals("normal"))
@@ -857,8 +924,7 @@ public class FilesManager {
 	@SuppressWarnings("unchecked")
 	public HashMap<String, HashMap<String, VirtualChest>> transfer(String fileName) {
 		String filename = this.path + File.separator + fileName;
-		Configuration config = new Configuration(new File(path + File.separator + "config.yml"));
-		config.load();
+		ExtendedConfiguration config = ExtendedConfiguration.loadConfiguration(new File(path + File.separator + "config.yml"));
 		String typeChosen = config.getString("chest-type");
 		HashMap<String, HashMap<String, VirtualChest>> chests = new HashMap<String, HashMap<String, VirtualChest>>();
 		HashMap<String, ArrayList<SerializedItemStack>> saved = null;

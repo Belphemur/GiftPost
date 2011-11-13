@@ -22,6 +22,7 @@ import com.Balor.Listeners.GPPlayerListener;
 import com.Balor.Listeners.PluginListener;
 import com.Balor.Listeners.SignListener;
 import com.Balor.Listeners.WorldGPListener;
+import com.Balor.Tools.Configuration.File.ExtendedConfiguration;
 import com.Balor.commands.*;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
@@ -212,7 +213,7 @@ public class GiftPost extends JavaPlugin {
 		log.info("[" + this.getDescription().getName() + "]" + " (version "
 				+ this.getDescription().getVersion() + ")");
 		gpw = GiftPostWorker.getInstance();
-		gpw.setConfig(getConfiguration());
+		gpw.setConfig(ExtendedConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
 		gpw.setfManager(getDataFolder().toString());
 		setupListeners();
 		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {

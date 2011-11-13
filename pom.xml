@@ -32,28 +32,19 @@
 		</plugins>
 	</build>
 	<repositories>
-		<repository>
-			<id>bukkit-repo</id>
-			<url>http://www.gestdown.info:8888/artifactory/bukkit-repo</url>
+	<repository>
+			<snapshots />
+			<id>Bukkit-dev</id>
+			<name>Bukkit-Dev</name>
+			<url>http://www.gestdown.info:8888/artifactory/Bukkit-dev</url>
 		</repository>
 		<repository>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 			<id>central</id>
-			<name>libs-release</name>
-			<url>http://gestdown.info:8888/artifactory/libs-release</url>
-		</repository>
-		<repository>
-			<snapshots />
-			<id>snapshots</id>
-			<name>libs-snapshot</name>
-			<url>http://gestdown.info:8888/artifactory/libs-snapshot</url>
-		</repository>
-		<repository>
-			<id>Gestdown</id>
-			<name>Gestdown-releases</name>
-			<url>http://www.gestdown.info:8888/artifactory/BukkitPlugin-release-local</url>
+			<name>Maven Repository Switchboard</name>
+			<url>http://repo1.maven.org/maven2</url>
 		</repository>
 	</repositories>
 
@@ -74,19 +65,6 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>com.nijikokun.bukkit</groupId>
 			<artifactId>Permissions</artifactId>
@@ -113,6 +91,16 @@
 			<artifactId>mChat</artifactId>
 			<version>v1.7.10_5</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
+			<version>1.8.1-R5-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>craftbukkit</artifactId>
+			<version>1.8.1-R5-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<properties>

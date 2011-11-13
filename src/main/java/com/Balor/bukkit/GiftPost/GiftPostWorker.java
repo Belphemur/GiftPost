@@ -18,6 +18,7 @@ package com.Balor.bukkit.GiftPost;
 import static com.Balor.utils.Display.chestKeeper;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,11 +32,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
-import org.bukkit.util.config.Configuration;
 
 import VirtualChest.Manager.Permissions.PermissionManager;
 
+import com.Balor.Tools.Configuration.File.ExtendedConfiguration;
 import com.Balor.commands.GPCommand;
 import com.Balor.utils.FilesManager;
 import com.Balor.utils.LogFormatter;
@@ -57,7 +59,7 @@ public class GiftPostWorker {
 	private ConcurrentMap<String, VirtualChest> defaultChests = new MapMaker().makeMap();
 	private ConcurrentMap<String, VirtualChest> sendReceiveChests = new MapMaker().makeMap();
 	private List<GPCommand> commands = new ArrayList<GPCommand>();
-	private Configuration config;
+	private ExtendedConfiguration config;
 	private FilesManager fManager;
 	public static final Logger log = Logger.getLogger("Minecraft");
 	public static final Logger workerLog = Logger.getLogger("VirtualChest");
@@ -87,15 +89,18 @@ public class GiftPostWorker {
 		instance = null;
 	}
 
-	public void setConfig(Configuration config) {
+	public void setConfig(ExtendedConfiguration config) {
 		this.config = config;
-		this.config.load();
 		if (config.getString("iConomy").equals("true")) {
 			try {
 				Methods.getMethod();
 			} catch (NoClassDefFoundError e) {
-				this.config.setProperty("iConomy", "false");
-				this.config.save();
+				this.config.set("iConomy", "false");
+				try {
+					this.config.save();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				log.severe("[VirtualChest] To work with Economy system you need to have the REGISTER API. It can be downloaded on the first post in the plugin's thread. Value set to false in the config file.");
 			}
 		}
@@ -132,7 +137,7 @@ public class GiftPostWorker {
 		return fManager;
 	}
 
-	public Configuration getConfig() {
+	public ExtendedConfiguration getConfig() {
 		return config;
 	}
 
@@ -529,7 +534,15 @@ public class GiftPostWorker {
 	 * load all the chests
 	 */
 	public synchronized void oldLoad() {
-		this.config.load();
+		try {
+			this.config.reload();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 		this.fManager.loadChests("chests.dat", chests);
 	}
 
@@ -537,7 +550,15 @@ public class GiftPostWorker {
 	 * load all the chests
 	 */
 	public synchronized void newLoad() {
-		this.config.load();
+		try {
+			this.config.reload();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 		allChests = fManager.getAllPlayerChestType();
 		if (allChests == null) {
 			allChests = new MapMaker().concurrencyLevel(8).makeMap();
@@ -559,7 +580,15 @@ public class GiftPostWorker {
 	 * load parties.
 	 */
 	public synchronized void loadParties() {
-		this.config.load();
+		try {
+			this.config.reload();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
+			e.printStackTrace();
+		}
 		HashMap<String, VirtualChest> loaded = this.fManager.loadParties("parties.dat");
 		if (loaded != null) {
 			parties.clear();
