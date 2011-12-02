@@ -16,25 +16,31 @@
  ************************************************************************/
 package com.aranai.virtualchest;
 
-import org.bukkit.inventory.ItemStack;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * @author Balor (aka Antoine Aflalo)
- *
+ * 
  */
 public class ItemStackSave {
 	public int count;
 	public int id;
 	public short damage;
-	public ItemStackSave(String toParse)
-	{
+	public Map<Integer, Integer> echantments = new HashMap<Integer, Integer>();
+
+	public ItemStackSave(String toParse) {
 		String infos[] = new String[3];
-		infos = toParse.split(";"); 
+		infos = toParse.split(";");
 		this.id = Integer.parseInt(infos[0]);
 		this.count = Integer.parseInt(infos[1]);
 		this.damage = Short.parseShort(infos[2]);
 	}
+
 	/**
 	 * @param is
 	 */
@@ -42,17 +48,29 @@ public class ItemStackSave {
 		this.id = is.getTypeId();
 		this.count = is.getAmount();
 		this.damage = is.getDurability();
+		for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet())
+			echantments.put(e.getKey().getId(), e.getValue());
 	}
-	/* (non-Javadoc)
+
+	public ItemStackSave() {
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return id+";"+count+";"+damage;
+		return id + ";" + count + ";" + damage;
 	}
-	public ItemStack getItemStack()
-	{
-		return new ItemStack(id, count, damage);
+
+	public ItemStack getItemStack() {
+		ItemStack is = new ItemStack(id, count, damage);
+		for (Entry<Integer, Integer> ench : echantments.entrySet())
+			is.addEnchantment(Enchantment.getById(ench.getKey()), ench.getValue());
+		return is;
 	}
 
 }

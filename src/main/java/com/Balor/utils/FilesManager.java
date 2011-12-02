@@ -61,9 +61,10 @@ public class FilesManager {
 	 * @param path
 	 */
 	public FilesManager(String path) {
+		ExtendedConfiguration.registerClass(ItemStackSave.class);
 		this.path = path;
 		if (!new File(this.path).exists()) {
-			new File(this.path).mkdir();
+			new File(this.path).mkdir();			
 		}
 	}
 
@@ -81,7 +82,8 @@ public class FilesManager {
 		if (directory == null)
 			lastDir = "";
 		lastFilename = filename;
-		return ExtendedConfiguration.loadConfiguration(getFile(directory, filename));
+		cacheConfiguration = ExtendedConfiguration.loadConfiguration(getFile(directory, filename));
+		return cacheConfiguration;
 	}
 
 	/**
@@ -133,11 +135,13 @@ public class FilesManager {
 				createChestFile(pName, chestName, "normal");
 				pChests.set(chestName + ".type", "normal");
 			}
-			List<String> toBeSave = new ArrayList<String>();
+			List<ItemStackSave> toBeSave = new ArrayList<ItemStackSave>();
 			for (org.bukkit.inventory.ItemStack is : v.getContents())
-				if (is != null)
-					toBeSave.add(new ItemStackSave(is).toString());
-			pChests.set(chestName + ".items", toBeSave);
+				if (is != null) {
+					toBeSave.add(new ItemStackSave(is));
+				}
+			pChests.set(chestName + ".eitems", toBeSave);
+			pChests.remove(chestName + ".items");
 		}
 		try {
 			pChests.save();
@@ -805,9 +809,15 @@ public class FilesManager {
 					v = new VirtualChest(chestName);
 				else
 					v = new VirtualLargeChest(chestName);
-				for (String toParse : chestSave.getStringList(chestName + ".items",
-						new ArrayList<String>())) {
-					v.addItem(new ItemStackSave(toParse).getItemStack());
+				if (chestSave.contains(chestName + ".items"))
+					for (String toParse : chestSave.getStringList(chestName + ".items",
+							new ArrayList<String>())) {
+						v.addItem(new ItemStackSave(toParse).getItemStack());
+					}
+				else if (chestSave.contains(chestName + ".eitems"))
+				{
+					for(ItemStackSave iss : (List<ItemStackSave>)chestSave.getList(chestName + ".eitems"))
+						v.addItem(iss.getItemStack());
 				}
 				result.put(chestName, v.clone());
 			}
