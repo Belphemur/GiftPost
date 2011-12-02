@@ -68,8 +68,8 @@ public class ItemStackSave {
 
 	public ItemStack getItemStack() {
 		ItemStack is = new ItemStack(id, count, damage);
-		for (Entry<Integer, Integer> ench : echantments.entrySet())
-			is.addUnsafeEnchantment(Enchantment.getById(ench.getKey()), ench.getValue());
+		for (Entry<Integer, Integer> ench : echantments.entrySet()) 
+			is.addEnchantment(Enchantment.getById(ench.getKey()), ench.getValue());
 		return is;
 	}
 

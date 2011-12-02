@@ -201,8 +201,7 @@ public class VirtualChest implements Cloneable {
 	public void setItem(int index, org.bukkit.inventory.ItemStack item) {
 		setItemStack(
 				index,
-				(item == null ? null : new net.minecraft.server.ItemStack(item.getTypeId(), item
-						.getAmount(), item.getDurability())));
+				(item == null ? null : CraftItemStack.createNMSItemStack(item)));
 	}
 
 	/**
@@ -238,8 +237,7 @@ public class VirtualChest implements Cloneable {
 					} else {
 						// More than a single stack!
 						if (item.getAmount() > getMaxItemStack()) {
-							setItem(firstFree, new CraftItemStack(item.getTypeId(),
-									getMaxItemStack(), item.getDurability()));
+							setItem(firstFree, new CraftItemStack(item));
 							item.setAmount(item.getAmount() - getMaxItemStack());
 						} else {
 							// Just store it
