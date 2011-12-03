@@ -48,8 +48,11 @@ public class ItemStackSave {
 		this.id = is.getTypeId();
 		this.count = is.getAmount();
 		this.damage = is.getDurability();
-		for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet())
-			echantments.put(e.getKey().getId(), e.getValue());
+		try {
+			for (Entry<Enchantment, Integer> e : is.getEnchantments().entrySet())
+				echantments.put(e.getKey().getId(), e.getValue());
+		} catch (NoSuchMethodError e) {
+		}
 	}
 
 	public ItemStackSave() {
@@ -68,9 +71,11 @@ public class ItemStackSave {
 
 	public ItemStack getItemStack() {
 		ItemStack is = new ItemStack(id, count, damage);
-		for (Entry<Integer, Integer> ench : echantments.entrySet()) 
-			is.addEnchantment(Enchantment.getById(ench.getKey()), ench.getValue());
+		try {
+			for (Entry<Integer, Integer> ench : echantments.entrySet())
+				is.addEnchantment(Enchantment.getById(ench.getKey()), ench.getValue());
+		} catch (NoSuchMethodError e) {
+		}
 		return is;
 	}
-
 }
