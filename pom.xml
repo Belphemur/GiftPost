@@ -3,13 +3,28 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.Balor</groupId>
 	<artifactId>GiftPost</artifactId>
-	<version>5.3.1</version>
+	<version>5.3.1-SNAPSHOT</version>
 	<name>VirtualChest</name>
 	<scm>
 		<connection>git@github.com:Belphemur/Tomb.git</connection>
 		<developerConnection>Balor</developerConnection>
 		<url>https://github.com/Belphemur/Tomb</url>
 	</scm>
+		<distributionManagement>
+		<!-- Publish the versioned releases here -->
+		<repository>
+			<id>bukkit-plugin-release</id>
+			<name>Bukkit Plugins Release</name>
+			<url>http://www.gestdown.info:8888/nexus/content/repositories/bukkit-plugin-release/</url>
+		</repository>
+
+		<!-- Publish the versioned releases here -->
+		<snapshotRepository>
+			<id>bukkit-plugin-snapshot</id>
+			<name>Bukkit Plugins Snapshot</name>
+			<url>http://www.gestdown.info:8888/nexus/content/repositories/bukkit-plugin-snapshot/</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<build>
 		<defaultGoal>clean install</defaultGoal>
 		<finalName>VirtualChest</finalName>
@@ -32,43 +47,26 @@
 		</plugins>
 	</build>
 	<repositories>
-	<repository>
-			<snapshots />
-			<id>Bukkit-dev</id>
-			<name>Bukkit-Dev</name>
-			<url>http://www.gestdown.info:8888/artifactory/Bukkit-dev</url>
-		</repository>
 		<repository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>Maven Repository Switchboard</name>
-			<url>http://repo1.maven.org/maven2</url>
+			<snapshots />
+			<id>BukkitDev</id>
+			<name>BukkitDev</name>
+			<url>http://www.gestdown.info:8888/nexus/content/groups/BukkitDev/</url>
 		</repository>
 	</repositories>
-
 	<pluginRepositories>
 		<pluginRepository>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>central</id>
-			<name>plugins-release</name>
-			<url>http://gestdown.info:8888/artifactory/plugins-release</url>
-		</pluginRepository>
-		<pluginRepository>
 			<snapshots />
-			<id>snapshots</id>
-			<name>plugins-snapshot</name>
-			<url>http://gestdown.info:8888/artifactory/plugins-snapshot</url>
+			<id>BukkitDev</id>
+			<name>BukkitDev</name>
+			<url>http://www.gestdown.info:8888/nexus/content/groups/BukkitDev/</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>com.nijikokun.bukkit</groupId>
 			<artifactId>Permissions</artifactId>
-			<version>3.1.1</version>
+			<version>3.1.6</version>
 		</dependency>
 		<dependency>
 			<groupId>Register</groupId>
@@ -78,18 +76,18 @@
 		<dependency>
 			<groupId>mcMMO</groupId>
 			<artifactId>mcMMO</artifactId>
-			<version>1.1.17</version>
+			<version>1.2.07</version>
 		</dependency>
 		<dependency>
 			<groupId>ru.tehkode</groupId>
 			<artifactId>PermissionsEx</artifactId>
-			<version>1.14</version>
+			<version>1.16</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.D3GN.MiracleM4n</groupId>
+			<groupId>net.D3GN</groupId>
 			<artifactId>mChat</artifactId>
-			<version>v1.7.10_5</version>
+			<version>1.8.8</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

@@ -312,7 +312,7 @@ public class FilesManager {
 		File newChestSave;
 		if ((newChestSave = getFile("Chests", pName + ".chestYml", false)).exists()) {
 			ExtendedConfiguration chest = ExtendedConfiguration.loadConfiguration(newChestSave);
-			chest.set(newName, chest.get(oldName));
+			chest.createSection(newName, chest.getConfigurationSection(oldName).getValues(true));
 			chest.remove(oldName);
 			try {
 				chest.save();
