@@ -99,14 +99,15 @@ public class GiftPostWorker {
 					.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 			if (economyProvider != null) {
 				economy = economyProvider.getProvider();
-			} else
+			} else {
 				this.config.set("iConomy", "false");
-			try {
-				this.config.save();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+				try {
+					this.config.save();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				log.severe("[VirtualChest] To work with Economy system you need to have the VAULT API. Value set to false in the config file.");
 			}
-			log.severe("[VirtualChest] To work with Economy system you need to have the VAULT API. Value set to false in the config file.");
 		}
 	}
 
@@ -750,10 +751,9 @@ public class GiftPostWorker {
 				return false;
 			} else {
 				if (amount != 0) {
-					economy.withdrawPlayer(player.getName(),amount);
-					player.sendMessage(chestKeeper() + " "
-							+ economy.format(amount) + ChatColor.DARK_GRAY
-							+ " used to pay the Chests Keeper.");
+					economy.withdrawPlayer(player.getName(), amount);
+					player.sendMessage(chestKeeper() + " " + economy.format(amount)
+							+ ChatColor.DARK_GRAY + " used to pay the Chests Keeper.");
 				}
 				return true;
 			}
