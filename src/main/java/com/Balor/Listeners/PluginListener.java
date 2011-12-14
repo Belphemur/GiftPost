@@ -25,7 +25,6 @@ import com.Balor.bukkit.GiftPost.GiftPost;
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.gmail.nossr50.mcMMO;
 import com.nijikokun.bukkit.Permissions.Permissions;
-import com.nijikokun.register.payment.Methods;
 
 import org.bukkit.plugin.Plugin;
 
@@ -55,13 +54,6 @@ public class PluginListener extends ServerListener {
 			if (Permissions != null) {
 				if (Permissions.isEnabled())
 					PermissionManager.setYetiPermissions(((Permissions) Permissions).getHandler());
-			}
-		}
-		if (GiftPostWorker.getPayement() == null) {
-			Plugin registerPlugin = GiftPost.getBukkitServer().getPluginManager().getPlugin("Register");
-			if (registerPlugin != null) {
-				GiftPostWorker.setPayementMethod(Methods.getMethod());
-				System.out.println("[VirtualChest] Successfully linked with Register (Economy plugins).");
 			}
 		}
 		if (GiftPostWorker.getmcMMO() == null) {

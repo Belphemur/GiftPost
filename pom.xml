@@ -3,14 +3,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.Balor</groupId>
 	<artifactId>GiftPost</artifactId>
-	<version>5.3.2</version>
+	<version>5.4-SNAPSHOT</version>
 	<name>VirtualChest</name>
 	<scm>
 		<connection>git@github.com:Belphemur/Tomb.git</connection>
 		<developerConnection>Balor</developerConnection>
 		<url>https://github.com/Belphemur/Tomb</url>
 	</scm>
-		<distributionManagement>
+	<distributionManagement>
 		<!-- Publish the versioned releases here -->
 		<repository>
 			<id>bukkit-plugin-release</id>
@@ -69,9 +69,9 @@
 			<version>3.1.6</version>
 		</dependency>
 		<dependency>
-			<groupId>Register</groupId>
-			<artifactId>Register</artifactId>
-			<version>1.5</version>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>Vault</artifactId>
+			<version>1.1.8</version>
 		</dependency>
 		<dependency>
 			<groupId>mcMMO</groupId>

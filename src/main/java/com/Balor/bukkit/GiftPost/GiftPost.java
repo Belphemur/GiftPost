@@ -213,7 +213,7 @@ public class GiftPost extends JavaPlugin {
 		log.info("[" + this.getDescription().getName() + "]" + " (version "
 				+ this.getDescription().getVersion() + ")");
 		gpw = GiftPostWorker.getInstance();
-		gpw.setConfig(ExtendedConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")));
+		gpw.setConfig(ExtendedConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")),this);
 		gpw.setfManager(getDataFolder().toString());
 		setupListeners();
 		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {

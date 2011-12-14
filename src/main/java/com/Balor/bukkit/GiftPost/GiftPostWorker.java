@@ -31,9 +31,13 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.milkbowl.vault.economy.Economy;
+
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import VirtualChest.Manager.Permissions.PermissionManager;
 
@@ -46,8 +50,6 @@ import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
 import com.gmail.nossr50.mcMMO;
 import com.google.common.collect.MapMaker;
-import com.nijikokun.register.payment.Method;
-import com.nijikokun.register.payment.Methods;
 
 /**
  * 
@@ -63,7 +65,7 @@ public class GiftPostWorker {
 	private FilesManager fManager;
 	public static final Logger log = Logger.getLogger("Minecraft");
 	public static final Logger workerLog = Logger.getLogger("VirtualChest");
-	private static Method payementMethod = null;
+	private static Economy economy = null;
 	private static mcMMO mcMMO = null;
 	private HashMap<String, VirtualChest> parties = new HashMap<String, VirtualChest>();
 	private static GiftPostWorker instance;
@@ -89,20 +91,22 @@ public class GiftPostWorker {
 		instance = null;
 	}
 
-	public void setConfig(ExtendedConfiguration config) {
+	public void setConfig(ExtendedConfiguration config, Plugin plugin) {
 		this.config = config;
 		if (config.getString("iConomy").equals("true")) {
-			try {
-				Methods.getMethod();
-			} catch (NoClassDefFoundError e) {
+
+			RegisteredServiceProvider<Economy> economyProvider = plugin.getServer()
+					.getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+			if (economyProvider != null) {
+				economy = economyProvider.getProvider();
+			} else
 				this.config.set("iConomy", "false");
-				try {
-					this.config.save();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				log.severe("[VirtualChest] To work with Economy system you need to have the REGISTER API. It can be downloaded on the first post in the plugin's thread. Value set to false in the config file.");
+			try {
+				this.config.save();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
+			log.severe("[VirtualChest] To work with Economy system you need to have the VAULT API. Value set to false in the config file.");
 		}
 	}
 
@@ -652,30 +656,6 @@ public class GiftPostWorker {
 	}
 
 	/**
-	 * iConomy plugin
-	 * 
-	 * @return
-	 */
-	public static Method getPayement() {
-		return payementMethod;
-	}
-
-	/**
-	 * Set iConomy Plugin
-	 * 
-	 * @param plugin
-	 * @return
-	 */
-	public static boolean setPayementMethod(Method plugin) {
-		if (payementMethod == null) {
-			payementMethod = plugin;
-		} else {
-			return false;
-		}
-		return true;
-	}
-
-	/**
 	 * mcMMO plugin
 	 * 
 	 * @return
@@ -738,67 +718,44 @@ public class GiftPostWorker {
 	 * @return
 	 */
 	public boolean economyCheck(Player player, String configParam) {
-		if (GiftPostWorker.getPayement() != null
-				&& this.getConfig().getString("iConomy", "false").matches("true")
+		if (economy != null && this.getConfig().getString("iConomy", "false").matches("true")
 				&& !this.hasPerm(player, "giftpost.admin.free", false)) {
-			if (GiftPostWorker.getPayement().hasAccount(player.getName())) {
-				if (!GiftPostWorker.getPayement().getAccount(player.getName())
-						.hasEnough(this.getConfig().getDouble(configParam, 1.0))) {
-					player.sendMessage(chestKeeper()
-							+ ChatColor.RED
-							+ "You don't have "
-							+ GiftPostWorker.getPayement().format(
-									this.getConfig().getDouble(configParam, 10.0))
-							+ " to pay the Chests Keeper !");
-					return false;
-				} else {
-					if (this.getConfig().getDouble(configParam, 1.0) != 0) {
-						GiftPostWorker.getPayement().getAccount(player.getName())
-								.subtract(this.getConfig().getDouble(configParam, 1.0));
-						player.sendMessage(chestKeeper()
-								+ " "
-								+ GiftPostWorker.getPayement().format(
-										this.getConfig().getDouble(configParam, 1.0))
-								+ ChatColor.DARK_GRAY + " used to pay the Chests Keeper.");
-					}
-					return true;
-				}
-
-			} else {
-				player.sendMessage(chestKeeper() + ChatColor.RED
-						+ "You must have an account to pay the Chests Keeper !");
+			if (!economy.has(player.getName(), this.getConfig().getDouble(configParam, 1.0))) {
+				player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have "
+						+ economy.format(this.getConfig().getDouble(configParam, 10.0))
+						+ " to pay the Chests Keeper !");
 				return false;
+			} else {
+				if (this.getConfig().getDouble(configParam, 1.0) != 0) {
+					economy.withdrawPlayer(player.getName(),
+							this.getConfig().getDouble(configParam, 1.0));
+					player.sendMessage(chestKeeper() + " "
+							+ economy.format(this.getConfig().getDouble(configParam, 1.0))
+							+ ChatColor.DARK_GRAY + " used to pay the Chests Keeper.");
+				}
+				return true;
 			}
 		}
 		return true;
 	}
 
 	public boolean economyUpgradeCheck(Player player) {
-		if (GiftPostWorker.getPayement() != null
-				&& this.getConfig().getString("iConomy", "false").matches("true")
+		if (economy != null && this.getConfig().getString("iConomy", "false").matches("true")
 				&& !this.hasPerm(player, "giftpost.admin.free", false)) {
 			double amount = this.getConfig().getDouble("iConomy-largeChest-price", 500.0)
 					- this.getConfig().getDouble("iConomy-normalChest-price", 250.0);
-			if (GiftPostWorker.getPayement().hasAccount(player.getName())) {
-				if (!GiftPostWorker.getPayement().getAccount(player.getName()).hasEnough(amount)) {
-					player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have "
-							+ GiftPostWorker.getPayement().format(amount)
-							+ " to pay the Chests Keeper !");
-					return false;
-				} else {
-					if (amount != 0) {
-						GiftPostWorker.getPayement().getAccount(player.getName()).subtract(amount);
-						player.sendMessage(chestKeeper() + " "
-								+ GiftPostWorker.getPayement().format(amount) + ChatColor.DARK_GRAY
-								+ " used to pay the Chests Keeper.");
-					}
-					return true;
-				}
-
-			} else {
-				player.sendMessage(chestKeeper() + ChatColor.RED
-						+ "You must have an account to pay the Chests Keeper !");
+			if (!economy.has(player.getName(), amount)) {
+				player.sendMessage(chestKeeper() + ChatColor.RED + "You don't have "
+						+ economy.format(amount) + " to pay the Chests Keeper !");
 				return false;
+			} else {
+				if (amount != 0) {
+					economy.withdrawPlayer(player.getName(),amount);
+					player.sendMessage(chestKeeper() + " "
+							+ economy.format(amount) + ChatColor.DARK_GRAY
+							+ " used to pay the Chests Keeper.");
+				}
+				return true;
 			}
 		}
 		return true;
