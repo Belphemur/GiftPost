@@ -16,8 +16,9 @@
  ************************************************************************/
 package com.Balor.Tools.Configuration;
 
-import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 import org.bukkit.configuration.ConfigurationSection;
@@ -27,9 +28,8 @@ import org.bukkit.configuration.MemorySection;
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-@SuppressWarnings("unchecked")
 public class ExMemorySection extends MemorySection implements ExConfigurationSection {
-	protected static final HashSet<Class<? extends Object>> exNaturalClass = new HashSet<Class<? extends Object>>();
+	protected final Lock lock = new ReentrantLock(true);
 
 	/**
 	 * 
@@ -46,34 +46,19 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		super(exMemorySection, key);
 	}
 
+	public boolean add(String path, Object value) {
+		if (isSet(path))
+			return false;
+		set(path, value);
+		return true;
+	}
+
 	public ExConfigurationSection addSection(String path) {
 		ExConfigurationSection result = getConfigurationSection(path);
 		if (result == null) {
 			result = createSection(path);
 		}
 		return result;
-	}
-
-	public void add(String path, Object value) {
-		if (isSet(path))
-			return;
-		set(path, value);
-	}
-
-	@Override
-	public long getLong(String path, long def) {
-		if (path == null) {
-			throw new IllegalArgumentException("Path cannot be null");
-		}
-
-		Object val = get(path, def);
-		long returnVal;
-		try {
-			returnVal = castToLong(val);
-		} catch (NumberFormatException e) {
-			returnVal = def;
-		}
-		return returnVal;
 	}
 
 	private long castToLong(Object value) throws NumberFormatException {
@@ -84,38 +69,6 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		else if (value instanceof Integer)
 			return Long.valueOf(((Integer) value));
 		throw new NumberFormatException();
-	}
-
-	/**
-	 * Shortcut to remove an item by setting it null
-	 * 
-	 * @param path
-	 *            Path to remove the entry at.
-	 */
-	public void remove(String path) {
-		set(path, null);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.bukkit.configuration.MemorySection#isNaturallyStorable(java.lang.
-	 * Object)
-	 */
-	@Override
-	protected boolean isNaturallyStorable(Object input) {
-		return super.isNaturallyStorable(input) || exNaturalClass.contains(input.getClass());
-	}
-
-	@Override
-	public ExConfigurationSection getConfigurationSection(String path) {
-		if (path == null) {
-			throw new IllegalArgumentException("Path cannot be null");
-		}
-
-		Object val = get(path, getDefault(path));
-		return (val instanceof ExConfigurationSection) ? (ExConfigurationSection) val : null;
 	}
 
 	/*
@@ -132,12 +85,12 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 			throw new IllegalArgumentException("Cannot create section at empty path");
 		}
 
-		String[] split = path.split(Pattern.quote(Character.toString(getRoot().options()
+		final String[] split = path.split(Pattern.quote(Character.toString(getRoot().options()
 				.pathSeparator())));
 		ExConfigurationSection section = this;
 
 		for (int i = 0; i < split.length - 1; i++) {
-			ExConfigurationSection last = section;
+			final ExConfigurationSection last = section;
 
 			section = getConfigurationSection(split[i]);
 
@@ -146,10 +99,10 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 			}
 		}
 
-		String key = split[split.length - 1];
+		final String key = split[split.length - 1];
 
 		if (section == this) {
-			ExConfigurationSection result = new ExMemorySection(this, key);
+			final ExConfigurationSection result = new ExMemorySection(this, key);
 			map.put(key, result);
 			return result;
 		} else {
@@ -157,29 +110,22 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		}
 	}
 
-	@Override
-	public String getString(String path, String def) {
-		if (path == null) {
-			throw new IllegalArgumentException("Path cannot be null");
-		}
-		Object val = get(path, def);
-		if (val == null)
-			return def;
-		return (val instanceof String) ? (String) val : val.toString();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * be.Balor.Tools.Configuration.ExConfigurationSection#getDoubleList(java
-	 * .lang.String, java.util.List)
+	 * @see org.bukkit.configuration.MemorySection#get(java.lang.String,
+	 * java.lang.Object)
 	 */
-	public List<Double> getDoubleList(String path, List<Double> def) {
-
-		List<Double> list = getList(path, def);
-		return list;
-
+	@Override
+	public Object get(String path, Object def) {
+		lock.lock();
+		Object info;
+		try {
+			info = super.get(path, def);
+		} finally {
+			lock.unlock();
+		}
+		return info;
 	}
 
 	/*
@@ -190,20 +136,34 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * .lang.String, java.util.List)
 	 */
 	public List<Boolean> getBooleanList(String path, List<Boolean> def) {
-		List<Boolean> list = getList(path, def);
-		return list;
+		final List<Boolean> result = super.getBooleanList(path);
+		if (result == null || (result != null && result.isEmpty()))
+			return def;
+		return result;
+	}
+
+	@Override
+	public ExConfigurationSection getConfigurationSection(String path) {
+		if (path == null) {
+			throw new IllegalArgumentException("Path cannot be null");
+		}
+
+		final Object val = get(path, getDefault(path));
+		return (val instanceof ExConfigurationSection) ? (ExConfigurationSection) val : null;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * be.Balor.Tools.Configuration.ExConfigurationSection#getStringList(java
+	 * be.Balor.Tools.Configuration.ExConfigurationSection#getDoubleList(java
 	 * .lang.String, java.util.List)
 	 */
-	public List<String> getStringList(String path, List<String> def) {
-		List<String> list = getList(path, def);
-		return list;
+	public List<Double> getDoubleList(String path, List<Double> def) {
+		final List<Double> result = super.getDoubleList(path);
+		if (result == null || (result != null && result.isEmpty()))
+			return def;
+		return result;
 	}
 
 	/*
@@ -214,8 +174,77 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * .String, java.util.List)
 	 */
 	public List<Integer> getIntList(String path, List<Integer> def) {
-		List<Integer> list = getList(path, def);
-		return list;
+		final List<Integer> result = getIntegerList(path);
+		if (result == null || (result != null && result.isEmpty()))
+			return def;
+		return result;
+	}
+
+	@Override
+	public long getLong(String path, long def) {
+		if (path == null) {
+			throw new IllegalArgumentException("Path cannot be null");
+		}
+
+		final Object val = get(path, def);
+		long returnVal;
+		try {
+			returnVal = castToLong(val);
+		} catch (final NumberFormatException e) {
+			returnVal = def;
+		}
+		return returnVal;
+	}
+
+	@Override
+	public String getString(String path, String def) {
+		if (path == null) {
+			throw new IllegalArgumentException("Path cannot be null");
+		}
+		final Object val = get(path, def);
+		if (val == null)
+			return def;
+		return (val instanceof String) ? (String) val : val.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * be.Balor.Tools.Configuration.ExConfigurationSection#getStringList(java
+	 * .lang.String, java.util.List)
+	 */
+	public List<String> getStringList(String path, List<String> def) {
+		final List<String> result = super.getStringList(path);
+		if (result == null || (result != null && result.isEmpty()))
+			return def;
+		return result;
+	}
+
+	/**
+	 * Shortcut to remove an item by setting it null
+	 * 
+	 * @param path
+	 *            Path to remove the entry at.
+	 */
+	public void remove(String path) {
+		set(path, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.bukkit.configuration.MemorySection#set(java.lang.String,
+	 * java.lang.Object)
+	 */
+	@Override
+	public void set(String path, Object value) {
+		lock.lock();
+		try {
+			super.set(path, value);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 }

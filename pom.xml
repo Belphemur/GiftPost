@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.Balor</groupId>
 	<artifactId>GiftPost</artifactId>
-	<version>5.4</version>
+	<version>5.5</version>
 	<name>VirtualChest</name>
 	<scm>
 		<connection>git@github.com:Belphemur/Tomb.git</connection>
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>Vault</artifactId>
-			<version>1.1.8</version>
+			<version>1.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>mcMMO</groupId>
@@ -93,12 +93,12 @@
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.0.1-R2-SNAPSHOT</version>
+			<version>1.1-R1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
-			<version>1.0.1-R2-SNAPSHOT</version>
+			<version>1.1-R1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<properties>

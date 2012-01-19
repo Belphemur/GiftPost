@@ -64,7 +64,7 @@ public class FilesManager {
 		ExtendedConfiguration.registerClass(ItemStackSave.class);
 		this.path = path;
 		if (!new File(this.path).exists()) {
-			new File(this.path).mkdir();			
+			new File(this.path).mkdir();
 		}
 	}
 
@@ -814,10 +814,9 @@ public class FilesManager {
 							new ArrayList<String>())) {
 						v.addItem(new ItemStackSave(toParse).getItemStack());
 					}
-				else if (chestSave.contains(chestName + ".eitems"))
-				{
-					for(ItemStackSave iss : (List<ItemStackSave>)chestSave.getList(chestName + ".eitems"))
-						v.addItem(iss.getItemStack());
+				else if (chestSave.contains(chestName + ".eitems")) {
+					for (Object iss : chestSave.getList(chestName + ".eitems"))
+						v.addItem(((ItemStackSave) iss).getItemStack());
 				}
 				result.put(chestName, v.clone());
 			}
