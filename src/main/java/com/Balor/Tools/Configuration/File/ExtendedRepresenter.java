@@ -38,15 +38,8 @@ import org.yaml.snakeyaml.representer.Representer;
  */
 class ExtendedRepresenter extends Representer {
 
-	public ExtendedRepresenter() {
-		super();
-		this.nullRepresenter = new EmptyRepresentNull();
-		this.multiRepresenters.put(ConfigurationSection.class, new RepresentConfigurationSection());
-		this.multiRepresenters.put(ConfigurationSerializable.class,
-				new RepresentConfigurationSerializable());
-	}
-
 	protected class EmptyRepresentNull implements Represent {
+		
 		public Node representData(Object data) {
 			return representScalar(Tag.NULL, ""); // Changed "null" to "" so as
 													// to avoid writing nulls
@@ -54,17 +47,17 @@ class ExtendedRepresenter extends Representer {
 	}
 
 	private class RepresentConfigurationSection extends RepresentMap {
-		@Override
+		
 		public Node representData(Object data) {
 			return super.representData(((ConfigurationSection) data).getValues(false));
 		}
 	}
 
 	private class RepresentConfigurationSerializable extends RepresentMap {
-		@Override
+		
 		public Node representData(Object data) {
-			ConfigurationSerializable serializable = (ConfigurationSerializable) data;
-			Map<String, Object> values = new LinkedHashMap<String, Object>();
+			final ConfigurationSerializable serializable = (ConfigurationSerializable) data;
+			final Map<String, Object> values = new LinkedHashMap<String, Object>();
 			values.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY,
 					ConfigurationSerialization.getAlias(serializable.getClass()));
 			values.putAll(serializable.serialize());
@@ -73,24 +66,32 @@ class ExtendedRepresenter extends Representer {
 		}
 	}
 
+	public ExtendedRepresenter() {
+		super();
+		this.nullRepresenter = new EmptyRepresentNull();
+		this.multiRepresenters.put(ConfigurationSection.class, new RepresentConfigurationSection());
+		this.multiRepresenters.put(ConfigurationSerializable.class,
+				new RepresentConfigurationSerializable());
+	}
+
 	// Code borrowed from snakeyaml
 	// (http://code.google.com/p/snakeyaml/source/browse/src/test/java/org/yaml/snakeyaml/issues/issue60/SkipBeanTest.java)
-	@Override
+	
 	protected NodeTuple representJavaBeanProperty(Object javaBean, Property property,
 			Object propertyValue, Tag customTag) {
-		NodeTuple tuple = super.representJavaBeanProperty(javaBean, property, propertyValue,
+		final NodeTuple tuple = super.representJavaBeanProperty(javaBean, property, propertyValue,
 				customTag);
-		Node valueNode = tuple.getValueNode();
+		final Node valueNode = tuple.getValueNode();
 		if (valueNode instanceof CollectionNode) {
 			// Removed null check
 			if (Tag.SEQ.equals(valueNode.getTag())) {
-				SequenceNode seq = (SequenceNode) valueNode;
+				final SequenceNode seq = (SequenceNode) valueNode;
 				if (seq.getValue().isEmpty()) {
 					return null; // skip empty lists
 				}
 			}
 			if (Tag.MAP.equals(valueNode.getTag())) {
-				MappingNode seq = (MappingNode) valueNode;
+				final MappingNode seq = (MappingNode) valueNode;
 				if (seq.getValue().isEmpty()) {
 					return null; // skip empty maps
 				}

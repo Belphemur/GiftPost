@@ -24,81 +24,89 @@ import org.bukkit.configuration.MemoryConfiguration;
 
 /**
  * @author Balor (aka Antoine Aflalo)
- *
+ * 
  */
 public class ExMemoryConfiguration extends ExMemorySection implements Configuration {
-    protected Configuration defaults;
-    protected ExMemoryConfigurationOption options;
+	protected Configuration defaults;
+	protected ExMemoryConfigurationOption options;
 
-    /**
-     * Creates an empty {@link MemoryConfiguration} with no default values.
-     */
-    public ExMemoryConfiguration() {}
+	/**
+	 * Creates an empty {@link MemoryConfiguration} with no default values.
+	 */
+	public ExMemoryConfiguration() {
+	}
 
-    /**
-     * Creates an empty {@link MemoryConfiguration} using the specified {@link Configuration}
-     * as a source for all default values.
-     *
-     * @param defaults Default value provider
-     * @throws IllegalArgumentException Thrown if defaults is null
-     */
-    public ExMemoryConfiguration(Configuration defaults) {
-        this.defaults = defaults;
-    }
+	/**
+	 * Creates an empty {@link MemoryConfiguration} using the specified
+	 * {@link Configuration} as a source for all default values.
+	 * 
+	 * @param defaults
+	 *            Default value provider
+	 * @throws IllegalArgumentException
+	 *             Thrown if defaults is null
+	 */
+	public ExMemoryConfiguration(Configuration defaults) {
+		this.defaults = defaults;
+	}
 
-    @Override
-    public void addDefault(String path, Object value) {
-        if (path == null) {
-            throw new IllegalArgumentException("Path may not be null");
-        }
-        
-        if (defaults == null) {
-            defaults = new MemoryConfiguration();
-        }
 
-        defaults.set(path, value);
-    }
+	public void addDefault(String path, Object value) {
+		if (path == null) {
+			throw new IllegalArgumentException("Path may not be null");
+		}
 
-    public void addDefaults(Map<String, Object> defaults) {
-        if (defaults == null) {
-            throw new IllegalArgumentException("Defaults may not be null");
-        }
+		if (defaults == null) {
+			defaults = new MemoryConfiguration();
+		}
 
-        for (Map.Entry<String, Object> entry : defaults.entrySet()) {
-            addDefault(entry.getKey(), entry.getValue());
-        }
-    }
+		defaults.set(path, value);
+	}
 
-    public void addDefaults(Configuration defaults) {
-        if (defaults == null) {
-            throw new IllegalArgumentException("Defaults may not be null");
-        }
 
-        addDefaults(defaults.getValues(true));
-    }
+	public void addDefaults(Configuration defaults) {
+		if (defaults == null) {
+			throw new IllegalArgumentException("Defaults may not be null");
+		}
 
-    public void setDefaults(Configuration defaults) {
-        if (defaults == null) {
-            throw new IllegalArgumentException("Defaults may not be null");
-        }
+		addDefaults(defaults.getValues(true));
+	}
 
-        this.defaults = defaults;
-    }
 
-    public Configuration getDefaults() {
-        return defaults;
-    }
+	public void addDefaults(Map<String, Object> defaults) {
+		if (defaults == null) {
+			throw new IllegalArgumentException("Defaults may not be null");
+		}
 
-    @Override
-    public ConfigurationSection getParent() {
-        return null;
-    }
+		for (final Map.Entry<String, Object> entry : defaults.entrySet()) {
+			addDefault(entry.getKey(), entry.getValue());
+		}
+	}
 
-    public ExMemoryConfigurationOption options() {
-        if (options == null) {
-            options = new ExMemoryConfigurationOption(this);
-        }
-        
-        return options;
-    }
+
+	public Configuration getDefaults() {
+		return defaults;
+	}
+
+
+	public ConfigurationSection getParent() {
+		return null;
+	}
+
+
+	public ExMemoryConfigurationOption options() {
+		if (options == null) {
+			options = new ExMemoryConfigurationOption(this);
+		}
+
+		return options;
+	}
+
+
+	public void setDefaults(Configuration defaults) {
+		if (defaults == null) {
+			throw new IllegalArgumentException("Defaults may not be null");
+		}
+
+		this.defaults = defaults;
+	}
 }

@@ -16,7 +16,6 @@
  ************************************************************************/
 package com.Balor.Tools.Configuration.File;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,22 +30,48 @@ import org.yaml.snakeyaml.nodes.Tag;
  * 
  */
 class YamlConstructor extends Constructor {
-	private HashMap<String, Class<?>> classMap = new HashMap<String, Class<?>>();
+	private class ConstructCustomObject extends ConstructYamlMap {
+		@SuppressWarnings("unchecked")
+		@Override
+		public Object construct(Node node) {
+			if (node.isTwoStepsConstruction()) {
+				throw new YAMLException("Unexpected referential mapping structure. Node: " + node);
+			}
 
-	public YamlConstructor(Class<? extends Object> theRoot) {
-		super(theRoot);
+			final Map<Object, Object> raw = (Map<Object, Object>) super.construct(node);
+
+			if (raw.containsKey(ConfigurationSerialization.SERIALIZED_TYPE_KEY)) {
+				final Map<String, Object> typed = new LinkedHashMap<String, Object>(raw.size());
+				for (final Map.Entry<Object, Object> entry : raw.entrySet()) {
+					typed.put(entry.getKey().toString(), entry.getValue());
+				}
+
+				try {
+					return ConfigurationSerialization.deserializeObject(typed);
+				} catch (final IllegalArgumentException ex) {
+					throw new YAMLException("Could not deserialize object", ex);
+				}
+			}
+
+			return raw;
+		}
+
+		@Override
+		public void construct2ndStep(Node node, Object object) {
+			throw new YAMLException("Unexpected referential mapping structure. Node: " + node);
+		}
 	}
+
+
+	private final ClassLoader pluginClassLoader;
 
 	/**
 	 * 
 	 */
-	public YamlConstructor() {
+	public YamlConstructor(ClassLoader classLoader) {
 		super();
 		this.yamlConstructors.put(Tag.MAP, new ConstructCustomObject());
-	}
-
-	public void addClassInfo(Class<? extends Object> c) {
-		classMap.put(c.getName(), c);
+		this.pluginClassLoader = classLoader;
 	}
 
 	/*
@@ -61,53 +86,6 @@ class YamlConstructor extends Constructor {
 	 */
 	@Override
 	protected Class<?> getClassForName(String name) throws ClassNotFoundException {
-		Class<?> cl = classMap.get(name);
-		if (cl == null)
-			return super.getClassForName(name);
-		else
-			return cl;
-	}
-
-	/**
-	 * Check if the class is registered
-	 * 
-	 * @param c
-	 * @return
-	 */
-	public boolean isClassRegistered(Class<? extends Object> c) {
-		return classMap.containsKey(c.getName());
-	}
-
-
-	private class ConstructCustomObject extends ConstructYamlMap {
-		@SuppressWarnings("unchecked")
-		@Override
-		public Object construct(Node node) {
-			if (node.isTwoStepsConstruction()) {
-				throw new YAMLException("Unexpected referential mapping structure. Node: " + node);
-			}
-
-			Map<Object, Object> raw = (Map<Object, Object>) super.construct(node);
-
-			if (raw.containsKey(ConfigurationSerialization.SERIALIZED_TYPE_KEY)) {
-				Map<String, Object> typed = new LinkedHashMap<String, Object>(raw.size());
-				for (Map.Entry<Object, Object> entry : raw.entrySet()) {
-					typed.put(entry.getKey().toString(), entry.getValue());
-				}
-
-				try {
-					return ConfigurationSerialization.deserializeObject(typed);
-				} catch (IllegalArgumentException ex) {
-					throw new YAMLException("Could not deserialize object", ex);
-				}
-			}
-
-			return raw;
-		}
-
-		@Override
-		public void construct2ndStep(Node node, Object object) {
-			throw new YAMLException("Unexpected referential mapping structure. Node: " + node);
-		}
+		return Class.forName(name, true, pluginClassLoader);
 	}
 }

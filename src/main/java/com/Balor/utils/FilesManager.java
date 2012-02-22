@@ -61,7 +61,6 @@ public class FilesManager {
 	 * @param path
 	 */
 	public FilesManager(String path) {
-		ExtendedConfiguration.registerClass(ItemStackSave.class);
 		this.path = path;
 		if (!new File(this.path).exists()) {
 			new File(this.path).mkdir();

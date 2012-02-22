@@ -46,6 +46,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		super(exMemorySection, key);
 	}
 
+	
 	public boolean add(String path, Object value) {
 		if (isSet(path))
 			return false;
@@ -53,6 +54,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		return true;
 	}
 
+	
 	public ExConfigurationSection addSection(String path) {
 		ExConfigurationSection result = getConfigurationSection(path);
 		if (result == null) {
@@ -77,7 +79,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * @see
 	 * org.bukkit.configuration.MemorySection#createSection(java.lang.String)
 	 */
-	@Override
+	
 	public ExConfigurationSection createSection(String path) {
 		if (path == null) {
 			throw new IllegalArgumentException("Path cannot be null");
@@ -116,12 +118,14 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * @see org.bukkit.configuration.MemorySection#get(java.lang.String,
 	 * java.lang.Object)
 	 */
-	@Override
+	
 	public Object get(String path, Object def) {
 		lock.lock();
 		Object info;
 		try {
 			info = super.get(path, def);
+			// info = newGet(path, def);
+
 		} finally {
 			lock.unlock();
 		}
@@ -135,6 +139,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * be.Balor.Tools.Configuration.ExConfigurationSection#getBooleanList(java
 	 * .lang.String, java.util.List)
 	 */
+	
 	public List<Boolean> getBooleanList(String path, List<Boolean> def) {
 		final List<Boolean> result = super.getBooleanList(path);
 		if (result == null || (result != null && result.isEmpty()))
@@ -142,7 +147,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		return result;
 	}
 
-	@Override
+	
 	public ExConfigurationSection getConfigurationSection(String path) {
 		if (path == null) {
 			throw new IllegalArgumentException("Path cannot be null");
@@ -159,6 +164,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * be.Balor.Tools.Configuration.ExConfigurationSection#getDoubleList(java
 	 * .lang.String, java.util.List)
 	 */
+	
 	public List<Double> getDoubleList(String path, List<Double> def) {
 		final List<Double> result = super.getDoubleList(path);
 		if (result == null || (result != null && result.isEmpty()))
@@ -173,6 +179,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * be.Balor.Tools.Configuration.ExConfigurationSection#getIntList(java.lang
 	 * .String, java.util.List)
 	 */
+	
 	public List<Integer> getIntList(String path, List<Integer> def) {
 		final List<Integer> result = getIntegerList(path);
 		if (result == null || (result != null && result.isEmpty()))
@@ -180,7 +187,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		return result;
 	}
 
-	@Override
+	
 	public long getLong(String path, long def) {
 		if (path == null) {
 			throw new IllegalArgumentException("Path cannot be null");
@@ -196,7 +203,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 		return returnVal;
 	}
 
-	@Override
+	
 	public String getString(String path, String def) {
 		if (path == null) {
 			throw new IllegalArgumentException("Path cannot be null");
@@ -214,6 +221,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * be.Balor.Tools.Configuration.ExConfigurationSection#getStringList(java
 	 * .lang.String, java.util.List)
 	 */
+	
 	public List<String> getStringList(String path, List<String> def) {
 		final List<String> result = super.getStringList(path);
 		if (result == null || (result != null && result.isEmpty()))
@@ -227,6 +235,7 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * @param path
 	 *            Path to remove the entry at.
 	 */
+	
 	public void remove(String path) {
 		set(path, null);
 	}
@@ -237,11 +246,12 @@ public class ExMemorySection extends MemorySection implements ExConfigurationSec
 	 * @see org.bukkit.configuration.MemorySection#set(java.lang.String,
 	 * java.lang.Object)
 	 */
-	@Override
+	
 	public void set(String path, Object value) {
 		lock.lock();
 		try {
 			super.set(path, value);
+			// newSet(path, value);
 		} finally {
 			lock.unlock();
 		}

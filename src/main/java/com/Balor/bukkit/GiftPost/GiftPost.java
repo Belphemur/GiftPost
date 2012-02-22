@@ -118,6 +118,7 @@ public class GiftPost extends JavaPlugin {
 	}
 
 	private void setupConfigFiles() {
+		ExtendedConfiguration.setClassLoader(this.getClassLoader());
 		if (!new File(getDataFolder().toString()).exists()) {
 			new File(getDataFolder().toString()).mkdir();
 		}
