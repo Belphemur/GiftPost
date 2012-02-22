@@ -16,9 +16,13 @@
  ************************************************************************/
 package com.Balor.Listeners;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.event.server.ServerListener;
+import org.bukkit.plugin.Plugin;
 
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 import VirtualChest.Manager.Permissions.PermissionManager;
 
 import com.Balor.bukkit.GiftPost.GiftPost;
@@ -26,22 +30,18 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.gmail.nossr50.mcMMO;
 import com.nijikokun.bukkit.Permissions.Permissions;
 
-import org.bukkit.plugin.Plugin;
-
-import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 /**
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class PluginListener extends ServerListener {
-	@Override
+public class PluginListener implements Listener {
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPluginEnable(PluginEnableEvent event) {
 		if (event.getPlugin().getDescription().getName().equals("PermissionsEx"))
 			PermissionManager.setPEX(PermissionsEx.getPermissionManager());
 
 		if (!PermissionManager.isPermissionsExSet()) {
-			Plugin Permissions = GiftPost.getBukkitServer().getPluginManager()
+			final Plugin Permissions = GiftPost.getBukkitServer().getPluginManager()
 					.getPlugin("PermissionsEx");
 			if (Permissions != null) {
 				if (Permissions.isEnabled())
@@ -49,7 +49,7 @@ public class PluginListener extends ServerListener {
 			}
 		}
 		if (!PermissionManager.isYetiPermissionsSet()) {
-			Plugin Permissions = GiftPost.getBukkitServer().getPluginManager()
+			final Plugin Permissions = GiftPost.getBukkitServer().getPluginManager()
 					.getPlugin("Permissions");
 			if (Permissions != null) {
 				if (Permissions.isEnabled())
@@ -57,7 +57,8 @@ public class PluginListener extends ServerListener {
 			}
 		}
 		if (GiftPostWorker.getmcMMO() == null) {
-			Plugin mcMMOPlugin = GiftPost.getBukkitServer().getPluginManager().getPlugin("mcMMO");
+			final Plugin mcMMOPlugin = GiftPost.getBukkitServer().getPluginManager()
+					.getPlugin("mcMMO");
 			if (mcMMOPlugin != null) {
 				if (mcMMOPlugin.isEnabled()) {
 					GiftPostWorker.setmcMMO((mcMMO) mcMMOPlugin);

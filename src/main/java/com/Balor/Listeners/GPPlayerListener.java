@@ -21,10 +21,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
@@ -36,14 +38,29 @@ import com.Balor.commands.Upgrade;
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class GPPlayerListener extends PlayerListener {
-	private GiftPostWorker worker;
+public class GPPlayerListener implements Listener {
+	private final GiftPostWorker worker;
 
 	public GPPlayerListener() {
 		worker = GiftPostWorker.getInstance();
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		onSign(event);
+		if (worker.getConfig().getString("use-wand", "true").matches("true")
+				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere", false)
+				&& event.getPlayer().getItemInHand() != null
+				&& event.getPlayer().getItemInHand().getType() != null
+				&& (event.getPlayer().getItemInHand().getType().getId() == worker.getConfig()
+						.getInt("wand-item-id", Material.CHEST.getId()))
+				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(
+						Action.LEFT_CLICK_BLOCK))) {
+			new Chest().execute(worker, event.getPlayer(), null);
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		GiftPostWorker.workerLog.info(event.getPlayer().getName() + " connected");
 		if (worker.getConfig().getString("message-of-the-day", "true").matches("true"))
@@ -59,10 +76,10 @@ public class GPPlayerListener extends PlayerListener {
 		}
 	}
 
-	@Override
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerQuit(PlayerQuitEvent event) {
-		Player p = event.getPlayer();
-		String pName = p.getName();
+		final Player p = event.getPlayer();
+		final String pName = p.getName();
 		if (worker.getConfig().getString("allow-offline", "true").matches("true")
 				&& worker.haveAChestInMemory(pName))
 			worker.getFileManager().createWorldFile(p);
@@ -70,12 +87,13 @@ public class GPPlayerListener extends PlayerListener {
 			worker.unloadPlayerChests(pName);
 	}
 
+	@EventHandler
 	public void onSign(PlayerInteractEvent event) {
 		if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			Block block = event.getClickedBlock();
+			final Block block = event.getClickedBlock();
 			if (block.getType().equals(Material.WALL_SIGN)
 					|| block.getType().equals(Material.SIGN_POST)) {
-				Sign sign = (Sign) block.getState();
+				final Sign sign = (Sign) block.getState();
 				if (sign.getLine(0).indexOf("[Chest Keeper]") == 0
 						&& sign.getLine(0).indexOf("]") != -1
 						&& worker.hasPerm(event.getPlayer(), "giftpost.chest.open")) {
@@ -91,21 +109,6 @@ public class GPPlayerListener extends PlayerListener {
 					new Upgrade().execute(worker, event.getPlayer(), null);
 				}
 			}
-		}
-	}
-
-	@Override
-	public void onPlayerInteract(PlayerInteractEvent event) {
-		onSign(event);
-		if (worker.getConfig().getString("use-wand", "true").matches("true")
-				&& worker.hasPerm(event.getPlayer(), "giftpost.chest.everywhere", false)
-				&& event.getPlayer().getItemInHand() != null
-				&& event.getPlayer().getItemInHand().getType() != null
-				&& (event.getPlayer().getItemInHand().getType().getId() == worker.getConfig()
-						.getInt("wand-item-id", Material.CHEST.getId()))
-				&& (event.getAction().equals(Action.LEFT_CLICK_AIR) || event.getAction().equals(
-						Action.LEFT_CLICK_BLOCK))) {
-			new Chest().execute(worker, event.getPlayer(), null);
 		}
 	}
 }

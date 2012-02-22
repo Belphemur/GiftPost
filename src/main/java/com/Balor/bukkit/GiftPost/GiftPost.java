@@ -14,21 +14,7 @@
     along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.*/
 package com.Balor.bukkit.GiftPost;
 
-import VirtualChest.Manager.Permissions.PermParent;
-import VirtualChest.Manager.Permissions.PermissionLinker;
-
-import com.Balor.Listeners.DeathEntityListener;
-import com.Balor.Listeners.GPPlayerListener;
-import com.Balor.Listeners.PluginListener;
-import com.Balor.Listeners.SignListener;
-import com.Balor.Listeners.WorldGPListener;
-import com.Balor.Tools.Configuration.File.ExtendedConfiguration;
-import com.Balor.commands.*;
-import com.Balor.commands.mcMMO.BuyPartyChest;
-import com.Balor.commands.mcMMO.OpenPartyChest;
-import com.Balor.utils.Downloader;
-import com.Balor.utils.threads.PartiesGarbageCollector;
-import com.google.common.collect.MapMaker;
+import static com.Balor.utils.Display.sendHelp;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -45,9 +32,34 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
-import static com.Balor.utils.Display.sendHelp;
+
+import VirtualChest.Manager.Permissions.PermParent;
+import VirtualChest.Manager.Permissions.PermissionLinker;
+
+import com.Balor.Listeners.DeathEntityListener;
+import com.Balor.Listeners.GPPlayerListener;
+import com.Balor.Listeners.PluginListener;
+import com.Balor.Listeners.SignListener;
+import com.Balor.Listeners.WorldGPListener;
+import com.Balor.Tools.Configuration.File.ExtendedConfiguration;
+import com.Balor.commands.Buy;
+import com.Balor.commands.Chest;
+import com.Balor.commands.ChestList;
+import com.Balor.commands.EmptyChest;
+import com.Balor.commands.GPCommand;
+import com.Balor.commands.GiveItem;
+import com.Balor.commands.Help;
+import com.Balor.commands.RemoveChest;
+import com.Balor.commands.Rename;
+import com.Balor.commands.Send;
+import com.Balor.commands.SetChest;
+import com.Balor.commands.SetChestLimit;
+import com.Balor.commands.Upgrade;
+import com.Balor.commands.mcMMO.BuyPartyChest;
+import com.Balor.commands.mcMMO.OpenPartyChest;
+import com.Balor.utils.Downloader;
+import com.Balor.utils.threads.PartiesGarbageCollector;
+import com.google.common.collect.MapMaker;
 
 /**
  * @author Balor
@@ -178,14 +190,11 @@ public class GiftPost extends JavaPlugin {
 		DeathEntityListener deathListener = new DeathEntityListener();
 		registerCommands();
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_JOIN, pListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_QUIT, pListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, pListener, Priority.Normal, this);
-		pm.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
-		pm.registerEvent(Event.Type.SIGN_CHANGE, sListener, Event.Priority.Highest, this);
-		pm.registerEvent(Event.Type.BLOCK_BREAK, sListener, Event.Priority.Highest, this);
-		pm.registerEvent(Event.Type.WORLD_SAVE, wListener, Event.Priority.Normal, this);
-		pm.registerEvent(Event.Type.ENTITY_DEATH, deathListener, Event.Priority.Normal, this);
+		pm.registerEvents(pluginListener, this);
+		pm.registerEvents(pListener, this);
+		pm.registerEvents(sListener, this);
+		pm.registerEvents(wListener, this);
+		pm.registerEvents(deathListener, this);
 	}
 
 	public static Server getBukkitServer() {
@@ -213,7 +222,9 @@ public class GiftPost extends JavaPlugin {
 		log.info("[" + this.getDescription().getName() + "]" + " (version "
 				+ this.getDescription().getVersion() + ")");
 		gpw = GiftPostWorker.getInstance();
-		gpw.setConfig(ExtendedConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")),this);
+		gpw.setConfig(
+				ExtendedConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml")),
+				this);
 		gpw.setfManager(getDataFolder().toString());
 		setupListeners();
 		if (new File(getDataFolder() + File.separator + "chest.dat").exists()) {
@@ -230,14 +241,14 @@ public class GiftPost extends JavaPlugin {
 			public void run() {
 				GiftPostWorker.getInstance().save();
 			}
-		}, (getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
-				getConfiguration().getInt("auto-save-time", 10) * 1200);
+		}, (getConfig().getInt("auto-save-time", 10) * 1200) / 2,
+				getConfig().getInt("auto-save-time", 10) * 1200);
 		if (getServer().getPluginManager().getPlugin("mcMMO") != null) {
 			GiftPostWorker.getInstance().loadParties();
 			getServer().getScheduler().scheduleAsyncRepeatingTask(this,
 					new PartiesGarbageCollector(),
-					(getConfiguration().getInt("auto-save-time", 10) * 1200) / 2,
-					getConfiguration().getInt("auto-save-time", 10) * 1200);
+					(getConfig().getInt("auto-save-time", 10) * 1200) / 2,
+					getConfig().getInt("auto-save-time", 10) * 1200);
 		}
 
 	}

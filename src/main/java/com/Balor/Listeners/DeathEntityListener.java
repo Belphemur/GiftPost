@@ -20,8 +20,9 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityListener;
 import org.bukkit.inventory.ItemStack;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
@@ -31,20 +32,21 @@ import com.aranai.virtualchest.VirtualChest;
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class DeathEntityListener extends EntityListener {
-	@Override
+public class DeathEntityListener implements Listener {
+	@EventHandler
 	public void onEntityDeath(EntityDeathEvent event) {
 		if (!(event.getEntity() instanceof Player))
 			return;
-		Player p = (Player) event.getEntity();		
+		final Player p = (Player) event.getEntity();
 		if (GiftPostWorker.getInstance().numberOfChest(p) != 0
 				&& GiftPostWorker.getInstance().getConfig().getString("drop-on-death", "false")
 						.matches("true")) {
-			Location deathLoc = p.getLocation();
-			HashMap<String, VirtualChest> listOfChest = GiftPostWorker.getInstance().listOfChest(p);
-			for (String chestName : listOfChest.keySet()) {
-				VirtualChest v = listOfChest.get(chestName);
-				for (ItemStack item : v.getContents())
+			final Location deathLoc = p.getLocation();
+			final HashMap<String, VirtualChest> listOfChest = GiftPostWorker.getInstance()
+					.listOfChest(p);
+			for (final String chestName : listOfChest.keySet()) {
+				final VirtualChest v = listOfChest.get(chestName);
+				for (final ItemStack item : v.getContents())
 					if (item != null)
 						p.getWorld().dropItem(deathLoc, item);
 

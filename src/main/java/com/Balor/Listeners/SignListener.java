@@ -18,8 +18,9 @@ package com.Balor.Listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.block.Sign;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockListener;
 import org.bukkit.event.block.SignChangeEvent;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
@@ -28,16 +29,30 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class SignListener extends BlockListener {
-	private GiftPostWorker worker;
+public class SignListener implements Listener {
+	private final GiftPostWorker worker;
 
 	public SignListener() {
 		worker = GiftPostWorker.getInstance();
 	}
 
-	@Override
+	@EventHandler
+	public void onBlockBreak(BlockBreakEvent event) {
+		if (event.getBlock().getState() instanceof Sign) {
+			final Sign sign = (Sign) event.getBlock().getState();
+			if ((sign.getLine(0).indexOf("[Chest Keeper]") == 0
+					|| sign.getLine(0).indexOf("[Buy Chest]") == 0 || sign.getLine(0).indexOf(
+					"[Up Chest]") == 0)
+					&& sign.getLine(0).indexOf("]") != -1
+					&& !worker.hasPerm(event.getPlayer(), "giftpost.admin.sign"))
+				event.setCancelled(true);
+
+		}
+	}
+
+	@EventHandler
 	public void onSignChange(SignChangeEvent e) {
-		String line0 = e.getLine(0);
+		final String line0 = e.getLine(0);
 		if (line0.indexOf("[Chest Keeper]") == 0 && line0.indexOf("]") != -1) {
 			if (!worker.hasPerm(e.getPlayer(), "giftpost.admin.sign"))
 				e.setLine(0, "\u00A74[No Perm]");
@@ -69,20 +84,6 @@ public class SignListener extends BlockListener {
 					e.setLine(3, ChatColor.DARK_RED + "chest !");
 				}
 			}
-		}
-	}
-
-	@Override
-	public void onBlockBreak(BlockBreakEvent event) {
-		if (event.getBlock().getState() instanceof Sign) {
-			Sign sign = (Sign) event.getBlock().getState();
-			if ((sign.getLine(0).indexOf("[Chest Keeper]") == 0
-					|| sign.getLine(0).indexOf("[Buy Chest]") == 0 || sign.getLine(0).indexOf(
-					"[Up Chest]") == 0)
-					&& sign.getLine(0).indexOf("]") != -1
-					&& !worker.hasPerm(event.getPlayer(), "giftpost.admin.sign"))
-				event.setCancelled(true);
-
 		}
 	}
 }

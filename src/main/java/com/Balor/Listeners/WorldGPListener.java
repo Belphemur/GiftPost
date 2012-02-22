@@ -16,7 +16,8 @@
  ************************************************************************/
 package com.Balor.Listeners;
 
-import org.bukkit.event.world.WorldListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldSaveEvent;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
@@ -25,8 +26,8 @@ import com.Balor.bukkit.GiftPost.GiftPostWorker;
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class WorldGPListener extends WorldListener {
-	@Override
+public class WorldGPListener implements Listener {
+	@EventHandler
 	public void onWorldSave(WorldSaveEvent event) {
 		if (!GiftPostWorker.isDisable()) {
 			GiftPostWorker.getInstance().save();
