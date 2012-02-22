@@ -16,53 +16,59 @@
  ************************************************************************/
 package VirtualChest.Manager.Permissions;
 
+import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 
 /**
  * @author Balor (aka Antoine Aflalo)
  * 
  */
-public class PermParent extends PermChild {
-	protected final String compareName;
+public class PermChild {
+	protected Permission bukkitPerm;
 
-	public PermParent(String perm) {
-		this(perm, perm == null ? null : perm.substring(0, perm.length() - 1), PermissionDefault.OP);
-	}
-
-	public PermParent(String perm, String compare, PermissionDefault def) {
-		super(perm, def);
-		this.compareName = compare;
+	public PermChild(String permName) {
+		this(permName, PermissionDefault.OP);
 	}
 
 	/**
-	 * @return the compareName
+	 * @param permName
+	 * @param parent
+	 * @param value
+	 * @param permDefault
 	 */
-	public String getCompareName() {
-		return compareName;
+	public PermChild(String permName, PermissionDefault permDefault) {
+		if (permName == null)
+			return;
+		if (Bukkit.getServer() == null)
+			return;
+		if ((bukkitPerm = Bukkit.getServer().getPluginManager().getPermission(permName)) != null) {
+			bukkitPerm.setDefault(permDefault);
+			return;
+		}
+		bukkitPerm = new Permission(permName, permDefault);
+		Bukkit.getServer().getPluginManager().addPermission(bukkitPerm);
 	}
 
 	/**
-	 * Add a permission Child to the Permission Parent
-	 * 
-	 * @param perm
-	 * @return the PermParent (this)
+	 * @return the permName
 	 */
-	public PermParent addChild(PermChild perm) throws IllegalArgumentException {
-		if (perm.equals(this))
-			throw new IllegalArgumentException("The Child can't be the parent.");
-		perm.bukkitPerm.addParent(bukkitPerm, true);
-		return this;
+	public String getPermName() {
+		return bukkitPerm.getName();
 	}
 
 	/**
-	 * Add a permission Child to the Permission Parent
-	 * 
-	 * @param perm
-	 * @return the PermParent (this)
+	 * @return the permDefault
 	 */
-	public PermParent addChild(String perm) {
-		this.addChild(new PermChild(perm));
-		return this;
+	public PermissionDefault getPermDefault() {
+		return bukkitPerm.getDefault();
+	}
+
+	/**
+	 * @return the bukkitPerm
+	 */
+	public Permission getBukkitPerm() {
+		return bukkitPerm;
 	}
 
 	/*
@@ -73,8 +79,8 @@ public class PermParent extends PermChild {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((compareName == null) ? 0 : compareName.hashCode());
+		int result = 1;
+		result = prime * result + ((bukkitPerm == null) ? 0 : bukkitPerm.hashCode());
 		return result;
 	}
 
@@ -87,17 +93,28 @@ public class PermParent extends PermChild {
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (!super.equals(obj))
+		if (obj == null)
 			return false;
-		if (!(obj instanceof PermParent))
+		if (!(obj instanceof PermChild))
 			return false;
-		PermParent other = (PermParent) obj;
-		if (compareName == null) {
-			if (other.compareName != null)
+		PermChild other = (PermChild) obj;
+		if (bukkitPerm == null) {
+			if (other.bukkitPerm != null)
 				return false;
-		} else if (!compareName.equals(other.compareName))
+		} else if (!bukkitPerm.equals(other.bukkitPerm))
 			return false;
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "PermChild [getPermName()=" + getPermName() + ", getPermDefault()="
+				+ getPermDefault() + "]";
 	}
 
 }

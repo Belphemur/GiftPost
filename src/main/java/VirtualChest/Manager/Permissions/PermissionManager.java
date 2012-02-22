@@ -1,56 +1,52 @@
 /************************************************************************
- * This file is part of VirtualChest.									
- *																		
- * VirtualChest is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by	
- * the Free Software Foundation, either version 3 of the License, or		
- * (at your option) any later version.									
- *																		
- * VirtualChest is distributed in the hope that it will be useful,	
- * but WITHOUT ANY WARRANTY; without even the implied warranty of		
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the			
- * GNU General Public License for more details.							
- *																		
+ * This file is part of AdminCmd.
+ *
+ * AdminCmd is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * AdminCmd is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
- * along with VirtualChest.  If not, see <http://www.gnu.org/licenses/>.
+ * along with AdminCmd.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
 package VirtualChest.Manager.Permissions;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
-import java.util.logging.Logger;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import VirtualChest.Manager.Permissions.Plugins.BukkitPermissions;
+import VirtualChest.Manager.Permissions.Plugins.IPermissionPlugin;
 import VirtualChest.Manager.Permissions.Plugins.PermissionsEx;
+import VirtualChest.Manager.Permissions.Plugins.SuperPermissions;
 import VirtualChest.Manager.Permissions.Plugins.YetiPermissions;
+import VirtualChest.Manager.Permissions.Plugins.bPermissions;
 
 import com.Balor.bukkit.GiftPost.GiftPostWorker;
 import com.nijiko.permissions.PermissionHandler;
+import com.platymuus.bukkit.permissions.PermissionsPlugin;
+
 
 /**
  * @author Balor (aka Antoine Aflalo)
- * 
+ *
  */
 public class PermissionManager {
 	private static PermissionManager instance = null;
 	private static boolean permissionsEx = false;
 	private static boolean yetiPermissions = false;
-	public static final Logger log = Logger.getLogger("Minecraft");
-	private static AbstractPermission permissionHandler;
+	private static boolean bPermissions = false;
+	private static boolean permissionsBukkit = false;
+	private static IPermissionPlugin permissionHandler;
 	private static boolean warningSend = false;
-	private Hashtable<String, WeakReference<PermissionLinker>> permissionLinkers = new Hashtable<String, WeakReference<PermissionLinker>>();
-
-	/**
-	 * 
-	 */
-	private PermissionManager() {
-		if (permissionHandler == null)
-			permissionHandler = new BukkitPermissions();
-	}
 
 	/**
 	 * @return the instance
@@ -61,18 +57,198 @@ public class PermissionManager {
 		return instance;
 	}
 
-	public synchronized PermissionLinker getPermissionLinker(String name) {
-		WeakReference<PermissionLinker> ref = permissionLinkers.get(name);
-		if (ref == null) {
-			return null;
+	public static String getPermissionLimit(Player p, String limit) {
+		return permissionHandler.getPermissionLimit(p, limit);
+	}
+
+	public static String getPrefix(Player player) {
+		return permissionHandler.getPrefix(player);
+	}
+
+	public static String getSuffix(Player player) {
+		return permissionHandler.getSuffix(player);
+	}
+
+	public static boolean hasPerm(CommandSender player, Permission perm)
+			throws NullPointerException {
+		return hasPerm(player, perm, true);
+	}
+
+	public static boolean hasPerm(CommandSender player, Permission perm, boolean errorMsg)
+			throws NullPointerException {
+		if (perm == null)
+			throw new NullPointerException("The Permission Node can't be NULL");
+		if (player == null)
+			throw new NullPointerException("The CommandSender can't be NULL");
+		return permissionHandler.hasPerm(player, perm, errorMsg);
+
+	}
+
+	/**
+	 * Check the permission with an error message if the user don't have the
+	 * Permission
+	 *
+	 * @param player
+	 *            player to check the permission
+	 * @param perm
+	 *            permission node
+	 * @return if the user have or not the permission
+	 * @throws NullPointerException
+	 *             when the permission node is null
+	 */
+	public static boolean hasPerm(CommandSender player, String perm) throws NullPointerException {
+		return hasPerm(player, perm, true);
+	}
+
+	/**
+	 * Check the permission with the possibility to disable the error msg
+	 *
+	 * @param player
+	 *            player to check the permission
+	 * @param perm
+	 *            permission node
+	 * @param errorMsg
+	 *            send or not an error message to the user if he don't have the
+	 *            permission
+	 * @return if the user have or not the permission
+	 * @throws NullPointerException
+	 *             when the permission node is null
+	 */
+	public static boolean hasPerm(CommandSender player, String perm, boolean errorMsg)
+			throws NullPointerException {
+		if (perm == null)
+			throw new NullPointerException("The Permission Node can't be NULL");
+		if (player == null)
+			throw new NullPointerException("The CommandSender can't be NULL");
+		return permissionHandler.hasPerm(player, perm, errorMsg);
+
+	}
+
+	/**
+	 * @return the bPermissions
+	 */
+	public static boolean isbPermissionsSet() {
+		return bPermissions;
+	}
+
+	public static boolean isInGroup(String groupName, Player player) throws NoPermissionsPlugin {
+		return permissionHandler.isInGroup(groupName, player);
+	}
+
+	/**
+	 * @return the PermissionsBukkit
+	 */
+	public static boolean isPermissionsBukkitSet() {
+		return permissionsBukkit;
+	}
+
+	/**
+	 * @return the permissionsEx
+	 */
+	public static boolean isPermissionsExSet() {
+		return permissionsEx;
+	}
+
+	/**
+	 * @return the yetiPermissions
+	 */
+	public static boolean isYetiPermissionsSet() {
+		return yetiPermissions;
+	}
+
+	/**
+	 * Set bPermission Plugin
+	 *
+	 * @param plugin
+	 * @param infoReader
+	 * @return
+	 */
+	public static boolean setbPermissions() {
+		if (!bPermissions && !permissionsEx) {
+			bPermissions = true;
+			permissionHandler = new bPermissions();
+			if (!yetiPermissions)
+				GiftPostWorker.log.info("Successfully linked with bPermissions.");
+			else
+				GiftPostWorker.log.info("Successfully linked with bPermissions overpassing the Permission Bridge.");
+		} else {
+			return false;
 		}
-		PermissionLinker perm = ref.get();
-		if (perm == null) {
-			// Hashtable holds stale weak reference
-			// to a logger which has been GC-ed.
-			permissionLinkers.remove(name);
+		return true;
+	}
+
+	/**
+	 * Set PermissionsBukkit Plugin
+	 *
+	 * @param plugin
+	 * @return
+	 */
+	public static boolean setPermissionsBukkit(PermissionsPlugin plugin) {
+		if (!permissionsBukkit && !bPermissions && !permissionsEx) {
+			permissionsBukkit = true;
+			permissionHandler = new BukkitPermissions(plugin);
+			if (!yetiPermissions)
+				GiftPostWorker.log.info("Successfully linked with PermissionsBukkit.");
+			else
+				GiftPostWorker.log.info("Successfully linked with PermissionsBukkit overpassing the Permission Bridge.");
+		} else {
+			return false;
 		}
-		return perm;
+		return true;
+	}
+
+	/**
+	 * @param pEX
+	 *            the pEX to set
+	 */
+	public static boolean setPEX(ru.tehkode.permissions.PermissionManager pEX) {
+		if (!permissionsEx) {
+			if (!GiftPostWorker.getInstance().getConfig().getBoolean("forceOfficialBukkitPerm")) {
+				permissionsEx = true;
+				permissionHandler = new PermissionsEx(pEX);
+				if (!yetiPermissions)
+					GiftPostWorker.log.info("Successfully linked with PermissionsEX");
+				else
+					GiftPostWorker.log.info("Use PermissionsEX instead of Yeti's Permissions.");
+			} else if (!warningSend) {
+				GiftPostWorker.log.info("Plugin Forced to use Offical Bukkit Permission System");
+				warningSend = true;
+			}
+			return true;
+		} else
+			return false;
+	}
+
+	/**
+	 * Set Permission Plugin
+	 *
+	 * @param plugin
+	 * @return
+	 */
+	public static boolean setYetiPermissions(PermissionHandler plugin) {
+		if (!yetiPermissions && !permissionsEx) {
+			if (!GiftPostWorker.getInstance().getConfig().getBoolean("forceOfficialBukkitPerm")) {
+				yetiPermissions = true;
+				permissionHandler = new YetiPermissions(plugin);
+				GiftPostWorker.log.info("Successfully linked with Yeti's Permissions.");
+			} else if (!warningSend) {
+				GiftPostWorker.log.info("Plugin Forced to use Offical Bukkit Permission System");
+				warningSend = true;
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
+
+	private final Hashtable<String, WeakReference<PermissionLinker>> permissionLinkers = new Hashtable<String, WeakReference<PermissionLinker>>();
+
+	/**
+	 *
+	 */
+	private PermissionManager() {
+		if (permissionHandler == null)
+			permissionHandler = new SuperPermissions();
 	}
 
 	public synchronized boolean addPermissionLinker(PermissionLinker perm) {
@@ -81,7 +257,7 @@ public class PermissionManager {
 			throw new NullPointerException();
 		}
 
-		WeakReference<PermissionLinker> ref = permissionLinkers.get(name);
+		final WeakReference<PermissionLinker> ref = permissionLinkers.get(name);
 		if (ref != null) {
 			if (ref.get() == null) {
 				// Hashtable holds stale weak reference
@@ -109,112 +285,18 @@ public class PermissionManager {
 		return result;
 	}
 
-	/**
-	 * Check the permissions
-	 * 
-	 * @param player
-	 * @param perm
-	 * @return boolean
-	 */
-	public static boolean hasPerm(CommandSender player, String perm) {
-		return permissionHandler.hasPerm(player, perm);
-	}
-
-	public static boolean hasPerm(CommandSender player, Permission perm) {
-		return permissionHandler.hasPerm(player, perm);
-	}
-
-	/**
-	 * Check the permission with the possibility to disable the error msg
-	 * 
-	 * @param player
-	 * @param perm
-	 * @param errorMsg
-	 * @return
-	 */
-	public static boolean hasPerm(CommandSender player, String perm, boolean errorMsg) {
-		return permissionHandler.hasPerm(player, perm, errorMsg);
-
-	}
-
-	public static boolean hasPerm(CommandSender player, Permission perm, boolean errorMsg) {
-		return permissionHandler.hasPerm(player, perm, errorMsg);
-
-	}
-
-	public static String getPermissionLimit(Player p, String limit) {
-		return permissionHandler.getPermissionLimit(p, limit);
-	}
-
-	public static String getPrefix(Player player) {
-		return permissionHandler.getPrefix(player);
-	}
-
-	public static boolean hasInfoNode() {
-		return permissionHandler.haveInfoNode();
-	}
-
-	/**
-	 * @return the permissionsEx
-	 */
-	public static boolean isPermissionsExSet() {
-		return permissionsEx;
-	}
-
-	/**
-	 * @return the yetiPermissions
-	 */
-	public static boolean isYetiPermissionsSet() {
-		return yetiPermissions;
-	}
-
-	/**
-	 * @param pEX
-	 *            the pEX to set
-	 */
-	public static boolean setPEX(ru.tehkode.permissions.PermissionManager pEX) {
-		if (!permissionsEx) {
-			if (!GiftPostWorker.getInstance().getConfig()
-					.getBoolean("forceOfficialBukkitPerm", false)) {
-				permissionsEx = true;
-				permissionHandler = new PermissionsEx(pEX);
-				if (!yetiPermissions)
-					System.out.println("[VirtualChest] Successfully linked with PermissionsEX");
-				else
-					System.out
-							.println("[VirtualChest] Use PermissionsEX instead of Yeti's Permissions.");
-			} else if (!warningSend) {
-				System.out
-						.println("[VirtualChest] Plugin Forced to use Offical Bukkit Permission System");
-				warningSend = true;
-			}
-			return true;
-		} else
-			return false;
-	}
-
-	/**
-	 * Set Permission Plugin
-	 * 
-	 * @param plugin
-	 * @return
-	 */
-	public static boolean setYetiPermissions(PermissionHandler plugin) {
-		if (!yetiPermissions && !permissionsEx) {
-			if (!GiftPostWorker.getInstance().getConfig()
-					.getBoolean("forceOfficialBukkitPerm", false)) {
-				yetiPermissions = true;
-				permissionHandler = new YetiPermissions(plugin);
-				System.out.println("[VirtualChest] Successfully linked with Yeti's Permissions.");
-			} else if (!warningSend) {
-				System.out
-						.println("[VirtualChest] Plugin Forced to use Offical Bukkit Permission System");
-				warningSend = true;
-			}
-		} else {
-			return false;
+	public synchronized PermissionLinker getPermissionLinker(String name) {
+		final WeakReference<PermissionLinker> ref = permissionLinkers.get(name);
+		if (ref == null) {
+			return null;
 		}
-		return true;
+		final PermissionLinker perm = ref.get();
+		if (perm == null) {
+			// Hashtable holds stale weak reference
+			// to a logger which has been GC-ed.
+			permissionLinkers.remove(name);
+		}
+		return perm;
 	}
 
 }

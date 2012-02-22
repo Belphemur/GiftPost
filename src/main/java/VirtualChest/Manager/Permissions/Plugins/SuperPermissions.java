@@ -16,23 +16,50 @@
  ************************************************************************/
 package VirtualChest.Manager.Permissions.Plugins;
 
+import in.mDev.MiracleM4n.mChatSuite.mChatSuite;
+import in.mDev.MiracleM4n.mChatSuite.api.InfoType;
+import in.mDev.MiracleM4n.mChatSuite.api.MInfoReader;
+
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import VirtualChest.Manager.Permissions.NoPermissionsPlugin;
 
-import com.nijiko.permissions.PermissionHandler;
-
 /**
- * @author Balor (aka Antoine Aflalo)
+ * @author Lathanael (aka Philippe Leipold)
  * 
  */
-public class YetiPermissions implements IPermissionPlugin {
-	protected PermissionHandler permission = null;
+public class SuperPermissions implements IPermissionPlugin {
+	protected static MInfoReader mChatInfo = null;
+
+	/**
+	 *
+	 */
+	public SuperPermissions() {
+	}
+
+	/**
+	 * @param mChatSuite
+	 *            the mChatAPI to set
+	 */
+	public static void setmChatapi(mChatSuite mChatSuite) {
+		if (SuperPermissions.mChatInfo == null && mChatSuite != null)
+			mChatInfo = mChatSuite.getInfoReader();
+	}
+
+	/**
+	 * @return the mChatAPI
+	 */
+	public static boolean isApiSet() {
+		return mChatInfo != null;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -41,30 +68,16 @@ public class YetiPermissions implements IPermissionPlugin {
 	 * be.Balor.Manager.Permissions.AbstractPermission#hasPerm(org.bukkit.command
 	 * .CommandSender, java.lang.String, boolean)
 	 */
-	/**
-	 *
-	 */
-	public YetiPermissions(PermissionHandler perm) {
-		this.permission = perm;
-	}
-
-	/**
-	 * @return the permission
-	 */
-	public PermissionHandler getPermission() {
-		return permission;
-	}
-
-
 	public boolean hasPerm(CommandSender player, String perm, boolean errorMsg) {
 		if (!(player instanceof Player))
 			return true;
-		if (permission.has((Player) player, perm)) {
+		if (player.hasPermission(perm))
 			return true;
-		} else {
+		else {
 			if (errorMsg)
 				player.sendMessage(ChatColor.RED + "You don't have the permission to do that "
 						+ ChatColor.BLUE + "(" + perm + ")");
+
 			return false;
 		}
 	}
@@ -76,13 +89,12 @@ public class YetiPermissions implements IPermissionPlugin {
 	 * be.Balor.Manager.Permissions.AbstractPermission#hasPerm(org.bukkit.command
 	 * .CommandSender, org.bukkit.permissions.Permission, boolean)
 	 */
-
 	public boolean hasPerm(CommandSender player, Permission perm, boolean errorMsg) {
 		if (!(player instanceof Player))
 			return true;
-		if (permission.has((Player) player, perm.getName())) {
+		if (player.hasPermission(perm))
 			return true;
-		} else {
+		else {
 			if (errorMsg)
 				player.sendMessage(ChatColor.RED + "You don't have the permission to do that "
 						+ ChatColor.BLUE + "(" + perm.getName() + ")");
@@ -97,9 +109,8 @@ public class YetiPermissions implements IPermissionPlugin {
 	 * be.Balor.Manager.Permissions.AbstractPermission#isInGroup(org.java.lang
 	 * .String, org.bukkit.entity.Player)
 	 */
-
-	public boolean isInGroup(String groupName, Player player) {
-		return permission.inGroup(player.getWorld().getName(), player.getName(), groupName);
+	public boolean isInGroup(String group, Player player) throws NoPermissionsPlugin {
+		throw new NoPermissionsPlugin("To use this functionality you need a Permission Plugin");
 	}
 
 	/*
@@ -109,10 +120,8 @@ public class YetiPermissions implements IPermissionPlugin {
 	 * be.Balor.Manager.Permissions.AbstractPermission#getUsers(org.java.lang
 	 * .String)
 	 */
-
 	public Set<Player> getUsers(String groupName) throws NoPermissionsPlugin {
-		throw new NoPermissionsPlugin(
-				"To use this functionality you need a newer Permissions plugin!");
+		throw new NoPermissionsPlugin("To use this functionality you need a Permission Plugin");
 	}
 
 	/*
@@ -122,26 +131,24 @@ public class YetiPermissions implements IPermissionPlugin {
 	 * be.Balor.Manager.Permissions.AbstractPermission#getPermissionLimit(org
 	 * .bukkit.entity.Player, java.lang.String)
 	 */
-	@SuppressWarnings("deprecation")
 
-	public String getPermissionLimit(Player p, String type) {
-		Integer limitInteger = null;
-		try {
-			limitInteger = permission.getInfoInteger(p.getWorld().getName(), p.getName(),
-					"admincmd." + type, false);
-		} catch (NoSuchMethodError e) {
-			try {
+	public String getPermissionLimit(final Player p, String limit) {
+		String result = null;
+		if (mChatInfo != null)
+			result = mChatInfo.getInfo(p.getName(), InfoType.USER, p.getWorld().getName(),
+					"admincmd." + limit);
+		if (result == null || (result != null && result.isEmpty())) {
+			Pattern regex = Pattern.compile("admincmd\\." + limit.toLowerCase() + "\\.[0-9]+");
+			final Set<PermissionAttachmentInfo> perms = p.getEffectivePermissions();
+			for (PermissionAttachmentInfo info : perms) {
+				Matcher regexMatcher = regex.matcher(info.getPermission());
+				if (regexMatcher.find())
+					return info.getPermission().split("\\.")[2];
 
-				limitInteger = permission.getPermissionInteger(p.getWorld().getName(), p.getName(),
-						"admincmd." + type);
-			} catch (Throwable e2) {
-				limitInteger = null;
 			}
-		}
-		if (limitInteger != null && limitInteger != -1)
-			return limitInteger.toString();
-		else
-			return null;
+		} else
+			return result;
+		return null;
 	}
 
 	/*
@@ -151,22 +158,12 @@ public class YetiPermissions implements IPermissionPlugin {
 	 * be.Balor.Manager.Permissions.AbstractPermission#getPrefix(java.lang.String
 	 * , java.lang.String)
 	 */
-	@SuppressWarnings("deprecation")
-
 	public String getPrefix(Player player) {
-		String world = player.getWorld().getName();
-		String pName = player.getName();
-		String prefixstring = null;
-		try {
-			prefixstring = permission.safeGetUser(world, pName).getPrefix();
-		} catch (Exception e) {
-			String group = permission.getGroup(world, pName);
-			prefixstring = permission.getGroupPrefix(world, group);
-		} catch (NoSuchMethodError e) {
-			String group = permission.getGroup(world, pName);
-			prefixstring = permission.getGroupPrefix(world, group);
-		}
-		return prefixstring;
+		if (mChatInfo != null)
+			return mChatInfo
+					.getPrefix(player.getName(), InfoType.USER, player.getWorld().getName());
+		else
+			return "";
 	}
 
 	/*
@@ -176,22 +173,12 @@ public class YetiPermissions implements IPermissionPlugin {
 	 * be.Balor.Manager.Permissions.IPermissionPlugin#getSuffix(org.bukkit.entity
 	 * .Player)
 	 */
-
-	@SuppressWarnings("deprecation")
 	public String getSuffix(Player player) {
-		String world = player.getWorld().getName();
-		String pName = player.getName();
-		String prefixstring = null;
-		try {
-			prefixstring = permission.safeGetUser(world, pName).getSuffix();
-		} catch (Exception e) {
-			String group = permission.getGroup(world, pName);
-			prefixstring = permission.getGroupSuffix(world, group);
-		} catch (NoSuchMethodError e) {
-			String group = permission.getGroup(world, pName);
-			prefixstring = permission.getGroupSuffix(world, group);
-		}
-		return prefixstring;
+		if (mChatInfo != null)
+			return mChatInfo
+					.getSuffix(player.getName(), InfoType.USER, player.getWorld().getName());
+		else
+			return "";
 	}
 
 }

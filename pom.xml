@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.Balor</groupId>
 	<artifactId>GiftPost</artifactId>
-	<version>5.5.1</version>
+	<version>5.6-SNAPSHOT</version>
 	<name>VirtualChest</name>
 	<scm>
 		<connection>git@github.com:Belphemur/Tomb.git</connection>
@@ -81,13 +81,13 @@
 		<dependency>
 			<groupId>ru.tehkode</groupId>
 			<artifactId>PermissionsEx</artifactId>
-			<version>1.16</version>
+			<version>1.17</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.D3GN</groupId>
-			<artifactId>mChat</artifactId>
-			<version>1.8.8</version>
+			<groupId>in.mDev</groupId>
+			<artifactId>mChatSuite</artifactId>
+			<version>149</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -99,6 +99,17 @@
 			<groupId>org.bukkit</groupId>
 			<artifactId>craftbukkit</artifactId>
 			<version>1.1-R5-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>de.bananaco</groupId>
+			<artifactId>bPermissions</artifactId>
+			<version>1337-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>PermissionsBukkit</artifactId>
+			<version>1.2</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<properties>
