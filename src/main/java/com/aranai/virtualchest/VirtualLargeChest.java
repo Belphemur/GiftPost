@@ -54,7 +54,7 @@ public class VirtualLargeChest extends VirtualChest {
 	@Override
 	public void openChest(Player p) {
 		EntityPlayer eh = ((CraftPlayer) p).getHandle();
-		eh.a(lc);
+		eh.openContainer(lc);
 	}
 
 	/**

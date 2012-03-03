@@ -54,7 +54,7 @@ public class VirtualChest implements Cloneable {
 	public void openChest(Player p) {
 
 		EntityPlayer eh = ((CraftPlayer) p).getHandle();
-		eh.a(chest);
+		eh.openContainer(chest);
 	}
 
 	/**
