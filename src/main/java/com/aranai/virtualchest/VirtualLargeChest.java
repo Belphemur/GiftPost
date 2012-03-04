@@ -128,6 +128,7 @@ public class VirtualLargeChest extends VirtualChest {
 	protected int getMaxItemStack() {
 		return lc.getMaxStackSize();
 	}
+
 	/**
 	 * is Chest Empty
 	 * 
@@ -233,5 +234,15 @@ public class VirtualLargeChest extends VirtualChest {
 		} catch (Exception e) {
 			throw new AssertionError();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.aranai.virtualchest.VirtualChest#getType()
+	 */
+	@Override
+	public ChestType getType() {
+		return ChestType.LARGE;
 	}
 }

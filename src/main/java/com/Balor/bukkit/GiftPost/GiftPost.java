@@ -20,7 +20,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -57,9 +56,7 @@ import com.Balor.commands.SetChestLimit;
 import com.Balor.commands.Upgrade;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
-import com.Balor.utils.Downloader;
 import com.Balor.utils.threads.PartiesGarbageCollector;
-import com.google.common.collect.MapMaker;
 
 /**
  * @author Balor
@@ -204,19 +201,6 @@ public class GiftPost extends JavaPlugin {
 
 	@SuppressWarnings("deprecation")
 	public void onEnable() {
-		try {
-			@SuppressWarnings("unused")
-			ConcurrentMap<Object, Object> test = new MapMaker().makeMap();
-			test = null;
-			System.gc();
-		} catch (NoClassDefFoundError e) {
-			Downloader.pluginName = "VirtualChest";
-			Downloader.install("http://gestdown.info/minecraft/guava-r09-gwt.jar",
-					"/lib/guava-r09-gwt.jar");
-			Downloader.install("http://gestdown.info/minecraft/guava-r09.jar", "lib/guava-r09.jar");
-			getServer().reload();
-			return;
-		}
 		server = getServer();
 		GiftPostWorker.setDisable(false);
 		setupConfigFiles();

@@ -193,15 +193,15 @@ public class VirtualChest implements Cloneable {
 	protected int getMaxItemStack() {
 		return chest.getMaxStackSize();
 	}
-/**
- * Set the index to the chosen Bukkit ItemStack
- * @param index
- * @param item
- */
+
+	/**
+	 * Set the index to the chosen Bukkit ItemStack
+	 * 
+	 * @param index
+	 * @param item
+	 */
 	public void setItem(int index, org.bukkit.inventory.ItemStack item) {
-		setItemStack(
-				index,
-				(item == null ? null : CraftItemStack.createNMSItemStack(item)));
+		setItemStack(index, (item == null ? null : CraftItemStack.createNMSItemStack(item)));
 	}
 
 	/**
@@ -281,10 +281,12 @@ public class VirtualChest implements Cloneable {
 	public void remove(Material material) {
 		remove(material.getId());
 	}
-/**
- * Remove an Bukkit ItemStack from the VirtualChest
- * @param item
- */
+
+	/**
+	 * Remove an Bukkit ItemStack from the VirtualChest
+	 * 
+	 * @param item
+	 */
 	public void remove(ItemStack item) {
 		org.bukkit.inventory.ItemStack[] items = getContents();
 		for (int i = 0; i < items.length; i++) {
@@ -388,5 +390,9 @@ public class VirtualChest implements Cloneable {
 		} catch (CloneNotSupportedException e) {
 			throw new AssertionError();
 		}
+	}
+
+	public ChestType getType() {
+		return ChestType.NORMAL;
 	}
 }
