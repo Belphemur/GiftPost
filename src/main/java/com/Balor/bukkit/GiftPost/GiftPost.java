@@ -56,6 +56,8 @@ import com.Balor.commands.SetChestLimit;
 import com.Balor.commands.Upgrade;
 import com.Balor.commands.mcMMO.BuyPartyChest;
 import com.Balor.commands.mcMMO.OpenPartyChest;
+import com.Balor.party.Party;
+import com.Balor.party.PartyManager;
 import com.Balor.utils.threads.PartiesGarbageCollector;
 
 /**
@@ -235,6 +237,8 @@ public class GiftPost extends JavaPlugin {
 					(getConfig().getInt("auto-save-time", 10) * 1200) / 2,
 					getConfig().getInt("auto-save-time", 10) * 1200);
 		}
+		Party.setDirectory(new File(getDataFolder(), "Parties"));
+		PartyManager.setPlugin(this);
 
 	}
 

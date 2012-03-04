@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.Balor</groupId>
 	<artifactId>GiftPost</artifactId>
-	<version>5.6.1</version>
+	<version>6.0.0-SNAPSHOT</version>
 	<name>VirtualChest</name>
 	<scm>
 		<connection>git@github.com:Belphemur/Tomb.git</connection>

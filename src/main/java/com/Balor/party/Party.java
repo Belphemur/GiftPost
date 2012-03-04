@@ -16,6 +16,7 @@
  ************************************************************************/
 package com.Balor.party;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +31,10 @@ import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import com.Balor.Tools.Configuration.File.ExtendedConfiguration;
+import com.Balor.party.Exceptions.DirectoryNotSet;
+import com.Balor.party.Exceptions.NotInPartyException;
+import com.Balor.party.Exceptions.OwnerLeavingException;
 import com.aranai.virtualchest.ChestType;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
@@ -45,6 +50,8 @@ public class Party implements ConfigurationSerializable {
 	private final Set<String> players = new HashSet<String>();
 	private String owner;
 	private long emptyTimestamp = -1;
+	private static File directory;
+	private final ExtendedConfiguration saveFile;
 	static {
 		ConfigurationSerialization.registerClass(Party.class);
 	}
@@ -52,14 +59,25 @@ public class Party implements ConfigurationSerializable {
 	/**
 	 * @param name
 	 * @param chest
+	 * @throws DirectoryNotSet
 	 */
-	public Party(String name, ChestType type) {
-		super();
+	Party(String name, ChestType type) throws DirectoryNotSet {
+		if (directory == null)
+			throw new DirectoryNotSet("The party need to have the directory set");
 		this.name = name;
 		if (type == ChestType.NORMAL)
 			this.chest = new VirtualChest(name);
 		else
 			this.chest = new VirtualLargeChest(name);
+		this.saveFile = ExtendedConfiguration.loadConfiguration(new File(directory, name + ".yml"));
+	}
+
+	/**
+	 * @param directory
+	 *            the directory to set
+	 */
+	public static void setDirectory(File directory) {
+		Party.directory = directory;
 	}
 
 	/**
@@ -163,7 +181,7 @@ public class Party implements ConfigurationSerializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Party deserialize(Map<String, Object> map) {
+	public static Party deserialize(Map<String, Object> map) throws DirectoryNotSet {
 		Party result = new Party((String) map.get("name"), (ChestType) map.get("chestType"));
 		for (String player : (Collection<String>) map.get("players"))
 			result.addPlayer(player);
@@ -177,4 +195,35 @@ public class Party implements ConfigurationSerializable {
 			result.getChest().addItem(item);
 		return result;
 	}
+
+	/**
+	 * Save the party to the file
+	 */
+	void save() {
+		saveFile.set("party", this);
+	}
+
+	void delete() {
+		new File(directory, name + ".yml").delete();
+	}
+
+	static Party createParty(String name, ChestType type) throws DirectoryNotSet {
+		File save = new File(directory, name + ".yml");
+		if (save.exists())
+			return (Party) ExtendedConfiguration.loadConfiguration(save).get("party");
+		return new Party(name, type);
+	}
+
+	/**
+	 * Check if the party as expired.
+	 * 
+	 * @param check
+	 * @return
+	 */
+	public boolean asExpired(Long check) {
+		if (emptyTimestamp == -1)
+			return false;
+		return (System.currentTimeMillis() - emptyTimestamp) >= check;
+	}
+
 }

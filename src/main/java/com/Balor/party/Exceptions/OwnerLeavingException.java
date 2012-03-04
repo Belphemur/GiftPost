@@ -14,30 +14,30 @@
  * You should have received a copy of the GNU General Public License
  * along with GiftPost.  If not, see <http://www.gnu.org/licenses/>.
  ************************************************************************/
-package com.Balor.party;
+package com.Balor.party.Exceptions;
 
 /**
  * @author Balor (aka Antoine Aflalo)
- *
+ * 
  */
-public class NotInPartyException extends Exception {
+public class OwnerLeavingException extends Exception {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 977192284383904472L;
+	private static final long serialVersionUID = -3291180455699101846L;
 
 	/**
 	 * 
 	 */
-	public NotInPartyException() {
+	public OwnerLeavingException() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 */
-	public NotInPartyException(String message) {
+	public OwnerLeavingException(String message) {
 		super(message);
 		// TODO Auto-generated constructor stub
 	}
@@ -45,7 +45,7 @@ public class NotInPartyException extends Exception {
 	/**
 	 * @param cause
 	 */
-	public NotInPartyException(Throwable cause) {
+	public OwnerLeavingException(Throwable cause) {
 		super(cause);
 		// TODO Auto-generated constructor stub
 	}
@@ -54,7 +54,7 @@ public class NotInPartyException extends Exception {
 	 * @param message
 	 * @param cause
 	 */
-	public NotInPartyException(String message, Throwable cause) {
+	public OwnerLeavingException(String message, Throwable cause) {
 		super(message, cause);
 		// TODO Auto-generated constructor stub
 	}
