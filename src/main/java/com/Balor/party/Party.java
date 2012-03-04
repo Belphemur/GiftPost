@@ -18,6 +18,7 @@ package com.Balor.party;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import com.aranai.virtualchest.ChestType;
 import com.aranai.virtualchest.VirtualChest;
 import com.aranai.virtualchest.VirtualLargeChest;
+import com.google.common.base.Joiner;
 
 /**
  * @author Balor (aka Antoine Aflalo)
@@ -60,16 +62,36 @@ public class Party implements ConfigurationSerializable {
 			this.chest = new VirtualLargeChest(name);
 	}
 
+	/**
+	 * Add a player to the party
+	 * 
+	 * @param player
+	 */
 	public void addPlayer(String player) {
 		players.add(player);
 	}
 
+	/**
+	 * Remove a player from the party.
+	 * 
+	 * @param player
+	 * @throws OwnerLeavingException
+	 *             when trying to remove the owner
+	 */
 	public void removePlayer(String player) throws OwnerLeavingException {
-		if (player.equals(owner))
+		if (owner != null && player.equals(owner))
 			throw new OwnerLeavingException();
 		players.remove(player);
 		if (players.isEmpty())
 			emptyTimestamp = System.currentTimeMillis();
+	}
+
+	public Collection<String> getPlayers() {
+		return Collections.unmodifiableCollection(players);
+	}
+
+	public String getPlayersList() {
+		return Joiner.on(", ").skipNulls().join(players);
 	}
 
 	public boolean hasAccess(Player player) {
@@ -94,27 +116,20 @@ public class Party implements ConfigurationSerializable {
 		return chest;
 	}
 
-	/**
-	 * @return the players
-	 */
-	public Set<String> getPlayers() {
-		return players;
-	}
-
-	/**
-	 * @return the owner
-	 */
-	public String getOwner() {
-		return owner;
+	public boolean isOwner(String player) {
+		return player.equals(owner);
 	}
 
 	/**
 	 * @param owner
 	 *            the owner to set
+	 * @throws NotInPartyException
+	 *             when trying to set an owner that it's not in the party
 	 */
-	public void setOwner(String owner) {
-		if (players.contains(owner))
-			this.owner = owner;
+	public void setOwner(String owner) throws NotInPartyException {
+		if (!players.contains(owner))
+			throw new NotInPartyException();
+		this.owner = owner;
 	}
 
 	/**
@@ -152,7 +167,10 @@ public class Party implements ConfigurationSerializable {
 		Party result = new Party((String) map.get("name"), (ChestType) map.get("chestType"));
 		for (String player : (Collection<String>) map.get("players"))
 			result.addPlayer(player);
-		result.setOwner((String) map.get("owner"));
+		try {
+			result.setOwner((String) map.get("owner"));
+		} catch (NotInPartyException e) {
+		}
 		result.emptyTimestamp = Long.parseLong(map.get("timeStamp").toString());
 		Collection<ItemStack> items = (Collection<ItemStack>) map.get("items");
 		for (ItemStack item : items)
